@@ -50,11 +50,13 @@ trap 'exec 2>&4 1>&3' 0 1 2 3
 # want them going to the same file. stdout must be redirected before stderr is redirected to stdout.
 exec 1>$LOGFILE 2>&1
 
-# Record Log duration
+# Record Installation duration
 SECONDS=0
 
-# Wrapper for runnig commands for the real owner
-alias runas="sudo -H -u ${USER} bash -c"
+# Wrapper for runnig commands for the real owner and not as root
+alias bashas="sudo -H -u ${USER} bash -c"
+# Expand aliases for non-interactive shell
+shopt -s expand_aliases
 
 echo ""
 echo "***** Init Installation at  `date` by user `whoami` ****"
@@ -74,12 +76,11 @@ printError() {
   echo "[Keptn-In-A-Box|ERROR] $(timestamp) $1"
 }
 
-
 waitForAllPods(){
     RETRY=0; 
     RETRY_MAX=24; 
     # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
-    CMD="sudo -H -u ubuntu bash -c \"kubectl get pods -A 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
+    CMD="bashas \"kubectl get pods -A 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
     printInfo "Checking and wait for all pods to run."
     while [[ $RETRY -lt $RETRY_MAX ]]; do
       pods_not_ok=$(eval "$CMD")
@@ -95,7 +96,7 @@ waitForAllPods(){
     if [[ $RETRY == $RETRY_MAX ]]; then
       printError "Pods in namespace ${NAMESPACE} are not running. Exiting installation..."
       # show the pods that have problems
-      sudo -H -u ubuntu bash -c "kubectl get pods --field-selector=status.phase!=Running -A"
+      bashas "kubectl get pods --field-selector=status.phase!=Running -A"
       exit 1
     fi
 }
@@ -189,19 +190,19 @@ microk8sInstall(){
 
 microk8sStart(){
     printInfo "***** Starting Microk8s *****"
-    sudo -H -u ubuntu bash -c 'microk8s.start'
+    bashas 'microk8s.start'
 }
 
 microk8sEnableBasic(){
     printInfo "***** Enable DNS, Storage, NGINX Ingress *****"
-    sudo -H -u ubuntu bash -c 'microk8s.enable dns storage ingress'
+    bashas 'microk8s.enable dns storage ingress'
     waitForAllPods
 }
 
 microk8sEnableDashboard(){
     if [ "$enable_k8dashboard" = true ] ; then
       printInfo "***** Enable Kubernetes Dashboard *****"
-      sudo -H -u ubuntu bash -c 'microk8s.enable dashboard'
+      bashas 'microk8s.enable dashboard'
       waitForAllPods
     fi
 }
@@ -209,7 +210,7 @@ microk8sEnableDashboard(){
 microk8sEnableRegistry(){
     if [ "$enable_registry" = true ] ; then
       printInfo "***** Enable own Docker Registry *****"
-      sudo -H -u ubuntu bash -c 'microk8s.enable registry'
+      bashas 'microk8s.enable registry'
       waitForAllPods
     fi
 }
@@ -229,7 +230,7 @@ istioInstall(){
       mv istio-1.5.1 /opt/istio-1.5.1 
       chmod +x -R /opt/istio-1.5.1/
       ln -s /opt/istio-1.5.1/bin/istioctl /usr/local/bin/istioctl
-      sudo -H -u ubuntu bash -c "echo 'y' | istioctl manifest apply"
+      bashas "echo 'y' | istioctl manifest apply"
       waitForAllPods
     fi
 }
@@ -247,7 +248,7 @@ helmInstall(){
 certmanagerInstall(){
     if [ "$certmanager_install" = true ] ; then
       printInfo " ***** Install CertManager ***** "
-      sudo -H -u ubuntu bash -c 'kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.14.0/cert-manager.yaml'
+      bashas 'kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.14.0/cert-manager.yaml'
       waitForAllPods
     fi
 }
@@ -257,29 +258,29 @@ keptndemoDeployCartsloadgenerator(){
     # https://github.com/sergiohinojosa/keptn-in-a-box/resources/cartsloadgenerator
     if [ "$keptndemo_cartsload" = true ] ; then
       printInfo " ***** Deploy Cartsload Generator ***** "
-      sudo -H -u ubuntu bash -c "kubectl create deploy cartsloadgen --image=shinojosa/cartsloadgen:keptn"
+      bashas "kubectl create deploy cartsloadgen --image=shinojosa/cartsloadgen:keptn"
     fi
 }
 
 resourcesClone(){
     if [ "$resources_clone" = true ] ; then
       printInfo " ***** Clone Keptn-in-a-Box Resources ***** "
-      sudo -H -u ubuntu bash -c "git clone https://github.com/sergiohinojosa/keptn-in-a-box /home/ubuntu/keptn-in-a-box"
+      bashas "git clone https://github.com/sergiohinojosa/keptn-in-a-box /home/ubuntu/keptn-in-a-box"
     fi
 }
 
 keptnExamplesClone(){
     if [ "$keptn_examples_clone" = true ] ; then
       printInfo " ***** Clone Keptn Exmaples ***** "
-      sudo -H -u ubuntu bash -c "git clone --branch 0.6.1 https://github.com/keptn/examples.git /home/ubuntu/examples --single-branch"
+      bashas "git clone --branch 0.6.1 https://github.com/keptn/examples.git /home/ubuntu/examples --single-branch"
     fi
 }
 
 dynatraceSaveCredentials(){
     if [ "$dynatrace_savecredentials" = true ] ; then
       printInfo " ***** Save Dynatrace credentials ***** "
-      sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
-      sudo -H -u ubuntu bash -c "bash /home/ubuntu/keptn-in-a-box/resources/dynatrace/save-credentials.sh show"
+      bashas "cd /home/ubuntu/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
+      bashas "bash /home/ubuntu/keptn-in-a-box/resources/dynatrace/save-credentials.sh show"
     fi
 }
 
@@ -290,11 +291,9 @@ keptnInstall(){
       tar -xvf keptn.tar
       chmod +x keptn 
       mv keptn /usr/local/bin/keptn
-
-      printInfo " ***** Install Keptn **** "
-      sudo -H -u ubuntu bash -c "kubectl create configmap keptn-domain --from-literal=domain=$DOMAIN"
-      sudo -H -u ubuntu bash -c "echo 'y' | keptn install --platform=kubernetes --istio-install-option=Reuse --gateway=LoadBalancer --keptn-installer-image=shinojosa/keptninstaller:6.1.customdomain"
-
+      printInfo " ***** Install Keptn with own installer passing DOMAIN via CM **** "
+      bashas "kubectl create configmap keptn-domain --from-literal=domain=$DOMAIN"
+      bashas "echo 'y' | keptn install --platform=kubernetes --istio-install-option=Reuse --gateway=LoadBalancer --keptn-installer-image=shinojosa/keptninstaller:6.1.customdomain"
     fi
 }
 
@@ -303,15 +302,15 @@ keptndemoTeaserPipeline(){
       printInfo " ***** Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview  ***** "
       # Code of the Loadgenerator found in
       # https://github.com/sergiohinojosa/keptn-in-a-box/resources/homepage
-      sudo -H -u ubuntu bash -c "kubectl -n istio-system create deploy homepage --image=shinojosa/nginxacm"
-      sudo -H -u ubuntu bash -c "kubectl -n istio-system expose deploy homepage --port=80 --type=NodePort"
+      bashas "kubectl -n istio-system create deploy homepage --image=shinojosa/nginxacm"
+      bashas "kubectl -n istio-system expose deploy homepage --port=80 --type=NodePort"
     fi
 }
 
 resourcesRouteIstioIngress(){
     if [ "$resources_route_istio_ingress" = true ] ; then
       printInfo " ***** Route Traffic to IstioGateway and Create SSL certificates for Istio Endpoints **** "
-      sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+      bashas "cd /home/ubuntu/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
     fi
 }
 
@@ -340,7 +339,7 @@ stillToDo(){
 
     # Route expose K8 Services (if API and Dashboard) 
     printf "\n\n*****Allow access to K8 Dashboard withouth login ***** \n"
-    sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-workshop/setup/k8-services && bash expose-k8-services.sh \"$DOMAIN\"" 
+    bashas "cd /home/ubuntu/keptn-workshop/setup/k8-services && bash expose-k8-services.sh \"$DOMAIN\"" 
 
     printf "\n\n*****Configure Public Domain for Keptn on Microk8s  ***** \n"
     
@@ -354,25 +353,25 @@ stillToDo(){
 
     # Install OA
     printf "\n\n***** Installing and configuring Dynatrace on the Cluster *****\n\n"
-    sudo -H -u ubuntu bash -c "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$APITOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$PAASTOKEN\""
-    sudo -H -u ubuntu bash -c "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/0.6.2/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
-    sudo -H -u ubuntu bash -c "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.1/deploy/service.yaml"
+    bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$APITOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$PAASTOKEN\""
+    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/0.6.2/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
+    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.1/deploy/service.yaml"
     printf "\n wait for Webhook to be available.. sleep 20 sec" ; sleep 20s
-    sudo -H -u ubuntu bash -c "keptn configure monitoring dynatrace" 
+    bashas "keptn configure monitoring dynatrace" 
 
     # Expose bridge via VS
     printf "\n\n*****  Expose Bridge via VS and update to EAP   *****\n\n"
-    sudo -H -u ubuntu bash -c "kubectl -n keptn set image deployment/bridge bridge=keptn/bridge2:20200326.0744 --record"
-    DOMAIN=$(sudo -H -u ubuntu bash -c "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
-    sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-workshop/setup/expose-bridge && bash expose-bridge.sh \"$DOMAIN\"" 
+    bashas "kubectl -n keptn set image deployment/bridge bridge=keptn/bridge2:20200326.0744 --record"
+    DOMAIN=$(bashas "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
+    bashas "cd /home/ubuntu/keptn-workshop/setup/expose-bridge && bash expose-bridge.sh \"$DOMAIN\"" 
 
     # OnBoard Unleash
     printf "\n\n*****  Deploy Unleash-Server  *****\n\n"
-    sudo -H -u ubuntu bash -c "cd /home/ubuntu/examples/unleash-server/ && bash /home/ubuntu/keptn-workshop/setup/deploy_unleashserver.sh" 
+    bashas "cd /home/ubuntu/examples/unleash-server/ && bash /home/ubuntu/keptn-workshop/setup/deploy_unleashserver.sh" 
 
     # Configure Kubernetes Monitoring
     printf "\n\n*****  Configure Kubernetes Monitoring  *****\n\n"
-    sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-workshop/setup/dynatrace && bash configure-k8.sh" 
+    bashas "cd /home/ubuntu/keptn-workshop/setup/dynatrace && bash configure-k8.sh" 
 
     printf "\n\n*****Allow -rwx for the user and group (dynatrace) for all files in the home directory ***** \n"
     chmod -R 774 /home/ubuntu/* 
@@ -388,7 +387,7 @@ stillToDo(){
     printf "\n\n***** Installation complete :) *****\nIt took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds "
 
     # Onboard Carts Application
-    sudo -H -u ubuntu bash -c "cd /home/ubuntu/examples/onboarding-carts/ && bash /home/ubuntu/keptn-workshop/setup/onboard_carts.sh && bash /home/ubuntu/keptn-workshop/setup/deploy_carts_0.sh" 
+    bashas "cd /home/ubuntu/examples/onboarding-carts/ && bash /home/ubuntu/keptn-workshop/setup/onboard_carts.sh && bash /home/ubuntu/keptn-workshop/setup/deploy_carts_0.sh" 
 }
 
 printInstalltime(){
