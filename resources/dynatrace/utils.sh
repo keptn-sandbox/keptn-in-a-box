@@ -12,13 +12,18 @@ readCredsFromFile() {
         DT_PAAS_TOKEN=$(echo $CREDS | jq -r '.dynatracePaaSToken')
     fi
 }
-
+printVariables(){
+    echo "Dynatrace Tenant (DT_TENANT): $DT_TENANT"
+    echo "Dynatrace API Token (DT_API_TOKEN): $DT_API_TOKEN"
+    echo "Dynatrace PaaS Token (DT_PAAS_TOKEN): $DT_PAAS_TOKEN"
+    export DT_TENANT=$DT_TENANT
+    export DT_API_TOKEN=$DT_API_TOKEN
+    export DT_PAAS_TOKEN=$DT_PAAS_TOKEN
+}
 writeCreadsToFile(){
     echo ""
     echo -e "${YLW}Please confirm the values are correct: ${NC}"
-    echo "Dynatrace Tenant: $DT_TENANT"
-    echo "Dynatrace API Token: $DT_API_TOKEN"
-    echo "Dynatrace PaaS Token: $DT_PAAS_TOKEN"
+    printVariables
     read -p "Is this all correct? (y/n) : " -n 1 -r
     echo ""
     

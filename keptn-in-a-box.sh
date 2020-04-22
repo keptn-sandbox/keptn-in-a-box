@@ -20,18 +20,23 @@ update_ubuntu=true
 docker_install=true
 microk8s_install=true
 setup_proaliases=true
+setup_magicdomain=true
 enable_k8dashboard=true
 enable_registry=true
-activegate_install=true
+dynatrace_activegate_install=true
 istio_install=true
 helm_install=true
 keptn_install=true
 certmanager_install=false
 
-clone_resources=true
+resources_clone=true
+keptn_examples_clone=true
+
+dynatrace_savecredentials=true
+keptndemo_teaser_pipeline=true
+resources_route_istio_ingress=true
 
 
-keptndemo_teaserandpipeline=true
 keptndemo_cartsload=true
 
 
@@ -194,8 +199,8 @@ microk8sEnableRegistry(){
     fi
 }
 
-activegateInstall(){
-    if [ "$activegate_install" = true ] ; then
+dynatraceActiveGateInstall(){
+    if [ "$dynatrace_activegate_install" = true ] ; then
       printInfo " ***** Installation of Active Gate ***** "
       wget -nv -O activegate.sh "https://$DT_TENANT/api/v1/deployment/installer/gateway/unix/latest?Api-Token=$DT_PAAS_TOKEN&arch=x86&flavor=default"
       sh activegate.sh 
@@ -243,17 +248,59 @@ certmanagerInstall(){
 }
 
 keptndemoDeployCartsloadgenerator(){
-  # Source of the pod
+    # Code of the Loadgenerator found in
+    # https://github.com/sergiohinojosa/keptn-in-a-box/resources/cartsloadgenerator
     if [ "$keptndemo_cartsload" = true ] ; then
+      printInfo " ***** Deploy Cartsload Generator ***** "
       sudo -H -u ubuntu bash -c "kubectl create deploy cartsloadgen --image=shinojosa/cartsloadgen:keptn"
     fi
 }
 
+resourcesClone(){
+    if [ "$resources_clone" = true ] ; then
+      printInfo " ***** Clone Keptn-in-a-Box Resources ***** "
+      sudo -H -u ubuntu bash -c "git clone https://github.com/sergiohinojosa/keptn-in-a-box /home/ubuntu/keptn-in-a-box"
+    fi
+}
+
+
+keptnExamplesClone(){
+    if [ "$keptn_examples_clone" = true ] ; then
+      printInfo " ***** Clone Keptn Exmaples ***** "
+      sudo -H -u ubuntu bash -c "git clone --branch 0.6.1 https://github.com/keptn/examples.git /home/ubuntu/examples --single-branch"
+    fi
+}
+
+dynatraceSaveCredentials(){
+    if [ "$dynatrace_savecredentials" = true ] ; then
+      printInfo " ***** Save Dynatrace credentials ***** "
+      sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
+      sudo -H -u ubuntu bash -c "bash /home/ubuntu/keptn-in-a-box/resources/dynatrace/save-credentials.sh show"
+    fi
+}
+
+keptndemoTeaserPipeline(){
+    if [ "$keptndemo_teaser_pipeline" = true ] ; then
+      printInfo " ***** Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview  ***** "
+      # Code of the Loadgenerator found in
+      # https://github.com/sergiohinojosa/keptn-in-a-box/resources/homepage
+      sudo -H -u ubuntu bash -c "kubectl -n istio-system create deploy nginx --image=shinojosa/nginxacm"
+      sudo -H -u ubuntu bash -c "kubectl -n istio-system expose deploy nginx --port=80 --type=NodePort"
+    fi
+}
+
+resourcesRouteIstioIngress(){
+    if [ "$resources_route_istio_ingress" = true ] ; then
+      printInfo " ***** Route Traffic to IstioGateway and Create SSL certificates for Istio Endpoints **** "
+      sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+    fi
+}
+
 stillToDo(){
+
     printf "\n\n*****  Create user 'dynatrace', we specify bash login, home directory, password and add him to the sudoers\n" >> $LOGFILE 2>&1 
     # Add user with password so SSH login with password is possible. Share same home directory
     # Add Dynatrace & Ubuntu to microk8s & docker
-
     usermod -a -G microk8s ubuntu
     usermod -a -G docker ubuntu
     # TODO - Enhance - paramatirize user and password with RTA CSV Variables
@@ -277,8 +324,8 @@ stillToDo(){
     chown ubuntu:ubuntu -R /home/ubuntu/
 
     # TODO
-    {  printf "\n\n***** Save Dynatrace credentials *****\n" ;\
-    sudo -H -u ubuntu bash -c "cd /home/ubuntu/keptn-workshop/setup/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\"" ;} >> $LOGFILE 2>&1
+    {  printf "\n\n\n" ;\
+   
 
     # TODO:  Enhacement - Validation CertManager is ready 
 
@@ -369,15 +416,20 @@ microk8sStart
 microk8sEnableBasic
 microk8sEnableDashboard
 microk8sEnableRegistry
-activegateInstall
+dynatraceActiveGateInstall
 istioInstall
 helmInstall
 certmanagerInstall
 keptnInstall
 
+resourcesClone
+keptnExamplesClone
 
+dynatraceSaveCredentials
 
+keptndemoTeaserPipeline
 
+resourcesRouteIstioIngress
 
 cartsdemoDeployLoadgenerator
 printInstalltime
