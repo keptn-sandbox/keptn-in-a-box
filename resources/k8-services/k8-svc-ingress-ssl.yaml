@@ -1,0 +1,84 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: k8-svc-ingress
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS" 
+    # In some scenarios the exposed URL in the backend service differs
+    # from the specified path in the Ingress rule. Without a
+    # rewrite any request will return 404
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    # The name of our ClusterIssuer. We use ACME with 
+    # HTTP solver
+    cert-manager.io/cluster-issuer: "letsencrypt"    
+spec:
+  rules:
+  - host: kubernetes.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-dashboard
+          servicePort: 443
+        path: /
+  # A valid key and certificate will be created for the entries belows
+  # with let's encrypt and the ACME protocol. https://letsencrypt.org/
+  tls:
+  - hosts:
+    - kubernetes.domain.placeholder
+    secretName: k8-svc-tls
+---
+# TODO Fix broken links or access via API proxy
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: grafana-ingress
+  namespace: kube-system
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "letsencrypt"    
+spec:
+  rules:
+  - host: grafana.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: monitoring-grafana
+          servicePort: 80
+        path: /
+  tls:
+  - hosts:
+    - grafana.domain.placeholder
+    secretName: grafana-tls
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: k8-api-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS" 
+    cert-manager.io/cluster-issuer: "letsencrypt"    
+spec:
+  rules:
+  - host: api.kubernetes.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes
+          servicePort: 443
+        path: /
+  tls:
+  - hosts:
+    - api.kubernetes.domain.placeholder
+    secretName: k8-api-tls

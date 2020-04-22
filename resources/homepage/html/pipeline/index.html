@@ -1,0 +1,134 @@
+<html>
+<title>Keptn Carts Pipeline Overview</title>
+<link rel="icon" href="https://keptn.sh/favicon.png" />
+<style>
+    /* General */
+    * {
+        font-family: BerninaSans, Roboto Sans, sans-serif;
+        color: #ffffff;
+    }
+
+    .background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 120%;
+        z-index: -1;
+        background: #0f1419 url(https://dt-cdn.net/images/error-pages-background-1920-375767b49f.png) no-repeat center center;
+        background-size: cover;
+        transform: scale(1.1);
+    }
+
+    body {
+        background: #0f1419 url(https://dt-cdn.net/images/error-pages-background-1920-375767b49f.png) no-repeat center center;
+        background-size: cover;
+    }
+
+    h1 {
+        color: blue;
+    }
+
+    p {
+        color: red;
+    }
+
+    table {
+        table-layout: auto;
+        width: 100%;
+        border: 0px solid white;
+        border-collapse: collapse;
+    }
+
+    tr {
+        border: 0px solid blue;
+    }
+
+    td {
+        border: 0px solid blue;
+        width: 500px;
+        height: 300px;
+    }
+    
+    div {
+        padding: 0px 0px 0px 0px;
+    }
+    
+    iframe {
+        height: 450px;
+        width: 100%;
+        border: none;
+    }
+
+    .box_scale {
+        -webkit-transform: scale(0.75);
+        /* Saf3.1+, Chrome */
+        -moz-transform: scale(0.75);
+        /* FF3.5+ */
+        -ms-transform: scale(0.75);
+        /* IE9 */
+        -o-transform: scale(0.75);
+        /* Opera 10.5+ */
+        transform: scale(0.75);
+        filter: progid:DXImageTransform.Microsoft.Matrix(
+                /* IE6–IE9 */
+                M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713, SizingMethod='auto expand');
+    }
+</style>
+
+
+<body>
+    <!-- 
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        height: 100px;
+
+        <div class="top"><iframe id="iframe1" height="33%" width="100%"></iframe></div>
+        <div class="mid"><iframe id="iframe2" height="33%" width="100%"></iframe></div>
+        <div class="bot"><iframe id="iframe3" height="33%" width="100%"></iframe></div>
+    -->
+
+    <table>
+        <tr>
+            <th>development</th>
+            <th>staging</th>
+            <th>production</th>
+        </tr>
+        <tr>
+            <td>
+                <div class="box_scale"><iframe id="iframe1"></iframe></div>
+            </td>
+            <td>
+                <div class="box_scale"><iframe id="iframe2"></iframe></div>
+            </td>
+            <td>
+                <div class="box_scale"><iframe id="iframe3"></iframe></div>
+            </td>
+        </tr>
+    </table>
+
+</body>
+<script>
+    function addSrc(elementId, src) {
+        var e = document.getElementById(elementId);
+        e.setAttribute('src', src);
+    }
+
+    var hostname = location.hostname;
+    //hostname = "18-132-59-76.nip.io";
+    var protocolframe = location.protocol;
+    // since we are in an Iframe the protocol also includes the hostdomain and path
+    var protocol = protocolframe.split(":")[0];
+
+    addSrc("iframe1", protocol + "://carts.sockshop-dev." + hostname)
+    addSrc("iframe2", protocol + "://carts.sockshop-staging." + hostname)
+    addSrc("iframe3", protocol + "://carts.sockshop-production." + hostname)
+
+    window.setInterval(function () {
+        document.getElementById('iframe1').src = document.getElementById('iframe1').src;
+        document.getElementById('iframe2').src = document.getElementById('iframe2').src;
+        document.getElementById('iframe3').src = document.getElementById('iframe3').src;
+    }, 5000);    
+</script>
+
+</html>

@@ -1,0 +1,22 @@
+{
+    "active": true,
+    "endpointStatus": "ASSIGNED",
+    "label": "SingleNode Dev Cluster",
+    "endpointUrl": "endpointurl.placeholder",
+    "authToken": "authToken.placeholder",
+    "eventsIntegrationEnabled": true,
+    "workloadIntegrationEnabled": true,
+    "eventsFieldSelectors": [
+        {
+            "label": "Node events",
+            "fieldSelector": "involvedObject.kind=Node",
+            "active": true
+        },
+        {
+            "label": "All namespaces for Dev purposes",
+            "fieldSelector": "involvedObject.namespace!=yestoallnamespaces",
+            "active": true
+        }
+    ],
+    "certificateCheckEnabled": false
+}

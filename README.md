@@ -35,5 +35,5 @@ A simple Bash script will set-up a fully functional Single Node Kubernetes Clust
 - Deployment of a Autonomous Cloud teaser home page with links to the pipeline, bridge keptn-api. 
 
 ### The Bash File
-- [ubuntu-setup-microk8-keptn.sh](ubuntu-setup-microk8-keptn.sh)
+- [keptn-in-a-box.sh](keptn-in-a-box.sh)
 

@@ -14,10 +14,11 @@ TENANT=
 PAASTOKEN=
 APITOKEN=
 
+# Set installation modules
 verbose_mode=false
 update_ubuntu=true
-install_docker=true
-install_microk8s=true
+docker_install=true
+microk8s_install=true
 setup_proaliases=true
 enable_k8dashboard=true
 enable_registry=true
@@ -26,6 +27,12 @@ istio_install=true
 helm_install=true
 keptn_install=true
 certmanager_install=false
+
+clone_resources=true
+
+
+keptndemo_teaserandpipeline=true
+keptndemo_cartsload=true
 
 
 ## ----  Write all to the logfile ----
@@ -113,7 +120,7 @@ dynatracePrintCredentials(){
 }
 
 dockerInstall(){
-    if [ "$install_docker" = true ] ; then
+    if [ "$docker_install" = true ] ; then
       printInfo "***** Install Docker *****"
       apt install docker.io -y  
       service docker start
@@ -123,7 +130,7 @@ dockerInstall(){
 
 
 microk8sInstall(){
-    if [ "$install_microk8s" = true ] ; then
+    if [ "$microk8s_install" = true ] ; then
     printInfo "*** Installing Microkubernetes with Kubernetes Version 1.15 ***"
     snap install microk8s --channel=1.15/stable --classic
     
@@ -235,19 +242,18 @@ certmanagerInstall(){
     fi
 }
 
-cartsdemoDeployLoadgenerator(){
-    if [ "$cartsdemo_load" = true ] ; then
+keptndemoDeployCartsloadgenerator(){
+  # Source of the pod
+    if [ "$keptndemo_cartsload" = true ] ; then
       sudo -H -u ubuntu bash -c "kubectl create deploy cartsloadgen --image=shinojosa/cartsloadgen:keptn"
-      printInfo " ***** OnBoarding complete :) *****\nIt took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds "
     fi
 }
-
 
 stillToDo(){
     printf "\n\n*****  Create user 'dynatrace', we specify bash login, home directory, password and add him to the sudoers\n" >> $LOGFILE 2>&1 
     # Add user with password so SSH login with password is possible. Share same home directory
     # Add Dynatrace & Ubuntu to microk8s & docker
-    
+
     usermod -a -G microk8s ubuntu
     usermod -a -G docker ubuntu
     # TODO - Enhance - paramatirize user and password with RTA CSV Variables
@@ -371,7 +377,7 @@ keptnInstall
 
 
 
+
+
 cartsdemoDeployLoadgenerator
-
-
 printInstalltime
