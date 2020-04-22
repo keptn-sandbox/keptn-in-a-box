@@ -13,7 +13,6 @@ else
     echo $DOMAIN
 fi
 
-
 printf "\nRouting Istio IngressGateway Service via Nginx Ingress \n"
 
 cat ingress-istio.yaml | \
