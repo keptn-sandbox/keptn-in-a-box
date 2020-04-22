@@ -8,6 +8,7 @@
 LOGFILE='/tmp/install.log'
 chmod 775 $LOGFILE
 USER="ubuntu"
+
 # Define Dynatrace Environment
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
 TENANT=
@@ -23,23 +24,32 @@ setup_proaliases=true
 setup_magicdomain_publicip=true
 enable_k8dashboard=true
 enable_registry=true
-dynatrace_activegate_install=true
 istio_install=true
 helm_install=true
-keptn_install=true
-certmanager_install=false
 
-resources_clone=true
+certmanager_install=false
+keptn_install=true
 keptn_examples_clone=true
 
-dynatrace_savecredentials=true
-keptndemo_teaser_pipeline=true
+resources_clone=true
 resources_route_istio_ingress=true
 
+dynatrace_savecredentials=true
+dynatrace_configure_monitoring=true
+dynatrace_activegate_install=true
+dynatrace_configure_workloads=true
 
+keptn_bridge_expose=true
+keptn_bridge_eap=true
+
+keptndemo_teaser_pipeline=true
 keptndemo_cartsload=true
+keptndemo_unleash=true
+keptndemo_cartsonboard=true
 
-
+microk8s_expose_kubernetes_api=true
+microk8s_expose_kubernetes_dashboard=true
+#TODO
 ## ----  Write all to the logfile ----
 # Saves file descriptors so they can be restored to whatever they were before redirection or used 
 # themselves to output to whatever they were before the following redirect.
@@ -150,7 +160,7 @@ setupProAliases(){
       alias vaml='vi -c \"set syntax:yaml\" -' 
       alias vson='vi -c \"set syntax:json\" -' 
       alias pg='ps -aux | grep' " > /root/.bash_aliases
-      cp /root/.bash_aliases /home/ubuntu/.bash_aliases
+      cp /root/.bash_aliases ~/.bash_aliases
     fi
 }
 
@@ -265,22 +275,22 @@ keptndemoDeployCartsloadgenerator(){
 resourcesClone(){
     if [ "$resources_clone" = true ] ; then
       printInfo " ***** Clone Keptn-in-a-Box Resources ***** "
-      bashas "git clone https://github.com/sergiohinojosa/keptn-in-a-box /home/ubuntu/keptn-in-a-box"
+      bashas "git clone https://github.com/sergiohinojosa/keptn-in-a-box ~/keptn-in-a-box"
     fi
 }
 
 keptnExamplesClone(){
     if [ "$keptn_examples_clone" = true ] ; then
       printInfo " ***** Clone Keptn Exmaples ***** "
-      bashas "git clone --branch 0.6.1 https://github.com/keptn/examples.git /home/ubuntu/examples --single-branch"
+      bashas "git clone --branch 0.6.1 https://github.com/keptn/examples.git ~/examples --single-branch"
     fi
 }
 
 dynatraceSaveCredentials(){
     if [ "$dynatrace_savecredentials" = true ] ; then
       printInfo " ***** Save Dynatrace credentials ***** "
-      bashas "cd /home/ubuntu/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
-      bashas "bash /home/ubuntu/keptn-in-a-box/resources/dynatrace/save-credentials.sh show"
+      bashas "cd ~/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
+      bashas "cd ~/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh show"
     fi
 }
 
@@ -294,6 +304,9 @@ keptnInstall(){
       printInfo " ***** Install Keptn with own installer passing DOMAIN via CM **** "
       bashas "kubectl create configmap keptn-domain --from-literal=domain=$DOMAIN"
       bashas "echo 'y' | keptn install --platform=kubernetes --istio-install-option=Reuse --gateway=LoadBalancer --keptn-installer-image=shinojosa/keptninstaller:6.1.customdomain"
+      printInfo "\nFor authorizing Keptn type:
+      keptn auth --endpoint=https://api.keptn.$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
+       --api-token=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)\n"
     fi
 }
 
@@ -302,6 +315,7 @@ keptndemoTeaserPipeline(){
       printInfo " ***** Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview  ***** "
       # Code of the Loadgenerator found in
       # https://github.com/sergiohinojosa/keptn-in-a-box/resources/homepage
+      # Ingressrouting is defined in resourcesRouteIstioIngress()
       bashas "kubectl -n istio-system create deploy homepage --image=shinojosa/nginxacm"
       bashas "kubectl -n istio-system expose deploy homepage --port=80 --type=NodePort"
     fi
@@ -309,20 +323,81 @@ keptndemoTeaserPipeline(){
 
 resourcesRouteIstioIngress(){
     if [ "$resources_route_istio_ingress" = true ] ; then
-      printInfo " ***** Route Traffic to IstioGateway and Create SSL certificates for Istio Endpoints **** "
-      bashas "cd /home/ubuntu/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+      printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints **** "
+      bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+    fi
+}
+
+dynatraceConfigureMonitoring(){
+    if [ "$dynatrace_configure_monitoring" = true ] ; then
+      printInfo " ***** Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) *****"
+      bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$DT_PAAS_TOKEN\""
+      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/0.6.2/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
+      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.1/deploy/service.yaml"
+      bashas "keptn configure monitoring dynatrace"
+    fi
+}
+
+keptnBridgeExpose(){
+    if [ "$keptn_bridge_expose" = true ] ; then
+      printInfo " ***** Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) *****"
+      # Expose bridge via VS
+      printInfo " *****  Expose Bridge via VS   ***** "
+      KEPTN_DOMAIN=$(bashas "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
+      bashas "cd ~/keptn-in-a-box/resources/expose-bridge && bash expose-bridge.sh \"$KEPTN_DOMAIN\"" 
+    fi
+}
+
+keptnBridgeEap(){
+    if [ "$keptn_bridge_eap" = true ] ; then
+      printInfo " *****  Keptn Bridge update to EAP   ***** "
+      bashas "kubectl -n keptn set image deployment/bridge bridge=keptn/bridge2:20200326.0744 --record"
+    fi
+}
+
+keptndemoUnleash(){
+    if [ "$keptndemo_unleash" = true ] ; then
+      printInfo " *****  Deploy Unleash-Server  ***** "
+      bashas "cd ~/examples/unleash-server/ && bash ~/keptn-in-a-box/resources/demo/deploy_unleashserver.sh" 
+    fi
+}
+
+dynatraceConfigureWorkloads(){
+    if [ "$dynatrace_configure_workloads" = true ] ; then
+      printInfo " ***** Configuring Dynatrace Workloads for the Cluster (via Dynatrace and K8 API) *****"
+      bashas "cd ~/keptn-in-a-box/resources/dynatrace && bash configure-k8.sh" 
+    fi
+}
+
+microk8sExposeKubernetesApi(){
+    if [ "$microk8s_expose_kubernetes_api" = true ] ; then
+      printInfo " **** Exposing the Kubernetes Cluster API *****"
+      bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\"" 
+    fi
+}
+
+microk8sExposeKubernetesDashboard(){
+    if [ "$microk8s_expose_kubernetes_dashboard" = true ] ; then
+      printInfo " **** Exposing the Kubernetes Dashboard *****"
+      bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-dashboard.sh \"$DOMAIN\"" 
+    fi
+}
+
+keptndemoCartsonboard(){
+    if [ "$keptndemo_cartsonboard" = true ] ; then
+      printInfo " **** Keptn onboarding Carts *****"
+      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/onboard_carts.sh && bash ~/keptn-workshop/setup/deploy_carts_0.sh"
     fi
 }
 
 stillToDo(){
-
-    printf "\n\n*****  Create user 'dynatrace', we specify bash login, home directory, password and add him to the sudoers\n" >> $LOGFILE 2>&1 
+    printf "\n\n*****  Create user 'dynatrace', we specify bash login, home directory, password and add him to the sudoers\n"
     # Add user with password so SSH login with password is possible. Share same home directory
     # Add Dynatrace & Ubuntu to microk8s & docker
     usermod -a -G microk8s ubuntu
     usermod -a -G docker ubuntu
     # TODO - Enhance - paramatirize user and password with RTA CSV Variables
-    useradd -s /bin/bash -d /home/ubuntu/ -m -G sudo -p $(openssl passwd -1 dynatrace) dynatrace
+    useradd -s /bin/bash -d ~/ -m -G sudo -p $(openssl passwd -1 dynatrace) dynatrace
     # Share own groups with each other
     usermod -a -G ubuntu dynatrace
     usermod -a -G dynatrace ubuntu
@@ -330,64 +405,18 @@ stillToDo(){
     usermod -a -G docker dynatrace
     cp /root/.bash_aliases /home/dynatrace/.bash_aliases
     # Copy Aliases
-    cp /root/.bash_aliases /home/ubuntu/.bash_aliases
+    cp /root/.bash_aliases ~/.bash_aliases
     # Start Micro Enable Default Modules as Ubuntu
     # Passing the commands to ubuntu since it has microk8s in its path and also does not have password enabled otherwise the install will fail
-    
     # Change owner of cloned folders
-    chown ubuntu:ubuntu -R /home/ubuntu/
-
-    # Route expose K8 Services (if API and Dashboard) 
-    printf "\n\n*****Allow access to K8 Dashboard withouth login ***** \n"
-    bashas "cd /home/ubuntu/keptn-workshop/setup/k8-services && bash expose-k8-services.sh \"$DOMAIN\"" 
-
-    printf "\n\n*****Configure Public Domain for Keptn on Microk8s  ***** \n"
-    
-
-    printf "\n\n***** Install Keptn *****\n"
-     
-    
-    # Authorize keptn
-    printf "\nFor authorizing Keptn type:
-    keptn auth --endpoint=https://api.keptn.$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}) --api-token=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)\n"
-
-    # Install OA
-    printf "\n\n***** Installing and configuring Dynatrace on the Cluster *****\n\n"
-    bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$APITOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$PAASTOKEN\""
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/0.6.2/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.1/deploy/service.yaml"
-    printf "\n wait for Webhook to be available.. sleep 20 sec" ; sleep 20s
-    bashas "keptn configure monitoring dynatrace" 
-
-    # Expose bridge via VS
-    printf "\n\n*****  Expose Bridge via VS and update to EAP   *****\n\n"
-    bashas "kubectl -n keptn set image deployment/bridge bridge=keptn/bridge2:20200326.0744 --record"
-    DOMAIN=$(bashas "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
-    bashas "cd /home/ubuntu/keptn-workshop/setup/expose-bridge && bash expose-bridge.sh \"$DOMAIN\"" 
-
-    # OnBoard Unleash
-    printf "\n\n*****  Deploy Unleash-Server  *****\n\n"
-    bashas "cd /home/ubuntu/examples/unleash-server/ && bash /home/ubuntu/keptn-workshop/setup/deploy_unleashserver.sh" 
-
-    # Configure Kubernetes Monitoring
-    printf "\n\n*****  Configure Kubernetes Monitoring  *****\n\n"
-    bashas "cd /home/ubuntu/keptn-workshop/setup/dynatrace && bash configure-k8.sh" 
-
+    chown ubuntu:ubuntu -R ~/
     printf "\n\n*****Allow -rwx for the user and group (dynatrace) for all files in the home directory ***** \n"
-    chmod -R 774 /home/ubuntu/* 
-
+    chmod -R 774 ~/* 
     # Allow unencrypted password via SSH for login
     # Restart the SSHD Service
     printf "\n\n***** Allow Password authentication and restarting SSH service *****\n"
     sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     service sshd restart
-
-    # Installation finish, print time.
-    DURATION=$SECONDS
-    printf "\n\n***** Installation complete :) *****\nIt took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds "
-
-    # Onboard Carts Application
-    bashas "cd /home/ubuntu/examples/onboarding-carts/ && bash /home/ubuntu/keptn-workshop/setup/onboard_carts.sh && bash /home/ubuntu/keptn-workshop/setup/deploy_carts_0.sh" 
 }
 
 printInstalltime(){
@@ -416,13 +445,26 @@ resourcesClone
 keptnExamplesClone
 dynatraceSaveCredentials
 
-keptnInstall
-
-keptndemoTeaserPipeline
-
 setupMagicDomainPublicIp
 
+microk8sExposeKubernetesApi
+microk8sExposeKubernetesDashboard
+
+keptnInstall
+
+
+keptndemoTeaserPipeline
+keptndemoUnleash
+
 resourcesRouteIstioIngress
+
+dynatraceConfigureMonitoring
+dynatraceConfigureWorkloads
+
+keptnBridgeExpose
+keptnBridgeEap
+
+keptndemoCartsonboard
 
 keptndemoDeployCartsloadgenerator
 printInstalltime
