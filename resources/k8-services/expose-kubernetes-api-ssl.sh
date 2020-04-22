@@ -12,13 +12,9 @@ else
     echo $DOMAIN
 fi
 
-echo "Skip Login in K8 Dashboard"
-kubectl -n kube-system patch deployments kubernetes-dashboard --patch "$(cat skip-login-in-k8-dashboard-patch.yaml)"
-
 echo "Expose Kubernetes API"
-cat ing-kubernetes-dashboard.yaml | \
-  sed 's~domain.placeholder~'"$DOMAIN"'~' > ./gen/ing-kubernetes-dashboard.yaml
-
+cat ing-kubernetes-api-ssl.yaml | \
+  sed 's~domain.placeholder~'"$DOMAIN"'~' > ./gen/ing-kubernetes-api.yaml
 
 # Deploy ingress with rules to domains and ingress-gateway.
-kubectl apply -f gen/ing-kubernetes-dashboard.yaml
+kubectl apply -f gen/ing-kubernetes-api.yaml

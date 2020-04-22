@@ -15,7 +15,7 @@ metadata:
     # The name of our ClusterIssuer. We use ACME with 
     # HTTP solver
     cert-manager.io/cluster-issuer: "letsencrypt"
-  name: istio-ssl-ingress
+  name: istio-ingress
   namespace: istio-system
 spec:
   rules:
@@ -90,4 +90,4 @@ spec:
     - carts.sockshop-staging.domain.placeholder
     - carts.sockshop-production.domain.placeholder
     - unleash.unleash-dev.domain.placeholder
-    secretName: domain-tls
+    secretName: istio-tls

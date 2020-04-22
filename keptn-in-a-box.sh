@@ -8,6 +8,8 @@
 LOGFILE='/tmp/install.log'
 chmod 775 $LOGFILE
 USER="ubuntu"
+NEWPWD="dynatrace"
+NEWUSER="dynatrace"
 
 # Define Dynatrace Environment
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
@@ -27,7 +29,9 @@ enable_registry=true
 istio_install=true
 helm_install=true
 
-certmanager_install=false
+certmanager_install=true
+certmanager_enable=true
+
 keptn_install=true
 keptn_examples_clone=true
 
@@ -49,7 +53,9 @@ keptndemo_cartsonboard=true
 
 microk8s_expose_kubernetes_api=true
 microk8s_expose_kubernetes_dashboard=true
-#TODO
+
+create_workshop_user=true
+
 ## ----  Write all to the logfile ----
 # Saves file descriptors so they can be restored to whatever they were before redirection or used 
 # themselves to output to whatever they were before the following redirect.
@@ -146,7 +152,7 @@ dockerInstall(){
       printInfo "***** Install Docker *****"
       apt install docker.io -y  
       service docker start
-      usermod -a -G docker ubuntu
+      usermod -a -G docker $USER
     fi
 }
 
@@ -160,7 +166,8 @@ setupProAliases(){
       alias vaml='vi -c \"set syntax:yaml\" -' 
       alias vson='vi -c \"set syntax:json\" -' 
       alias pg='ps -aux | grep' " > /root/.bash_aliases
-      cp /root/.bash_aliases ~/.bash_aliases
+      homedir=$(eval echo ~$USER)
+      cp /root/.bash_aliases $homedir/.bash_aliases
     fi
 }
 
@@ -183,7 +190,7 @@ microk8sInstall(){
     bash -c "echo \"--allow-privileged=true\" >> /var/snap/microk8s/current/args/kube-apiserver"
     
     printInfo " - Add ubuntu to microk8 usergroup *** "
-    usermod -a -G microk8s ubuntu
+    usermod -a -G microk8s $USER
 
     printInfo " - Update IPTABLES, allow traffic for pods (internal and external) "
     iptables -P FORWARD ACCEPT
@@ -263,6 +270,14 @@ certmanagerInstall(){
     fi
 }
 
+certmanagerEnable(){
+    if [ "$certmanager_enable" = true ] ; then
+      printInfo " ***** Create Valid Certificates ***** "
+      bashas "kubectl apply -f ~/keptn-in-a-box/resources/istio/clusterissuer.yaml"
+      waitForAllPods
+    fi
+}
+
 keptndemoDeployCartsloadgenerator(){
     # Code of the Loadgenerator found in
     # https://github.com/sergiohinojosa/keptn-in-a-box/resources/cartsloadgenerator
@@ -296,8 +311,13 @@ dynatraceSaveCredentials(){
 
 resourcesRouteIstioIngress(){
     if [ "$resources_route_istio_ingress" = true ] ; then
-      printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints **** "
-      bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+      if [ "$certmanager_enable" = true ] ; then
+        printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints with SSL **** "
+        bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-ssl-istio.sh \"$DOMAIN\""
+      else
+        printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints **** "
+        bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+      fi
     fi
 }
 
@@ -375,8 +395,13 @@ dynatraceConfigureWorkloads(){
 
 microk8sExposeKubernetesApi(){
     if [ "$microk8s_expose_kubernetes_api" = true ] ; then
-      printInfo " **** Exposing the Kubernetes Cluster API *****"
-      bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\"" 
+      if [ "$certmanager_enable" = true ] ; then
+        printInfo " **** Exposing the Kubernetes Cluster API with SSL *****"
+        bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
+      else
+        printInfo " **** Exposing the Kubernetes Cluster API *****"
+        bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
+      fi
     fi
 }
 
@@ -390,34 +415,26 @@ microk8sExposeKubernetesDashboard(){
 keptndemoCartsonboard(){
     if [ "$keptndemo_cartsonboard" = true ] ; then
       printInfo " **** Keptn onboarding Carts *****"
-      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/onboard_carts.sh && bash ~/keptn-workshop/setup/deploy_carts_0.sh"
+      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/onboard_carts.sh && bash ~/keptn-in-a-box/resources/demo/deploy_carts_0.sh"
     fi
 }
 
-stillToDo(){
-    # Add user with password so SSH login with password is possible. Share same home directory
-    # Add Dynatrace & Ubuntu to microk8s & docker
-    usermod -a -G microk8s ubuntu
-    usermod -a -G docker ubuntu
-    # TODO - Enhance - paramatirize user and password with RTA CSV Variables
-    useradd -s /bin/bash -d ~/ -m -G sudo -p $(openssl passwd -1 dynatrace) dynatrace
-    # Share own groups with each other
-    usermod -a -G ubuntu dynatrace
-    usermod -a -G dynatrace ubuntu
-    usermod -a -G microk8s dynatrace
-    usermod -a -G docker dynatrace
-    cp /root/.bash_aliases /home/dynatrace/.bash_aliases
-    # Copy Aliases
-    cp /root/.bash_aliases ~/.bash_aliases
-    chown ubuntu:ubuntu -R ~/
-    printf "\n\n*****Allow -rwx for the user and group (dynatrace) for all files in the home directory ***** \n"
-    chmod -R 774 ~/* 
-    # Allow unencrypted password via SSH for login
-    # Restart the SSHD Service
-    printf "\n\n***** Allow Password authentication and restarting SSH service *****\n"
-    sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-    service sshd restart
+createWorkshopUser(){
+    if [ "$create_workshop_user" = true ] ; then
+      printInfo " **** Creating Workshop User from user($USER) into($NEWUSER) *****"
+      homedirectory=$(eval echo ~$USER)
+      cp -R $homedirectory /home/$NEWUSER
+      useradd -s /bin/bash -d /home/$NEWUSER -m -G sudo -p $(openssl passwd -1 $NEWPWD) $NEWUSER
+      usermod -a -G docker $NEWUSER
+      usermod -a -G microk8s $NEWUSER
+      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+      service sshd restart
+    fi
 }
+
+printf "\nCreate Cluster-Issuer\n"
+kubectl apply -f clusterissuer.yaml
+
 
 printInstalltime(){
      # Installation finish, print time.
@@ -429,24 +446,30 @@ printInstalltime(){
 enableVerbose
 updateUbuntu
 dynatracePrintCredentials
+
 setupProAliases 
 dockerInstall
+
 microk8sInstall
 microk8sStart
 microk8sEnableBasic
 microk8sEnableDashboard
 microk8sEnableRegistry
+
 dynatraceActiveGateInstall
 istioInstall
 helmInstall
 certmanagerInstall
+
 resourcesClone
 keptnExamplesClone
+
 dynatraceSaveCredentials
 setupMagicDomainPublicIp
 
 microk8sExposeKubernetesApi
 microk8sExposeKubernetesDashboard
+
 resourcesRouteIstioIngress
 
 keptnInstall
@@ -459,7 +482,9 @@ dynatraceConfigureWorkloads
 
 keptnBridgeExpose
 keptnBridgeEap
+
 keptndemoCartsonboard
 keptndemoDeployCartsloadgenerator
 
+createWorkshopUser
 printInstalltime

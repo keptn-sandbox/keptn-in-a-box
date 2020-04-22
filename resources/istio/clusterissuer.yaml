@@ -4,7 +4,7 @@ metadata:
   name: letsencrypt
 spec:
   acme:
-    email: keptn@dynatrace.com 
+    email: keptn-in-a-box@dynatrace.ai 
     # Production ACME URL of Letsencrypt
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
