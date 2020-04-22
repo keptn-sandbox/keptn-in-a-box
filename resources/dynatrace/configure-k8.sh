@@ -11,10 +11,9 @@ echo "Dynatrace API Token: $DT_API_TOKEN"
 echo "Dynatrace PaaS Token: $DT_PAAS_TOKEN"
 
 configureAccountAndGetCredentials(){
-    wget https://www.dynatrace.com/support/help/codefiles/kubernetes/kubernetes-monitoring-service-account.yaml
-    kubectl apply -f kubernetes-monitoring-service-account.yaml
+    kubectl apply -f https://www.dynatrace.com/support/help/codefiles/kubernetes/kubernetes-monitoring-service-account.yaml
     echo "\This is the SSL API URI of the K8s cluster exposed via nginx ingress:"
-    endpoint=$(kubectl get ing k8-api-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')
+    endpoint=$(kubectl get ing kubernetes-api-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')
     # Name the connection
     title=$(echo $endpoint | sed 's~api\.kubernetes\.~~g' )
     # Add protocol 

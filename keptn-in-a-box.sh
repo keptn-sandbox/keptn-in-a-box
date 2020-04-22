@@ -294,6 +294,13 @@ dynatraceSaveCredentials(){
     fi
 }
 
+resourcesRouteIstioIngress(){
+    if [ "$resources_route_istio_ingress" = true ] ; then
+      printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints **** "
+      bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+    fi
+}
+
 keptnInstall(){
     if [ "$keptn_install" = true ] ; then
       printInfo " ***** Download & Configure Keptn Client **** "
@@ -321,19 +328,16 @@ keptndemoTeaserPipeline(){
     fi
 }
 
-resourcesRouteIstioIngress(){
-    if [ "$resources_route_istio_ingress" = true ] ; then
-      printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints **** "
-      bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
-    fi
-}
-
 dynatraceConfigureMonitoring(){
     if [ "$dynatrace_configure_monitoring" = true ] ; then
       printInfo " ***** Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) *****"
       bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$DT_PAAS_TOKEN\""
       bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/0.6.2/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
       bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.1/deploy/service.yaml"
+      
+      printInfo " ***** Wait for the Service to be created *****"
+      waitForAllPods
+      # TODO supresswebhook --suppress-websocket
       bashas "keptn configure monitoring dynatrace"
     fi
 }
@@ -391,7 +395,6 @@ keptndemoCartsonboard(){
 }
 
 stillToDo(){
-    printf "\n\n*****  Create user 'dynatrace', we specify bash login, home directory, password and add him to the sudoers\n"
     # Add user with password so SSH login with password is possible. Share same home directory
     # Add Dynatrace & Ubuntu to microk8s & docker
     usermod -a -G microk8s ubuntu
@@ -406,9 +409,6 @@ stillToDo(){
     cp /root/.bash_aliases /home/dynatrace/.bash_aliases
     # Copy Aliases
     cp /root/.bash_aliases ~/.bash_aliases
-    # Start Micro Enable Default Modules as Ubuntu
-    # Passing the commands to ubuntu since it has microk8s in its path and also does not have password enabled otherwise the install will fail
-    # Change owner of cloned folders
     chown ubuntu:ubuntu -R ~/
     printf "\n\n*****Allow -rwx for the user and group (dynatrace) for all files in the home directory ***** \n"
     chmod -R 774 ~/* 
@@ -424,7 +424,6 @@ printInstalltime(){
     DURATION=$SECONDS
     printInfo "***** Installation complete :) *****\nIt took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds "
 }
-
 
 # Sequence of the functions for modular installation
 enableVerbose
@@ -444,27 +443,23 @@ certmanagerInstall
 resourcesClone
 keptnExamplesClone
 dynatraceSaveCredentials
-
 setupMagicDomainPublicIp
 
 microk8sExposeKubernetesApi
 microk8sExposeKubernetesDashboard
+resourcesRouteIstioIngress
 
 keptnInstall
 
-
 keptndemoTeaserPipeline
 keptndemoUnleash
-
-resourcesRouteIstioIngress
 
 dynatraceConfigureMonitoring
 dynatraceConfigureWorkloads
 
 keptnBridgeExpose
 keptnBridgeEap
-
 keptndemoCartsonboard
-
 keptndemoDeployCartsloadgenerator
+
 printInstalltime
