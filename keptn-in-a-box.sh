@@ -1,7 +1,6 @@
 #!/bin/bash
-## Commands for Ubuntu Server 18.04 LTS (HVM), SSD Volume Type
-## These script will install the following components:
-## Microkubernetes 1.15, Keptn 6.1 with Istio 1.5 and Helm 1.2, the OneAgent and an ActiveGate
+## Ubuntu Server 18.04 LTS (HVM) for full cuntionality sice 2xlarge 
+## Microkubernetes 1.15, Keptn 6.1 with Istio 1.5, Helm 1.2, Docker, Registry, OneAgent and ActiveGate
 
 ## ----  Define variables ----
 # Write the installation in logfile
@@ -33,9 +32,10 @@ certmanager_install=true
 certmanager_enable=true
 
 keptn_install=true
-keptn_examples_clone=true
 
+keptn_examples_clone=true
 resources_clone=true
+
 resources_route_istio_ingress=true
 
 dynatrace_savecredentials=true
@@ -267,14 +267,22 @@ certmanagerInstall(){
       printInfo " ***** Install CertManager ***** "
       bashas 'kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.14.0/cert-manager.yaml'
       waitForAllPods
+      printInfo " ***** Installing ClusterIssuer with HTTP Letsencrypt ***** "
+      bashas "kubectl apply -f ~/keptn-in-a-box/resources/istio/clusterissuer.yaml"
     fi
 }
 
 certmanagerEnable(){
     if [ "$certmanager_enable" = true ] ; then
-      printInfo " ***** Create Valid Certificates ***** "
-      bashas "kubectl apply -f ~/keptn-in-a-box/resources/istio/clusterissuer.yaml"
-      waitForAllPods
+      printInfo " ***** Create Valid SSL Certificates ***** "
+      if [ "$resources_route_istio_ingress" = true ] ; then
+        printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints with SSL **** "
+        bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-ssl-istio.sh \"$DOMAIN\""
+      fi
+      if [ "$microk8s_expose_kubernetes_api" = true ] ; then
+        printInfo " **** Exposing the Kubernetes Cluster API with SSL *****"
+        bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api-ssl.sh \"$DOMAIN\""
+      fi
     fi
 }
 
@@ -311,13 +319,8 @@ dynatraceSaveCredentials(){
 
 resourcesRouteIstioIngress(){
     if [ "$resources_route_istio_ingress" = true ] ; then
-      if [ "$certmanager_enable" = true ] ; then
-        printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints with SSL **** "
-        bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-ssl-istio.sh \"$DOMAIN\""
-      else
-        printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints **** "
-        bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
-      fi
+      printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints **** "
+      bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
     fi
 }
 
@@ -331,9 +334,6 @@ keptnInstall(){
       printInfo " ***** Install Keptn with own installer passing DOMAIN via CM **** "
       bashas "kubectl create configmap keptn-domain --from-literal=domain=$DOMAIN"
       bashas "echo 'y' | keptn install --platform=kubernetes --istio-install-option=Reuse --gateway=LoadBalancer --keptn-installer-image=shinojosa/keptninstaller:6.1.customdomain"
-      printInfo "\nFor authorizing Keptn type:
-      keptn auth --endpoint=https://api.keptn.$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
-       --api-token=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)\n"
     fi
 }
 
@@ -357,7 +357,6 @@ dynatraceConfigureMonitoring(){
       
       printInfo " ***** Wait for the Service to be created *****"
       waitForAllPods
-      # TODO supresswebhook --suppress-websocket
       bashas "keptn configure monitoring dynatrace"
     fi
 }
@@ -395,13 +394,8 @@ dynatraceConfigureWorkloads(){
 
 microk8sExposeKubernetesApi(){
     if [ "$microk8s_expose_kubernetes_api" = true ] ; then
-      if [ "$certmanager_enable" = true ] ; then
-        printInfo " **** Exposing the Kubernetes Cluster API with SSL *****"
-        bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
-      else
-        printInfo " **** Exposing the Kubernetes Cluster API *****"
-        bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
-      fi
+      printInfo " **** Exposing the Kubernetes Cluster API *****"
+      bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
     fi
 }
 
@@ -415,7 +409,8 @@ microk8sExposeKubernetesDashboard(){
 keptndemoCartsonboard(){
     if [ "$keptndemo_cartsonboard" = true ] ; then
       printInfo " **** Keptn onboarding Carts *****"
-      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/onboard_carts.sh && bash ~/keptn-in-a-box/resources/demo/deploy_carts_0.sh"
+      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/onboard_carts.sh && bash ~/keptn-in-a-box/resources/demo/onboard_carts_qualitygates.sh"
+      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/deploy_carts_0.sh"
     fi
 }
 
@@ -432,8 +427,6 @@ createWorkshopUser(){
     fi
 }
 
-printf "\nCreate Cluster-Issuer\n"
-kubectl apply -f clusterissuer.yaml
 
 
 printInstalltime(){
@@ -487,4 +480,6 @@ keptndemoCartsonboard
 keptndemoDeployCartsloadgenerator
 
 createWorkshopUser
+
+certmanagerEnable
 printInstalltime
