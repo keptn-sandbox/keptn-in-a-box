@@ -2,17 +2,17 @@
 
 > ## ***🥼⚗ Spend more time innovating and less time configuring***
 
-# Keptn in a Box (with Dynatrace enabled) 🎁
+# Keptn-in-a-Box (with Dynatrace Software Intelligence Empowered) 🎁
 
 Keptn-In-A-Box is part of the automation for delivering Autonomous Cloud Workshops with Dynatrace. This is not a tutorial but more an explanation of what the shell file set up for you on a plain Ubuntu image. 
 
 A simple Bash script will set-up a fully functional Single Node Kubernetes Cluster with Dynatrace installed and Kubernetes Cluster, Cloud Applications and Events monitoring enabled. This script is used as [userdata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) when spinning up elastic compute images (ec2) in amazon web services, but it can run also manually in a Linux machine or VM with snap installed. The tested distro is  *Ubuntu Server 18.04 LTS*
+For spinning up instances automatically with AWS completely configured and set up, and also automating the creation and management of Dynatrace environments, take a look at this project- [Dynatrace - Rest Tenant Automation](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) 
 
 
 ![#](doc/ac-concepts-keptninabox.png)
 
-
-## The Bash script in a nutshell
+## 🥜The Bash script in a Nutshell
 - Update the ubuntu repository
 - Installation of Docker (for building own Docker images)
 - Installation of Microkubernetes (v1.15)
@@ -33,7 +33,65 @@ A simple Bash script will set-up a fully functional Single Node Kubernetes Clust
 - Onboard of the Sockshop-Carts Sample project
 - Deployment of a cartsloadgenerator PoD
 - Deployment of a Autonomous Cloud teaser home page with links to the pipeline, bridge keptn-api. 
+- Creation of valid SSL certificates with Certmanager and HTTPs Let's encrypt.
+- Create a user account and copy the standard user (ubuntu on this case) with his own home directory (a replica) and allowing SSH connections with text password. 
 
-### The Bash File
+### 💻The Bash File
+
+The bash file is scripted in a modular fashion so this allow you with control flags, found at the top, to specify the different modules that you want to have installed. By default all modules are set to true. 
+
 - [keptn-in-a-box.sh](keptn-in-a-box.sh)
 
+## Prerequisites
+
+- [Ubuntu](https://ubuntu.com/#download) with internet connection (tested on 18.04 LTS)
+
+  ### (optional)
+
+- [A Dynatrace Tenant](https://www.dynatrace.com/trial/) 
+- AWS Account [Here you can get a free account](https://aws.amazon.com/free/)
+- You will get the most ouf of it by having a public ip
+
+
+## How to get started
+### Run it in an available machine  (manually)
+- Get your Ubuntu image 
+	
+	- For installing all features I recommend using a size t2.2xlarge which has 8 core and 32 Gig of RAM. 
+	
+- Add the Dynatrace information to the variables:
+
+TENANT="https://mytenant.live.dynatrace.com"
+PAASTOKEN=myDynatracePaaSToken
+APITOKEN=myDynatraceApiToken
+
+ > For Tenant add it with protocol like:
+ >  *https://{your-domain}/e/{your-environment-id}* 
+ > for managed or 
+ > https://{your-environment-id}.live.dynatrace.com 
+ > for SaaS
+ >
+
+- Run the script as root or sudo 
+
+  ```bash
+  ./keptn-in-a-box.sh
+  ```
+
+  > The script is optimized to be run as root without an interactive shell since it is used as userdata passed on creation of the elastic cloud machine
+
+
+### Spin your preconfigured Keptn-in-a-box machines  (manually in aws)
+- Log in to AWS
+- Click on "Launch instance"
+- Select "Ubuntu Server 18.04 LTS (HVM)"
+- Choose Instance Type "t2.2xlarge"
+- Select "Next - configure instance details"
+- In Configure Instance details - Advanced options copy the keptn-in-a-box.sh file. (as strig or select it, doesnt matter)
+- Review it and launch your instance.
+
+
+
+### Spin your preconfigured Keptn-in-a-box machines  (automated)
+
+- Description to be added. Please see the [RTA project](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) for reference

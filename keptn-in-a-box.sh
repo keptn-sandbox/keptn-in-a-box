@@ -355,6 +355,7 @@ dynatraceConfigureMonitoring(){
       printInfo " ***** Wait for the Service to be created *****"
       waitForAllPods
       bashas "keptn configure monitoring dynatrace"
+      waitForAllPods
     fi
 }
 
