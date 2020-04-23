@@ -266,13 +266,14 @@ certmanagerInstall(){
       printInfo " ***** Install CertManager ***** "
       bashas 'kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.14.0/cert-manager.yaml'
       waitForAllPods
-      printInfo " ***** Installing ClusterIssuer with HTTP Letsencrypt ***** "
-      bashas "kubectl apply -f ~/keptn-in-a-box/resources/istio/clusterissuer.yaml"
     fi
 }
 
 certmanagerEnable(){
     if [ "$certmanager_enable" = true ] ; then
+      printInfo " ***** Installing ClusterIssuer with HTTP Letsencrypt ***** "
+      bashas "kubectl apply -f ~/keptn-in-a-box/resources/istio/clusterissuer.yaml"
+      waitForAllPods
       printInfo " ***** Create Valid SSL Certificates ***** "
       if [ "$resources_route_istio_ingress" = true ] ; then
         printInfo " ***** Route Traffic to IstioGateway and for known Istio Endpoints with SSL **** "
