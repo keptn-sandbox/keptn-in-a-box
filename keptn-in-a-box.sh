@@ -3,7 +3,6 @@
 ## Microkubernetes 1.15, Keptn 6.1 with Istio 1.5, Helm 1.2, Docker, Registry, OneAgent and ActiveGate
 
 ## ----  Define variables ----
-# Write the installation in logfile
 LOGFILE='/tmp/install.log'
 chmod 775 $LOGFILE
 USER="ubuntu"
@@ -287,7 +286,6 @@ certmanagerEnable(){
 }
 
 keptndemoDeployCartsloadgenerator(){
-    # Code of the Loadgenerator found in
     # https://github.com/sergiohinojosa/keptn-in-a-box/resources/cartsloadgenerator
     if [ "$keptndemo_cartsload" = true ] ; then
       printInfo " ***** Deploy Cartsload Generator ***** "
@@ -340,7 +338,6 @@ keptnInstall(){
 keptndemoTeaserPipeline(){
     if [ "$keptndemo_teaser_pipeline" = true ] ; then
       printInfo " ***** Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview  ***** "
-      # Code of the Loadgenerator found in
       # https://github.com/sergiohinojosa/keptn-in-a-box/resources/homepage
       # Ingressrouting is defined in resourcesRouteIstioIngress()
       bashas "kubectl -n istio-system create deploy homepage --image=shinojosa/nginxacm"
@@ -354,7 +351,6 @@ dynatraceConfigureMonitoring(){
       bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$DT_PAAS_TOKEN\""
       bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/0.6.2/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
       bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.1/deploy/service.yaml"
-      
       printInfo " ***** Wait for the Service to be created *****"
       waitForAllPods
       bashas "keptn configure monitoring dynatrace"
@@ -363,9 +359,7 @@ dynatraceConfigureMonitoring(){
 
 keptnBridgeExpose(){
     if [ "$keptn_bridge_expose" = true ] ; then
-      printInfo " ***** Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) *****"
-      # Expose bridge via VS
-      printInfo " *****  Expose Bridge via VS   ***** "
+      printInfo " ***** IExpose Bridge via VS *****"
       KEPTN_DOMAIN=$(bashas "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
       bashas "cd ~/keptn-in-a-box/resources/expose-bridge && bash expose-bridge.sh \"$KEPTN_DOMAIN\"" 
     fi
@@ -426,8 +420,6 @@ createWorkshopUser(){
       service sshd restart
     fi
 }
-
-
 
 printInstalltime(){
      # Installation finish, print time.
