@@ -2,7 +2,7 @@
 
 > ## ***🥼⚗ Spend more time innovating and less time configuring***
 
-# Keptn-in-a-Box (with Dynatrace Software Intelligence Empowered) 🎁
+# Keptn-in-a-Box (with Dynatrace Software Intelligence empowered) 🎁
 
 Keptn-In-A-Box is part of the automation for delivering Autonomous Cloud Workshops with Dynatrace. This is not a tutorial but more an explanation of what the shell file set up for you on a plain Ubuntu image. 
 
@@ -12,7 +12,7 @@ For spinning up instances automatically with AWS completely configured and set u
 
 ![#](doc/ac-concepts-keptninabox.png)
 
-## 🥜The Bash script in a Nutshell
+## 🥜The Bash File - Features in a Nutshell
 - Update the ubuntu repository
 - Installation of Docker (for building own Docker images)
 - Installation of Microkubernetes (v1.15)
@@ -24,6 +24,7 @@ For spinning up instances automatically with AWS completely configured and set u
 - Installation of Dynatrace ActiveGate and configuration of [Cluster](https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/monitoring/connect-kubernetes-clusters-to-dynatrace/) and [Workload monitoring](https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/monitoring/monitor-workloads-kubernetes/)
 - Installation of Istio 1.5.1 
 - Installation of Helm Client
+- Enabling own Docker Registry for the Cluster
 - Convert the public IP in a (magic) domain ([nip.io](https://nip.io/)) for being able to expose all the needed services with subdomains.
 - Routing of traffic to Istio-Ingressgateway via a Kubernetes NGINX Ingress using standard HTTP(S) ports 80 and 443. This way we dont need a public IP from the Cloud Provider
 - Installation of Keptn 
@@ -52,6 +53,19 @@ The bash file is scripted in a modular fashion so this allow you with control fl
 - AWS Account [Here you can get a free account](https://aws.amazon.com/free/)
 - You will get the most ouf of it by having a public ip
 
+### Repository Structure
+```
+─ doc                       doc folder.
+─ keptn-in-a-box.sh         the Bash file
+─ resources                 
+  ├── cartsloadgenerator    Sources of the load container of the carts app 
+  ├── demo                  Scripts for Onboarding the Carts app  
+  ├── dynatrace             Scripts for integrating with Dynatrace
+  ├── expose-bridge         YAML files for exposing the bridge
+  ├── homepage              Sources of the homepage for displaying the Autonomous Cloud teaser  
+  ├── istio                 YAML files for mapping istio ingressgw to the nginx ingress
+  └── k8-services           YAML files for exposing the k8 services
+```
 
 ## How to get started
 ### Run it in an available machine  (manually)
@@ -61,16 +75,15 @@ The bash file is scripted in a modular fashion so this allow you with control fl
 	
 - Add the Dynatrace information to the variables:
 
-TENANT="https://mytenant.live.dynatrace.com"
-PAASTOKEN=myDynatracePaaSToken
-APITOKEN=myDynatraceApiToken
+	- TENANT="https://mytenant.live.dynatrace.com"
+	- PAASTOKEN=myDynatracePaaSToken
+	- APITOKEN=myDynatraceApiToken
 
- > For Tenant add it with protocol like:
- >  *https://{your-domain}/e/{your-environment-id}* 
- > for managed or 
- > https://{your-environment-id}.live.dynatrace.com 
- > for SaaS
- >
+     > For Tenant add it with protocol like:
+     >  *https://{your-domain}/e/{your-environment-id}* 
+     > for managed or 
+     > https://{your-environment-id}.live.dynatrace.com 
+     > for SaaS
 
 - Run the script as root or sudo 
 
@@ -87,11 +100,29 @@ APITOKEN=myDynatraceApiToken
 - Select "Ubuntu Server 18.04 LTS (HVM)"
 - Choose Instance Type "t2.2xlarge"
 - Select "Next - configure instance details"
-- In Configure Instance details - Advanced options copy the keptn-in-a-box.sh file. (as strig or select it, doesnt matter)
+- In Configure Instance details - Advanced options copy the keptn-in-a-box.sh file. (as string or drop it, doesn't matter)
 - Review it and launch your instance.
-
-
 
 ### Spin your preconfigured Keptn-in-a-box machines  (automated)
 
 - Description to be added. Please see the [RTA project](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) for reference
+
+
+
+## Troubleshooting and inspecting the installation
+If you spin instances automatically via [RTA](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation), AWS with UserData or manually, the bash script will write stdout and stderr to a log file. to Inspect do 
+
+```bash
+less +F /tmp/install.log
+```
+
+
+## Contributing
+
+If you have any ideas for immprovements or want to contribute that's great. Please just keep in mind the file is used as UserData and AWS has a limitation of 16384 bytes. Please do:
+```bash
+ls -las keptn-in-a-box.sh 
+```
+and check that the size is not bigger than 16200 so you leave a buffer (184 bytes) for the initialization of the TENANT, PAASTOKEN and APITOKEN variables.
+
+

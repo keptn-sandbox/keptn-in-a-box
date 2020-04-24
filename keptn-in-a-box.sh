@@ -1,6 +1,5 @@
 #!/bin/bash
-## Ubuntu Server 18.04 LTS (HVM) for full cuntionality sice 2xlarge 
-## Microkubernetes 1.15, Keptn 6.1 with Istio 1.5, Helm 1.2, Docker, Registry, OneAgent and ActiveGate
+## Keptn-in-a-Box see README for details.
 
 ## ----  Define variables ----
 LOGFILE='/tmp/install.log'
@@ -15,6 +14,18 @@ TENANT=
 PAASTOKEN=
 APITOKEN=
 
+# Versions
+ISTIO_VERSION=1.5.1
+HELM_VERSION=2.12.3
+CERTMANAGER_VERSION=0.14.0
+KEPTN_VERSION=0.6.1
+KEPTN_DT_SERVICE_VERSION=0.6.2
+KEPTN_DT_SLI_SERVICE_VERSION=0.3.1
+KEPTN_EXAMPLES_BRANCH=0.6.1
+TEASER_IMAGE="shinojosa/nginxacm"
+KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
+MICROK8S_CHANNEL="1.15/stable"
+
 # Set installation modules
 verbose_mode=false
 update_ubuntu=true
@@ -27,45 +38,32 @@ enable_registry=true
 istio_install=true
 helm_install=true
 
-certmanager_install=true
-certmanager_enable=true
+certmanager_install=false
+certmanager_enable=false
 
 keptn_install=true
-
 keptn_examples_clone=true
 resources_clone=true
-
 resources_route_istio_ingress=true
-
 dynatrace_savecredentials=true
 dynatrace_configure_monitoring=true
 dynatrace_activegate_install=true
 dynatrace_configure_workloads=true
-
 keptn_bridge_expose=true
 keptn_bridge_eap=true
-
 keptndemo_teaser_pipeline=true
 keptndemo_cartsload=true
 keptndemo_unleash=true
 keptndemo_cartsonboard=true
-
 microk8s_expose_kubernetes_api=true
 microk8s_expose_kubernetes_dashboard=true
-
 create_workshop_user=true
 
 ## ----  Write all to the logfile ----
-# Saves file descriptors so they can be restored to whatever they were before redirection or used 
-# themselves to output to whatever they were before the following redirect.
 exec 3>&1 4>&2
-# Restore file descriptors for particular signals. Not generally necessary since they should be restored when the sub-shell exits.
 trap 'exec 2>&4 1>&3' 0 1 2 3
-# Redirect stdout to file log.out then redirect stderr to stdout. Note that the order is important when you 
-# want them going to the same file. stdout must be redirected before stderr is redirected to stdout.
 exec 1>$LOGFILE 2>&1
 
-# Record Installation duration
 SECONDS=0
 
 # Wrapper for runnig commands for the real owner and not as root
@@ -94,7 +92,6 @@ printError() {
 waitForAllPods(){
     RETRY=0; 
     RETRY_MAX=24; 
-    # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
     CMD="bashas \"kubectl get pods -A 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
     printInfo "Checking and wait for all pods to run."
     while [[ $RETRY -lt $RETRY_MAX ]]; do
@@ -110,7 +107,6 @@ waitForAllPods(){
 
     if [[ $RETRY == $RETRY_MAX ]]; then
       printError "Pods in namespace ${NAMESPACE} are not running. Exiting installation..."
-      # show the pods that have problems
       bashas "kubectl get pods --field-selector=status.phase!=Running -A"
       exit 1
     fi
@@ -118,7 +114,7 @@ waitForAllPods(){
 
 enableVerbose(){
     if [ "$verbose_mode" = true ] ; then
-      log "Activating verbose mode"
+      printInfo "Activating verbose mode"
       set -x
     fi
 }
@@ -183,7 +179,7 @@ setupMagicDomainPublicIp(){
 microk8sInstall(){
     if [ "$microk8s_install" = true ] ; then
     printInfo "*** Installing Microkubernetes with Kubernetes Version 1.15 ***"
-    snap install microk8s --channel=1.15/stable --classic
+    snap install microk8s --channel=$MICROK8S_CHANNEL --classic
     
     printInfo "allowing the execution of priviledge pods "
     bash -c "echo \"--allow-privileged=true\" >> /var/snap/microk8s/current/args/kube-apiserver"
@@ -241,11 +237,11 @@ dynatraceActiveGateInstall(){
 
 istioInstall(){
     if [ "$istio_install" = true ] ; then
-      printInfo " ***** Install istio 1.5 into /Opt and add it to user/local/bin ***** "
-      curl -L https://istio.io/downloadIstio | ISTIO_VERSION=1.5.1 sh - 
-      mv istio-1.5.1 /opt/istio-1.5.1 
-      chmod +x -R /opt/istio-1.5.1/
-      ln -s /opt/istio-1.5.1/bin/istioctl /usr/local/bin/istioctl
+      printInfo " ***** Install istio $ISTIO_VERSION into /Opt and add it to user/local/bin ***** "
+      curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh - 
+      mv istio-$ISTIO_VERSION /opt/istio-$ISTIO_VERSION 
+      chmod +x -R /opt/istio-$ISTIO_VERSION/
+      ln -s /opt/istio-$ISTIO_VERSION/bin/istioctl /usr/local/bin/istioctl
       bashas "echo 'y' | istioctl manifest apply"
       waitForAllPods
     fi
@@ -253,10 +249,10 @@ istioInstall(){
 
 helmInstall(){
     if [ "$helm_install" = true ] ; then
-      printInfo " *****  Installing HELM Client v2.12.3 ***** "
+      printInfo " *****  Installing HELM Client v$HELM_VERSION ***** "
       wget -O getHelm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get
       chmod +x getHelm.sh
-      ./getHelm.sh -v v2.12.3
+      ./getHelm.sh -v v$HELM_VERSION
       helm init 
     fi
 }
@@ -264,7 +260,7 @@ helmInstall(){
 certmanagerInstall(){
     if [ "$certmanager_install" = true ] ; then
       printInfo " ***** Install CertManager ***** "
-      bashas 'kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.14.0/cert-manager.yaml'
+      bashas "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v$CERTMANAGER_VERSION/cert-manager.yaml"
       waitForAllPods
     fi
 }
@@ -304,7 +300,7 @@ resourcesClone(){
 keptnExamplesClone(){
     if [ "$keptn_examples_clone" = true ] ; then
       printInfo " ***** Clone Keptn Exmaples ***** "
-      bashas "git clone --branch 0.6.1 https://github.com/keptn/examples.git ~/examples --single-branch"
+      bashas "git clone --branch $KEPTN_EXAMPLES_BRANCH https://github.com/keptn/examples.git ~/examples --single-branch"
     fi
 }
 
@@ -312,7 +308,6 @@ dynatraceSaveCredentials(){
     if [ "$dynatrace_savecredentials" = true ] ; then
       printInfo " ***** Save Dynatrace credentials ***** "
       bashas "cd ~/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
-      bashas "cd ~/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh show"
     fi
 }
 
@@ -326,7 +321,7 @@ resourcesRouteIstioIngress(){
 keptnInstall(){
     if [ "$keptn_install" = true ] ; then
       printInfo " ***** Download & Configure Keptn Client **** "
-      wget -q -O keptn.tar https://github.com/keptn/keptn/releases/download/0.6.1/0.6.1_keptn-linux.tar
+      wget -q -O keptn.tar "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/${KEPTN_VERSION}_keptn-linux.tar"
       tar -xvf keptn.tar
       chmod +x keptn 
       mv keptn /usr/local/bin/keptn
@@ -339,9 +334,7 @@ keptnInstall(){
 keptndemoTeaserPipeline(){
     if [ "$keptndemo_teaser_pipeline" = true ] ; then
       printInfo " ***** Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview  ***** "
-      # https://github.com/sergiohinojosa/keptn-in-a-box/resources/homepage
-      # Ingressrouting is defined in resourcesRouteIstioIngress()
-      bashas "kubectl -n istio-system create deploy homepage --image=shinojosa/nginxacm"
+      bashas "kubectl -n istio-system create deploy homepage --image=${TEASER_IMAGE}"
       bashas "kubectl -n istio-system expose deploy homepage --port=80 --type=NodePort"
     fi
 }
@@ -350,8 +343,8 @@ dynatraceConfigureMonitoring(){
     if [ "$dynatrace_configure_monitoring" = true ] ; then
       printInfo " ***** Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) *****"
       bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$DT_PAAS_TOKEN\""
-      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/0.6.2/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
-      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/0.3.1/deploy/service.yaml"
+      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
+      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/$KEPTN_DT_SLI_SERVICE_VERSION/deploy/service.yaml"
       printInfo " ***** Wait for the Service to be created *****"
       waitForAllPods
       bashas "keptn configure monitoring dynatrace"
@@ -370,7 +363,7 @@ keptnBridgeExpose(){
 keptnBridgeEap(){
     if [ "$keptn_bridge_eap" = true ] ; then
       printInfo " *****  Keptn Bridge update to EAP   ***** "
-      bashas "kubectl -n keptn set image deployment/bridge bridge=keptn/bridge2:20200326.0744 --record"
+      bashas "kubectl -n keptn set image deployment/bridge bridge=${KEPTN_BRIDGE_IMAGE} --record"
     fi
 }
 
@@ -424,7 +417,6 @@ createWorkshopUser(){
 }
 
 printInstalltime(){
-     # Installation finish, print time.
     DURATION=$SECONDS
     printInfo "***** Installation complete :) *****\nIt took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds "
 }
@@ -433,47 +425,33 @@ printInstalltime(){
 enableVerbose
 updateUbuntu
 dynatracePrintCredentials
-
 setupProAliases 
 dockerInstall
-
 microk8sInstall
 microk8sStart
 microk8sEnableBasic
 microk8sEnableDashboard
 microk8sEnableRegistry
-
 dynatraceActiveGateInstall
 istioInstall
 helmInstall
 certmanagerInstall
-
 resourcesClone
 keptnExamplesClone
-
 dynatraceSaveCredentials
 setupMagicDomainPublicIp
-
 microk8sExposeKubernetesApi
 microk8sExposeKubernetesDashboard
-
 resourcesRouteIstioIngress
-
 keptnInstall
-
 keptndemoTeaserPipeline
 keptndemoUnleash
-
 dynatraceConfigureMonitoring
 dynatraceConfigureWorkloads
-
 keptnBridgeExpose
 keptnBridgeEap
-
 keptndemoCartsonboard
 keptndemoDeployCartsloadgenerator
-
 createWorkshopUser
-
 certmanagerEnable
 printInstalltime
