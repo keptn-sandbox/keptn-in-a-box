@@ -153,7 +153,7 @@ updateUbuntu(){
     fi
 }
 
-dynatracePrintCredentials(){
+dynatracePrintValidateCredentials(){
   printInfo " **** Printing Dynatrace Credentials ****"
   if [ -n "${TENANT}" ]; then
     printInfo " **** Shuffle the variables for name convention with Keptn & Dynatrace ****"
@@ -167,7 +167,11 @@ dynatracePrintCredentials(){
     printInfo "Dynatrace API Token: $DT_API_TOKEN"
     printInfo "Dynatrace PaaS Token: $DT_PAAS_TOKEN"
   else
-    printInfo " **** Dynatrace Variables not set ****"
+    printInfo " **** Dynatrace Variables not set, Dynatrace wont be installed****"
+    dynatrace_savecredentials=false
+    dynatrace_configure_monitoring=false
+    dynatrace_activegate_install=false
+    dynatrace_configure_workloads=false
   fi
 }
 
@@ -467,7 +471,7 @@ doInstallation(){
   
   setBashas
   
-  dynatracePrintCredentials
+  dynatracePrintValidateCredentials
 
   enableVerbose
   updateUbuntu

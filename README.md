@@ -6,7 +6,7 @@
 
 Keptn-In-A-Box is part of the automation for delivering Autonomous Cloud Workshops with Dynatrace. This is not a tutorial but more an explanation of what the shell file set up for you on a plain Ubuntu image. 
 
-A simple Bash script will set-up a fully functional Single Node Kubernetes Cluster with Dynatrace installed and Kubernetes Cluster, Cloud Applications and Events monitoring enabled. This script is used as [userdata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) when spinning up elastic compute images (ec2) in amazon web services, but it can run also manually in a Linux machine or VM with snap installed. The tested distro is  *Ubuntu Server 18.04 LTS*
+A simple Bash script will set-up a fully functional Single Node Kubernetes Cluster with Dynatrace installed and Kubernetes Cluster, Cloud Applications and Events monitoring enabled. This script is used as [userdata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) when spinning up elastic compute images (ec2) in amazon web services, but it can run also manually in a Linux machine or VM with snap installed. The tested distro is  *Ubuntu Server 18.04 LTS & 20.04 LTS*
 For spinning up instances automatically with AWS completely configured and set up, and also automating the creation and management of Dynatrace environments, take a look at this project- [Dynatrace - Rest Tenant Automation](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) 
 
 
@@ -37,15 +37,17 @@ For spinning up instances automatically with AWS completely configured and set u
 - Creation of valid SSL certificates with Certmanager and HTTPs Let's encrypt.
 - Create a user account and copy the standard user (ubuntu on this case) with his own home directory (a replica) and allowing SSH connections with text password. 
 
-### 💻The Bash File
+### 💻The Keptn-in-a-Box Bash Installation
 
-The bash file is scripted in a modular fashion so this allow you with control flags, found at the top, to specify the different modules that you want to have installed. By default all modules are set to true. 
+The bash file is scripted in a modular fashion allowing you with  control flags to enable or disable the modules that you want to install in your box. This allows you to have a very slim cluster running keptn with the bare minimal resources or to have a full blown cluster with pretty much all the desired features and frameworks for your CI/CD pipelines and performance testings.
+
 
 - [keptn-in-a-box.sh](keptn-in-a-box.sh)
+- [functions.sh](functions.sh)
 
 ## Prerequisites
 
-- [Ubuntu](https://ubuntu.com/#download) with internet connection (tested on 18.04 LTS)
+- [Ubuntu](https://ubuntu.com/#download) with internet connection (tested on 18.04 LTS and 20.04 LTS)
 
   ### (optional)
 
@@ -56,7 +58,8 @@ The bash file is scripted in a modular fashion so this allow you with control fl
 ### Repository Structure
 ```
 ─ doc                       doc folder.
-─ keptn-in-a-box.sh         the Bash file
+─ keptn-in-a-box.sh         the Bash executable where to define variables
+─ functions.sh        		The definiton of functions and modules 
 ─ resources                 
   ├── cartsloadgenerator    Sources of the load container of the carts app 
   ├── demo                  Scripts for Onboarding the Carts app  
