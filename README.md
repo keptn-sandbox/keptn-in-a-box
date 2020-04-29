@@ -10,7 +10,7 @@ A simple Bash script will set-up a fully functional Single Node Kubernetes Clust
 For spinning up instances automatically with AWS completely configured and set up, and also automating the creation and management of Dynatrace environments, take a look at this project- [Dynatrace - Rest Tenant Automation](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) 
 
 
-![#](doc/ac-concepts-keptninabox.png)
+![#](doc/ac-concepts-keptninabox.jpg)
 
 ## 🥜Keptn-in-a-Box - Features in a Nutshell
 - Update the ubuntu repository
@@ -39,11 +39,28 @@ For spinning up instances automatically with AWS completely configured and set u
 
 ### 💻The Keptn-in-a-Box Bash installation
 
-The bash file is scripted in a modular fashion allowing you with  control flags to enable or disable the modules that you want to install in your box. This allows you to have a very slim cluster running keptn with the bare minimal resources or to have a full blown cluster with pretty much all the desired features and frameworks for your CI/CD pipelines and performance testings.
+![#](doc/keptn-in-a-box.png | width=100)
 
 
-- [keptn-in-a-box.sh](keptn-in-a-box.sh)
-- [functions.sh](functions.sh)
+<table style="width:100%">
+  <tr>
+    <td>
+    <p align="center">
+    </p>
+    The bash file is scripted in a modular fashion allowing you with  control flags to enable or disable the modules that you want to install in your box. This allows you to have a very slim cluster running keptn with the bare minimal resources or to have a full blown cluster with pretty much all the desired features and frameworks for your CI/CD pipelines and performance testings.
+    <ol>
+    <li><a href="keptn-in-a-box.sh">keptn-in-a-box.sh</a></li>
+    <li><a href="functions.sh">functions.sh</a></li>
+    </ol>  
+    </p>
+    </td>
+    <td>
+   <img src="doc/keptn-in-a-box.png" title="Keptn-in-a-Box"> 
+    </td>
+  </tr>
+</table>
+
+
 
 ## Prerequisites
 
