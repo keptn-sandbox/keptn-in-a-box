@@ -178,11 +178,11 @@ The script will install all the modules shown above and the github repository wi
      > for SaaS
 
 
-For more details on the Integration with Dynatrace follow this links
 
 Generate an API token and a PaaS token in your Dynatrace environment.
 Make sure you have the **Access problem and event feed, metrics, and topology** switch enabled for the API token.
 
+For more details on the Integration with Dynatrace read the following links:
 - [OneAgent Operator](https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/oneagent-with-helm/)
 - [API Authentication](https://www.dynatrace.com/support/help/extend-dynatrace/dynatrace-api/basics/dynatrace-api-authentication/)
 - [PaaS Token](https://www.dynatrace.com/support/help/reference/dynatrace-concepts/environment-id/#anchor_paas)
