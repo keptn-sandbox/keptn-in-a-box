@@ -102,19 +102,19 @@ The minimum required for running the default modules is t2.large with 13 Gigs of
 ### installationModulesFull
 The minimum required for running the default modules is t2.large with 13 Gigs of Disk space.We recommend 20 Gigs and t2.2xlarge for the best experience.
 
-# Get started in 1 - 2 - 3
+## Get started in 1 - 2 - 3
 
-## Run it in an available machine  (manually)
+### Run it in an available machine  (manually)
 
-### 1. Log in into  your Ubuntu image
-### 2. Clone the repo and navigate to the directory
+#### 1. Log in into  your Ubuntu image
+#### 2. Clone the repo and navigate to the directory
 
 ```bash
 git clone https://github.com/keptn-sandbox/keptn-in-a-box ; cd keptn-in-a-box
 ```
 > Actually you only need to copy and execute the **keptn-in-a-box.sh** file. It'll take care of the rest and load the resources from github.
 
-### 3. Execute the file with sudo rights.
+#### 3. Execute the file with sudo rights.
 ```bash
 sudo ./keptn-in-a-box.sh &
 ```
@@ -126,7 +126,7 @@ For inspecting the installation on realtime type:
 less +F /tmp/install.log
 ```
 
-####  The installed modules
+#####  The installed modules
 
 The default installation is **installationModulesDefault** which sets the control flag to true to the following modules:
 
@@ -163,7 +163,7 @@ The script will install all the modules shown above and the github repository wi
 
 >The script was first created  to be run as root without an interactive shell since it is passed as userdata on creation of the elastic cloud machine via a python rest automation program.
 
-# 💪Empower your Keptn-in-a-box 🎁 with Dynatrace by adding it's credentials
+## 💪Empower your Keptn-in-a-box 🎁 with Dynatrace by adding it's credentials
 
 - Add the Dynatrace information to the variables:
 
@@ -181,8 +181,8 @@ The script will install all the modules shown above and the github repository wi
 With the **installationModulesDefault** or **installationModulesFull** Dynatrace is automatically installed if the credentials are configured.
 
 
-# Other installation options
-## Spin your preconfigured Keptn-in-a-box machines with userdata  (manually in aws)
+## Other installation options
+### Spin your preconfigured Keptn-in-a-box machines with userdata  (manually in aws)
 1. Log in to AWS
 2. Click on "Launch instance"
 3. Select "Ubuntu Server [18|20].04 LTS (HVM) "
@@ -191,15 +191,15 @@ With the **installationModulesDefault** or **installationModulesFull** Dynatrace
 6. In Configure Instance details - Advanced options (below) copy the keptn-in-a-box.sh file. (as string or drop it, doesn't matter). Remember to edit your file if you want to customize your box.
 7. Review it and launch your instance.
 
-## Spin your preconfigured Keptn-in-a-box machines  with userdata (automated)
+### Spin your preconfigured Keptn-in-a-box machines  with userdata (automated)
 - Description to be added. Please see the [Dynatrace Rest Tenant Automation project](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) for reference. The RTA project can spin as many instances as you want by providing a simple CSV file. It will also create and configure Dynatrace environments for each CSV entry, 😍 perfect for delivering workshops 👨‍💻. If you are interested in a workshop get in contact with us. 
 
 
-# 🛠 Customizing your installation
+## 🛠 Customizing your installation
 
 The keptn-in-a-box project is highly customizable (obviously since it's a bashfile) below are some customizations that are the most used. All customizations can and should be done in the ** keptn-in-a-box.sh** file and not in the **functions.sh** file. This way you keep a nice delegation of tasks and functionality. 
 
-## Change the installation type to Minimal or Full
+### Change the installation type to Minimal or Full
 Comment out the Default and uncomment the installation type you want. For example for minimal:
 
 ```bash
@@ -211,7 +211,7 @@ installationModulesMinimal
 ```
 The same applies for Full.
 
-## Change your own Domain
+### Change your own Domain
 By default the Script will get the public ip and give it a magic domain with nip.io like ip=1.2.3.4 will become 1-2-3-4.nip.io. This way with an NGINX Ingress Keptn and all Istio and Kubernetes services are available with subdomains via the standard HTTP ports 443 and 80.
 
 This is a sample could be if I'm running my box in a VirtualMachine in my home network:
@@ -219,7 +219,7 @@ This is a sample could be if I'm running my box in a VirtualMachine in my home n
 DOMAIN=192.168.0.1.nip.io
 ```
 
-## 🔒 Generate valid certificates with Lets Encrypt 
+### 🔒 Generate valid certificates with Lets Encrypt 
 
 By adding/commenting out the following control flags, you'll install Certmanager. A Cluster Issuer will be added and a valid certificate with let's encrypt for your public endpoints will be created. This way the Keptn API and Kubernetes API will have a valid Certificate.
 
@@ -229,7 +229,7 @@ certmanager_enable=true
 ```
 Add the modules before the `doInstallation` 
 
-## 👨‍💻 Create a Workshop user 
+### 👨‍💻 Create a Workshop user 
 You might have notice the following variables:
 ```bash
 NEWPWD="dynatrace"
@@ -237,7 +237,7 @@ NEWUSER="dynatrace"
 ```
 This variables in combination with the control flag `create_workshop_user=false` will create a workshop user. It will clone the `USER` home directory and add hi configuration so the `NEWUSER` can also interact with `keptn`, `docker` and `kubectl`. An SSH Password will be configured and allowed.
 
-##  Change the Version of a component
+###  Change the Version of a component
 This are the actual versions of the different Modules
 ```bash
 # **** Installation Versions **** 
@@ -255,10 +255,10 @@ MICROK8S_CHANNEL="1.15/stable"
 Feel free to experiment and change the versions. We will try to keep the list up to date. 
 
 
-##  Create your custom installation
+###  Create your custom installation
 At the beggining of the  `functions.sh` file the installation modules are listed. You can enable them in the `keptn-in-a-box.sh` file before calling the `doInstallation` function.
 
-## Troubleshooting and inspecting the installation
+### Troubleshooting and inspecting the installation
 To Inspect do 
 
 ```bash
@@ -272,6 +272,5 @@ If you have any ideas for improvements or want to contribute that's great. Creat
 
 
 ## Author 
-
 sergio.hinojosa@dynatrace.com
 
