@@ -298,9 +298,9 @@ and to have a verbose output (of every executed command) set the following contr
 This project was first presented to the Keptn Community in a Keptn Developer Meeting on the 23rd of April 2020.
 
 #### 📹Here is the recording of the Video: Keptn in a Box - Delivering Autonomous Cloud out of the Box
-[![Keptn in a Box - Delivering Autonomous Cloud out of the Box](doc/Keptn-in-a-box-delivering-Autonomous-Cloud-out-of-the-box-YouTube.png)]([Keptn-in-a-box-delivering-Autonomous-Cloud-out-of-the-box-YouTube.png](https://www.youtube.com/watch?v=A9ZYdih0anE))
+<a alt="Keptn in a Box - Delivering Autonomous Cloud out of the Box" href="https://www.youtube.com/watch?v=A9ZYdih0anE" target="_blank"><img src="doc/Keptn-in-a-box-delivering-Autonomous-Cloud-out-of-the-box-YouTube.png" width="500px" title="Keptn-in-a-Box"/></a>
 
-
+      
 Join the [Keptn Community](https://github.com/keptn/community) for more interesting projects and keep up to date with Keptn!
 
 
