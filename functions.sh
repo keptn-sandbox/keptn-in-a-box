@@ -9,40 +9,28 @@ update_ubuntu=false
 docker_install=false
 microk8s_install=false
 setup_proaliases=false
-
 enable_k8dashboard=false
 enable_registry=false
-
 istio_install=false
 helm_install=false
-
 certmanager_install=false
 certmanager_enable=false
-
 keptn_install=false
-
 keptn_examples_clone=false
-
 resources_clone=false
 resources_route_istio_ingress=false
-
 dynatrace_savecredentials=false
 dynatrace_configure_monitoring=false
 dynatrace_activegate_install=false
 dynatrace_configure_workloads=false
-
 keptn_bridge_expose=false
 keptn_bridge_eap=false
-
 keptndemo_teaser_pipeline=false
 keptndemo_cartsload=false
-
 keptndemo_unleash=false
 keptndemo_cartsonboard=false
-
 microk8s_expose_kubernetes_api=false
 microk8s_expose_kubernetes_dashboard=false
-
 create_workshop_user=false
 
 
@@ -167,7 +155,7 @@ updateUbuntu(){
 
 dynatracePrintCredentials(){
   printInfo " **** Printing Dynatrace Credentials ****"
-  if [ -n "${DT_TENANT}" ]; then
+  if [ -n "${TENANT}" ]; then
     printInfo " **** Shuffle the variables for name convention with Keptn & Dynatrace ****"
     PROTOCOL="https://"
     DT_TENANT=${TENANT#"$PROTOCOL"}

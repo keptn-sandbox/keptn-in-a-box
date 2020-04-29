@@ -11,6 +11,8 @@ pipe_log=true
 FUNCTIONS_FILE='functions.sh'
 
 USER="ubuntu"
+
+# create_workshop_user=true (will clone the home directory from USER and allow SSH login with text password )
 NEWPWD="dynatrace"
 NEWUSER="dynatrace"
 
@@ -64,23 +66,33 @@ else
     echo "The functions file $FUNCTIONS_FILE does not exist, getting it from github."
     curl -o functions.sh https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/functions/functions.sh
 fi
+
+
+# Wrapper for runnig commands for the real owner and not as root
+alias bashas="sudo -H -u ${USER} bash -c"
+# Expand aliases for non-interactive shell
+shopt -s expand_aliases
+
 # --- Loading the functions in the current shell
 source $FUNCTIONS_FILE
 
 
 # --- Enable the installation Modules --- 
+# Uncomment for installing the Default 
 installationModulesDefault
 
+# - Uncomment below for installing the minimal setup
 #installationModulesMinimal
 
+# - Uncomment below for installing all features
 #installationModulesFull
+
 
 # -- Override a module like for example verbose output of all commands
 #verbose_mode=true
-
 # -- or install cert manager 
 #certmanager_install=true
 #certmanager_enable=true
 
-# do Installation
+# *** Do Installation 
 doInstallation
