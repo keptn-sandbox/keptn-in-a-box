@@ -42,7 +42,6 @@ installationModulesDefault(){
   setup_proaliases=true
 
   enable_k8dashboard=true
-  enable_registry=true
   istio_install=true
   helm_install=true
 
@@ -71,6 +70,9 @@ installationModulesDefault(){
 installationModulesFull(){
   # installation default
   installationModulesDefault
+  
+  enable_registry=true
+
   # plus all others 
   certmanager_install=true
   certmanager_enable=true
@@ -155,7 +157,7 @@ updateUbuntu(){
 
 dynatracePrintValidateCredentials(){
   printInfo " **** Printing Dynatrace Credentials ****"
-  if [ -n "${TENANT}" ]; then
+  if [ -n "${TENANT}" ] ; then
     printInfo " **** Shuffle the variables for name convention with Keptn & Dynatrace ****"
     PROTOCOL="https://"
     DT_TENANT=${TENANT#"$PROTOCOL"}

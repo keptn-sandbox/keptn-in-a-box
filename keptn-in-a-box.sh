@@ -10,6 +10,7 @@ pipe_log=true
 # The installation will look for this file locally, if not found it will pull it form github.
 FUNCTIONS_FILE='functions.sh'
 
+# The user to run the commands from. Will be overwritten when executing this shell with sudo 
 USER="ubuntu"
 
 # create_workshop_user=true (will clone the home directory from USER and allow SSH login with text password )
@@ -40,7 +41,7 @@ KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.15/stable"
 
 ## ----  Write all to the logfile ----
-if [ "$pipe_log" = true ]; then
+if [ "$pipe_log" = true ] ; then
   echo "Piping all output to logfile $LOGFILE"
   echo "Type 'less +F $LOGFILE' for viewing the output of installation on realtime"
   echo "If you did not send the job to the background, type \"CTRL + Z\" and \"bg\""
@@ -67,6 +68,11 @@ else
     curl -o functions.sh https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh
 fi
 
+# Comfortable function for setting the sudo user.
+if [ -n "${SUDO_USER}" ] ; then
+  USER=$SUDO_USER
+fi
+echo "running sudo commands as $USER"
 
 # Wrapper for runnig commands for the real owner and not as root
 alias bashas="sudo -H -u ${USER} bash -c"
@@ -86,7 +92,6 @@ installationModulesDefault
 
 # - Uncomment below for installing all features
 #installationModulesFull
-
 
 # -- Override a module like for example verbose output of all commands
 #verbose_mode=true

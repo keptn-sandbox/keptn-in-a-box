@@ -49,16 +49,15 @@ The bash file is scripted in a modular fashion allowing you with  control flags 
 
 - [Ubuntu](https://ubuntu.com/#download) with internet connection (tested on 18.04 LTS and 20.04 LTS)
 
-  ### (optional)
-
+#### (optional)
 - [A Dynatrace Tenant](https://www.dynatrace.com/trial/) 
 - AWS Account [Here you can get a free account](https://aws.amazon.com/free/)
-- You will get the most out of it by having a public ip 
+- You will get the most out of it if your DOMAIN is configured and reachable either by Dynatrace SaaS or Dynatrace Managed.
 
-### Repository Structure
-```
+## Repository Structure
+```bash
 ─ doc                       doc folder.
-─ keptn-in-a-box.sh         the Bash executable where to define variables
+─ keptn-in-a-box.sh         the executable (also where to define your variables)
 ─ functions.sh        		The definiton of functions and modules 
 ─ resources                 
   ├── cartsloadgenerator    Sources of the load container of the carts app 
@@ -70,12 +69,102 @@ The bash file is scripted in a modular fashion allowing you with  control flags 
   └── k8-services           YAML files for exposing the k8 services
 ```
 
-## How to get started
-### Run it in an available machine  (manually)
-- Get your Ubuntu image 
-	
-	- For installing all features I recommend using a size t2.2xlarge which has 8 core and 32 Gig of RAM. 
-	
+## 💾 Sizing
+
+This section will give you an idea the nedded size for your Box. But it all dependson the modules you want to install and what is your goal and usecase.
+The installer comes with 3 predefined modules: **minimal**, **default** and **full**.
+
+Below is a table for the sizing reference if you run a local VM or are virtualizing locally.
+### AWS sizings for reference 
+
+| **Size**   | **vCPUs** | **Memory (GiB)** |
+| ---------- | --------- | ---------------- |
+| t2.medium  | 2         | 4                |
+| t2.large   | 2         | 8                |
+| t2.xlarge  | 4         | 16               |
+| t2.2xlarge | 8         | 32               |
+
+### installationModulesMinimal
+The minimum required for running a Single Node Kubernetes cluster with keptn full features is a t2.medium (2 vCPU and 4 Gib of RAM) and 10 Gigabytes of disk space. If you feel frisky go for this size but the experience won't be the best. 
+
+Adding more RAM and more CPUs will speed up things. Depending what you want to achieve. Also consider that you'll have available less than 2 Gigs of disk space. This is the available disk after a minimal installation.
+
+```bash
+df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/root       9.7G  6.9G  2.8G  72% /
+```
+
+
+### installationModulesDefault
+The minimum required for running the default modules is t2.large with 13 Gigs of Disk space. We recommend 20 Gigs and t2.xlarge for the best experience.
+
+### installationModulesFull
+The minimum required for running the default modules is t2.large with 13 Gigs of Disk space.We recommend 20 Gigs and t2.2xlarge for the best experience.
+
+# Get started in 1 - 2 - 3
+
+## Run it in an available machine  (manually)
+
+### 1. Log in into  your Ubuntu image
+### 2. Clone the repo and navigate to the directory
+
+```bash
+git clone https://github.com/keptn-sandbox/keptn-in-a-box ; cd keptn-in-a-box
+```
+> Actually you only need to copy and execute the **keptn-in-a-box.sh** file. It'll take care of the rest and load the resources from github.
+
+### 3. Execute the file with sudo rights.
+```bash
+sudo ./keptn-in-a-box.sh &
+```
+
+And that was it! Yes that easy! Now if you notice is that there is an & in the command. This will send the installation job in the background. You will not see any output since stdout and stderr are piped to a logfile which is located by default in **/tmp/install.log** 
+
+For inspecting the installation on realtime type:
+```bash
+less +F /tmp/install.log
+```
+
+####  The installed modules
+
+The default installation is **installationModulesDefault** which sets the control flag to true to the following modules:
+
+
+```bash
+  update_ubuntu=true
+  docker_install=true
+  microk8s_install=true
+  setup_proaliases=true
+  enable_k8dashboard=true
+  istio_install=true
+  helm_install=true
+  keptn_install=true
+  keptn_examples_clone=true
+  resources_clone=true
+  resources_route_istio_ingress=true
+  dynatrace_savecredentials=true
+  dynatrace_configure_monitoring=true
+  dynatrace_activegate_install=true
+  dynatrace_configure_workloads=true
+  keptn_bridge_expose=true
+  keptn_bridge_eap=true
+  keptndemo_teaser_pipeline=true
+  keptndemo_cartsload=true
+  keptndemo_unleash=true
+  keptndemo_cartsonboard=true
+  microk8s_expose_kubernetes_api=true
+  microk8s_expose_kubernetes_dashboard=true
+```
+
+Dynatrace OneAgent and Dynatrace ActiveGate will be installed and configured if you provided your credentials. Otherwise they won't be installed. 
+
+The script will install all the modules shown above and the github repository will be cloned in the home (~) directory of the sudo user that executed the script.
+
+>The script was first created  to be run as root without an interactive shell since it is passed as userdata on creation of the elastic cloud machine via a python rest automation program.
+
+# 💪Empower your Keptn-in-a-box 🎁 with Dynatrace by adding it's credentials
+
 - Add the Dynatrace information to the variables:
 
 	- TENANT="https://mytenant.live.dynatrace.com"
@@ -88,44 +177,101 @@ The bash file is scripted in a modular fashion allowing you with  control flags 
      > https://{your-environment-id}.live.dynatrace.com 
      > for SaaS
 
-- Run the script as root or sudo 
 
-  ```bash
-  ./keptn-in-a-box.sh
-  ```
-
-  > The script is optimized to be run as root without an interactive shell since it is used as userdata passed on creation of the elastic cloud machine
+With the **installationModulesDefault** or **installationModulesFull** Dynatrace is automatically installed if the credentials are configured.
 
 
-### Spin your preconfigured Keptn-in-a-box machines  (manually in aws)
-- Log in to AWS
-- Click on "Launch instance"
-- Select "Ubuntu Server 18.04 LTS (HVM)"
-- Choose Instance Type "t2.2xlarge"
-- Select "Next - configure instance details"
-- In Configure Instance details - Advanced options copy the keptn-in-a-box.sh file. (as string or drop it, doesn't matter)
-- Review it and launch your instance.
+# Other installation options
+## Spin your preconfigured Keptn-in-a-box machines with userdata  (manually in aws)
+1. Log in to AWS
+2. Click on "Launch instance"
+3. Select "Ubuntu Server [18|20].04 LTS (HVM) "
+4. Choose your Instance Type "t2.xlarge" or 2xlarge recommended.
+5. Select "Next - configure instance details"
+6. In Configure Instance details - Advanced options (below) copy the keptn-in-a-box.sh file. (as string or drop it, doesn't matter). Remember to edit your file if you want to customize your box.
+7. Review it and launch your instance.
 
-### Spin your preconfigured Keptn-in-a-box machines  (automated)
+## Spin your preconfigured Keptn-in-a-box machines  with userdata (automated)
+- Description to be added. Please see the [Dynatrace Rest Tenant Automation project](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) for reference. The RTA project can spin as many instances as you want by providing a simple CSV file. It will also create and configure Dynatrace environments for each CSV entry, 😍 perfect for delivering workshops 👨‍💻. If you are interested in a workshop get in contact with us. 
 
-- Description to be added. Please see the [RTA project](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) for reference
+
+# 🛠 Customizing your installation
+
+The keptn-in-a-box project is highly customizable (obviously since it's a bashfile) below are some customizations that are the most used. All customizations can and should be done in the ** keptn-in-a-box.sh** file and not in the **functions.sh** file. This way you keep a nice delegation of tasks and functionality. 
+
+## Change the installation type to Minimal or Full
+Comment out the Default and uncomment the installation type you want. For example for minimal:
+
+```bash
+#installationModulesDefault
+
+installationModulesMinimal
+
+#installationModulesFull
+```
+The same applies for Full.
+
+## Change your own Domain
+By default the Script will get the public ip and give it a magic domain with nip.io like ip=1.2.3.4 will become 1-2-3-4.nip.io. This way with an NGINX Ingress Keptn and all Istio and Kubernetes services are available with subdomains via the standard HTTP ports 443 and 80.
+
+This is a sample could be if I'm running my box in a VirtualMachine in my home network:
+```bash
+DOMAIN=192.168.0.1.nip.io
+```
+
+## 🔒 Generate valid certificates with Lets Encrypt 
+
+By adding/commenting out the following control flags, you'll install Certmanager. A Cluster Issuer will be added and a valid certificate with let's encrypt for your public endpoints will be created. This way the Keptn API and Kubernetes API will have a valid Certificate.
+
+```bash
+certmanager_install=true
+certmanager_enable=true
+```
+Add the modules before the `doInstallation` 
+
+## 👨‍💻 Create a Workshop user 
+You might have notice the following variables:
+```bash
+NEWPWD="dynatrace"
+NEWUSER="dynatrace"
+```
+This variables in combination with the control flag `create_workshop_user=false` will create a workshop user. It will clone the `USER` home directory and add hi configuration so the `NEWUSER` can also interact with `keptn`, `docker` and `kubectl`. An SSH Password will be configured and allowed.
+
+##  Change the Version of a component
+This are the actual versions of the different Modules
+```bash
+# **** Installation Versions **** 
+ISTIO_VERSION=1.5.1
+HELM_VERSION=2.12.3
+CERTMANAGER_VERSION=0.14.0
+KEPTN_VERSION=0.6.1
+KEPTN_DT_SERVICE_VERSION=0.6.2
+KEPTN_DT_SLI_SERVICE_VERSION=0.3.1
+KEPTN_EXAMPLES_BRANCH=0.6.1
+TEASER_IMAGE="shinojosa/nginxacm"
+KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
+MICROK8S_CHANNEL="1.15/stable"
+```
+Feel free to experiment and change the versions. We will try to keep the list up to date. 
 
 
+##  Create your custom installation
+At the beggining of the  `functions.sh` file the installation modules are listed. You can enable them in the `keptn-in-a-box.sh` file before calling the `doInstallation` function.
 
 ## Troubleshooting and inspecting the installation
-If you spin instances automatically via [RTA](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation), AWS with UserData or manually, the bash script will write stdout and stderr to a log file. to Inspect do 
+To Inspect do 
 
 ```bash
 less +F /tmp/install.log
 ```
 
+and to have a verbose output (of every executed command) set the following control flag `verbose_mode=true` 
 
 ## Contributing
+If you have any ideas for improvements or want to contribute that's great. Create a pull request or file an issue.
 
-If you have any ideas for immprovements or want to contribute that's great. Please just keep in mind the file is used as UserData and AWS has a limitation of 16384 bytes. Please do:
-```bash
-ls -las keptn-in-a-box.sh 
-```
-and check that the size is not bigger than 16200 so you leave a buffer (184 bytes) for the initialization of the TENANT, PAASTOKEN and APITOKEN variables.
 
+## Author 
+
+sergio.hinojosa@dynatrace.com
 
