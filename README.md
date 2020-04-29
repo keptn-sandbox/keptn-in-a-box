@@ -12,7 +12,7 @@ For spinning up instances automatically with AWS completely configured and set u
 
 ![#](doc/ac-concepts-keptninabox.png)
 
-## 🥜The Bash File - Features in a Nutshell
+## 🥜Keptn-in-a-Box - Features in a Nutshell
 - Update the ubuntu repository
 - Installation of Docker (for building own Docker images)
 - Installation of Microkubernetes (v1.15)
@@ -35,9 +35,9 @@ For spinning up instances automatically with AWS completely configured and set u
 - Deployment of a cartsloadgenerator PoD
 - Deployment of a Autonomous Cloud teaser home page with links to the pipeline, bridge keptn-api. 
 - Creation of valid SSL certificates with Certmanager and HTTPs Let's encrypt.
-- Create a user account and copy the standard user (ubuntu on this case) with his own home directory (a replica) and allowing SSH connections with text password. 
+- Create a user account and copy the standard user (ubuntu on this case) with his own home directory (a replica) and allowing SSH connections with text password. Useful for spinning an army of workshop clusters. 
 
-### 💻The Keptn-in-a-Box Bash Installation
+### 💻The Keptn-in-a-Box Bash installation
 
 The bash file is scripted in a modular fashion allowing you with  control flags to enable or disable the modules that you want to install in your box. This allows you to have a very slim cluster running keptn with the bare minimal resources or to have a full blown cluster with pretty much all the desired features and frameworks for your CI/CD pipelines and performance testings.
 
@@ -53,7 +53,7 @@ The bash file is scripted in a modular fashion allowing you with  control flags 
 
 - [A Dynatrace Tenant](https://www.dynatrace.com/trial/) 
 - AWS Account [Here you can get a free account](https://aws.amazon.com/free/)
-- You will get the most ouf of it by having a public ip
+- You will get the most out of it by having a public ip 
 
 ### Repository Structure
 ```
