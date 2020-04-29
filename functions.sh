@@ -1,63 +1,116 @@
 #!/bin/bash
 
-wrappingout(){
-## ----  Define variables ----
-LOGFILE='/tmp/install.log'
-chmod 775 $LOGFILE
-USER="ubuntu"
-NEWPWD="dynatrace"
-NEWUSER="dynatrace"
+# This file contains the functions for installing Keptn-in-a-Box
+# For the variables 6 version definitions do it in the keptn-in-a-box.sh file
 
-# Define Dynatrace Environment
-# Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
-TENANT=
-PAASTOKEN=
-APITOKEN=
-
-# DEFAULT Versions
-ISTIO_VERSION=1.5.1
-HELM_VERSION=2.12.3
-CERTMANAGER_VERSION=0.14.0
-KEPTN_VERSION=0.6.1
-KEPTN_DT_SERVICE_VERSION=0.6.2
-KEPTN_DT_SLI_SERVICE_VERSION=0.3.1
-KEPTN_EXAMPLES_BRANCH=0.6.1
-TEASER_IMAGE="shinojosa/nginxacm"
-KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
-MICROK8S_CHANNEL="1.15/stable"
-
-# INSTALLATION MODULES
+#  Listing of all the installation modules
 verbose_mode=false
-update_ubuntu=true
-docker_install=true
-microk8s_install=true
-setup_proaliases=true
-setup_magicdomain_publicip=true
-enable_k8dashboard=true
-enable_registry=true
-istio_install=true
-helm_install=true
+update_ubuntu=false
+docker_install=false
+microk8s_install=false
+setup_proaliases=false
+
+enable_k8dashboard=false
+enable_registry=false
+
+istio_install=false
+helm_install=false
 
 certmanager_install=false
 certmanager_enable=false
 
-keptn_install=true
-keptn_examples_clone=true
-resources_clone=true
-resources_route_istio_ingress=true
-dynatrace_savecredentials=true
-dynatrace_configure_monitoring=true
-dynatrace_activegate_install=true
-dynatrace_configure_workloads=true
-keptn_bridge_expose=true
-keptn_bridge_eap=true
-keptndemo_teaser_pipeline=true
-keptndemo_cartsload=true
-keptndemo_unleash=true
-keptndemo_cartsonboard=true
-microk8s_expose_kubernetes_api=true
-microk8s_expose_kubernetes_dashboard=true
-create_workshop_user=true
+keptn_install=false
+
+keptn_examples_clone=false
+
+resources_clone=false
+resources_route_istio_ingress=false
+
+dynatrace_savecredentials=false
+dynatrace_configure_monitoring=false
+dynatrace_activegate_install=false
+dynatrace_configure_workloads=false
+
+keptn_bridge_expose=false
+keptn_bridge_eap=false
+
+keptndemo_teaser_pipeline=false
+keptndemo_cartsload=false
+
+keptndemo_unleash=false
+keptndemo_cartsonboard=false
+
+microk8s_expose_kubernetes_api=false
+microk8s_expose_kubernetes_dashboard=false
+
+create_workshop_user=false
+
+
+installationModulesDefault(){
+  # INSTALLATION MODULES
+  update_ubuntu=true
+  docker_install=true
+  microk8s_install=true
+  setup_proaliases=true
+
+  enable_k8dashboard=true
+  enable_registry=true
+  istio_install=true
+  helm_install=true
+
+  certmanager_install=false
+  certmanager_enable=false
+
+  keptn_install=true
+  keptn_examples_clone=true
+  resources_clone=true
+  resources_route_istio_ingress=true
+  dynatrace_savecredentials=true
+  dynatrace_configure_monitoring=true
+  dynatrace_activegate_install=true
+  dynatrace_configure_workloads=true
+  keptn_bridge_expose=true
+  keptn_bridge_eap=true
+  keptndemo_teaser_pipeline=true
+  keptndemo_cartsload=true
+  keptndemo_unleash=true
+  keptndemo_cartsonboard=true
+  microk8s_expose_kubernetes_api=true
+  microk8s_expose_kubernetes_dashboard=true
+  create_workshop_user=false
+}
+
+installationModulesFull(){
+  # installation default
+  installationModulesDefault
+  # plus all others 
+  certmanager_install=true
+  certmanager_enable=true
+  create_workshop_user=true
+}
+
+installationModulesMinimal(){
+  # The minimal to have a full keptn working 
+  # with exposed istio and keptn over nginx 
+  update_ubuntu=true
+  docker_install=true
+  microk8s_install=true
+  setup_proaliases=true
+
+  istio_install=true
+  keptn_install=true
+  resources_clone=true
+  resources_route_istio_ingress=true
+  keptn_bridge_expose=true
+  microk8s_expose_kubernetes_api=true
+  keptndemo_teaser_pipeline=true
+}
+
+setBashas(){
+  # Wrapper for runnig commands for the real owner and not as root
+  alias bashas="sudo -H -u ${USER} bash -c"
+  # Expand aliases for non-interactive shell
+  shopt -s expand_aliases
 }
 
 # FUNCTIONS DECLARATIONS
@@ -113,6 +166,8 @@ updateUbuntu(){
 }
 
 dynatracePrintCredentials(){
+  printInfo " **** Printing Dynatrace Credentials ****"
+  if [ -n "${DT_TENANT}" ]; then
     printInfo " **** Shuffle the variables for name convention with Keptn & Dynatrace ****"
     PROTOCOL="https://"
     DT_TENANT=${TENANT#"$PROTOCOL"}
@@ -123,6 +178,9 @@ dynatracePrintCredentials(){
     printInfo "Dynatrace Tenant: $DT_TENANT"
     printInfo "Dynatrace API Token: $DT_API_TOKEN"
     printInfo "Dynatrace PaaS Token: $DT_PAAS_TOKEN"
+  else
+    printInfo " **** Dynatrace Variables not set ****"
+  fi
 }
 
 dockerInstall(){
@@ -152,8 +210,11 @@ setupProAliases(){
 }
 
 setupMagicDomainPublicIp(){
-    if [ "$setup_magicdomain_publicip" = true ] ; then
-      printInfo " ***** Converting the public IP in a magic nip.io domain ***** "
+    if [ -n "${DOMAIN}" ] ; then
+      printInfo " ***** The following domain is defined: $DOMAIN ***** "
+      export DOMAIN
+    else
+      printInfo " ***** No DOMAIN is defined, converting the public IP in a magic nip.io domain ***** "
       PUBLIC_IP=$(curl -s ifconfig.me) 
       PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g')
       export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io" 
@@ -404,7 +465,60 @@ createWorkshopUser(){
 printInstalltime(){
     DURATION=$SECONDS
     printInfo "***** Installation complete :) *****\nIt took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds "
+    printInfo "***** Keptn & Kubernetes Exposed Ingress Endpoints ***** "
+    bashas "kubectl get ing -A"
 }
 
+doInstallation(){
+  printInfo ""
+  printInfo "***** Init Installation at  `date` by user `whoami` ****"
+  printInfo "***** Setting up Microk8s (SingleNode K8s Dev Cluster) with Keptn ****"
+  printInfo ""
+  # Record time of installation
+  SECONDS=0
+  
+  setBashas
+  
+  dynatracePrintCredentials
 
-printInfo "Functions loaded"
+  enableVerbose
+  updateUbuntu
+
+  setupProAliases 
+
+  dockerInstall
+  microk8sInstall
+  microk8sStart
+  microk8sEnableBasic
+  microk8sEnableDashboard
+  microk8sEnableRegistry
+  dynatraceActiveGateInstall
+  istioInstall
+  helmInstall
+  certmanagerInstall
+  resourcesClone
+  keptnExamplesClone
+  dynatraceSaveCredentials
+
+  setupMagicDomainPublicIp
+
+  microk8sExposeKubernetesApi
+  microk8sExposeKubernetesDashboard
+  resourcesRouteIstioIngress
+  keptnInstall
+  keptndemoTeaserPipeline
+  keptndemoUnleash
+  dynatraceConfigureMonitoring
+  dynatraceConfigureWorkloads
+  keptnBridgeExpose
+  keptnBridgeEap
+  keptndemoCartsonboard
+  keptndemoDeployCartsloadgenerator
+  createWorkshopUser
+  certmanagerEnable
+  printInstalltime
+  # TODO print Ingress Hosts in a nicer way
+  # TODO Add wrapper shell to load and call functions with parameters
+}
+
+printInfo "Keptn-in-a-Box installation functions loaded in the current shell"

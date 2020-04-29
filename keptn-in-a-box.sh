@@ -5,17 +5,27 @@
 ## ----  Define variables ----
 LOGFILE='/tmp/install.log'
 chmod 775 $LOGFILE
+pipe_log=true
+
+# The installation will look for this file locally, if not found it will pull it form github.
+FUNCTIONS_FILE='functions.sh'
+
 USER="ubuntu"
 NEWPWD="dynatrace"
 NEWUSER="dynatrace"
 
-# Define Dynatrace Environment
+# ****  Define Dynatrace Environment **** 
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
 TENANT=
 PAASTOKEN=
 APITOKEN=
 
-# Versions
+# Set your custom domain e.g for an internal machine like 192.168.0.1.nip.io
+# So Keptn and all other services are routed and exposed properly via the Ingress Gateway
+# if no DOMAIN is setted, the public IP of the machine will be converted to a magic nip.io domain   
+DOMAIN=
+
+# **** Installation Versions **** 
 ISTIO_VERSION=1.5.1
 HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
@@ -27,103 +37,50 @@ TEASER_IMAGE="shinojosa/nginxacm"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.15/stable"
 
-# Set installation modules
-verbose_mode=false
-update_ubuntu=true
-docker_install=true
-microk8s_install=true
-setup_proaliases=true
-setup_magicdomain_publicip=true
-enable_k8dashboard=true
-enable_registry=true
-istio_install=true
-helm_install=true
-
-certmanager_install=false
-certmanager_enable=false
-
-keptn_install=true
-keptn_examples_clone=true
-resources_clone=true
-resources_route_istio_ingress=true
-dynatrace_savecredentials=true
-dynatrace_configure_monitoring=true
-dynatrace_activegate_install=true
-dynatrace_configure_workloads=true
-keptn_bridge_expose=true
-keptn_bridge_eap=true
-keptndemo_teaser_pipeline=true
-keptndemo_cartsload=true
-keptndemo_unleash=true
-keptndemo_cartsonboard=true
-microk8s_expose_kubernetes_api=true
-microk8s_expose_kubernetes_dashboard=true
-create_workshop_user=true
-
 ## ----  Write all to the logfile ----
-# Saves file descriptors so they can be restored to whatever they were before redirection or used 
-# themselves to output to whatever they were before the following redirect.
-#exec 3>&1 4>&2
+if [ "$pipe_log" = true ]; then
+  echo "Piping all output to logfile $LOGFILE"
+  echo "Type 'less +F $LOGFILE' for viewing the output of installation on realtime"
+  echo "If you did not send the job to the background, type \"CTRL + Z\" and \"bg\""
+  echo "CTRL + Z (for pausing this job)"
+  echo "then"
+  echo "bg (for resuming back this job and send it to the background)"
+  # Saves file descriptors so they can be restored to whatever they were before redirection or used 
+  # themselves to output to whatever they were before the following redirect.
+  exec 3>&1 4>&2
+  # Restore file descriptors for particular signals. Not generally necessary since they should be restored when the sub-shell exits.
+  trap 'exec 2>&4 1>&3' 0 1 2 3
+  # Redirect stdout to file log.out then redirect stderr to stdout. Note that the order is important when you 
+  # want them going to the same file. stdout must be redirected before stderr is redirected to stdout.
+  exec 1>$LOGFILE 2>&1
+else
+  echo "Not piping stdout stderr to the logfile, writing the installation to the console"
+fi
 
-# Restore file descriptors for particular signals. Not generally necessary since they should be restored when the sub-shell exits.
-#trap 'exec 2>&4 1>&3' 0 1 2 3
-
-# Redirect stdout to file log.out then redirect stderr to stdout. Note that the order is important when you 
-# want them going to the same file. stdout must be redirected before stderr is redirected to stdout.
-#exec 1>$LOGFILE 2>&1
-
-SECONDS=0
-
-USER="shi"
-# Wrapper for runnig commands for the real owner and not as root
-alias bashas="sudo -H -u ${USER} bash -c"
-# Expand aliases for non-interactive shell
-shopt -s expand_aliases
-
-echo ""
-echo "***** Init Installation at  `date` by user `whoami` ****"
-echo "***** Setting up Microk8s (SingleNode K8s Dev Cluster) with Keptn ****"
-echo ""
-
-# Load the functions. The variables should all be defined
-source ./functions.sh
+# Load functions after defining the variables & versions
+if [ -f "$FUNCTIONS_FILE" ]; then
+    echo "The functions file $FUNCTIONS_FILE exists locally, loading functions from it."
+else 
+    echo "The functions file $FUNCTIONS_FILE does not exist, getting it from github."
+    curl -o functions.sh https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/functions/functions.sh
+fi
+# --- Loading the functions in the current shell
+source $FUNCTIONS_FILE
 
 
-dynatracePrintCredentials
-bashas "echo \"hello\" whoami"
-read -p "Want to continue? (y/n) : " -n 1 -r
+# --- Enable the installation Modules --- 
+installationModulesDefault
 
-# Sequence of the functions for modular installation
-enableVerbose
-updateUbuntu
-dynatracePrintCredentials
-setupProAliases 
-dockerInstall
-microk8sInstall
-microk8sStart
-microk8sEnableBasic
-microk8sEnableDashboard
-microk8sEnableRegistry
-dynatraceActiveGateInstall
-istioInstall
-helmInstall
-certmanagerInstall
-resourcesClone
-keptnExamplesClone
-dynatraceSaveCredentials
-setupMagicDomainPublicIp
-microk8sExposeKubernetesApi
-microk8sExposeKubernetesDashboard
-resourcesRouteIstioIngress
-keptnInstall
-keptndemoTeaserPipeline
-keptndemoUnleash
-dynatraceConfigureMonitoring
-dynatraceConfigureWorkloads
-keptnBridgeExpose
-keptnBridgeEap
-keptndemoCartsonboard
-keptndemoDeployCartsloadgenerator
-createWorkshopUser
-certmanagerEnable
-printInstalltime
+#installationModulesMinimal
+
+#installationModulesFull
+
+# -- Override a module like for example verbose output of all commands
+#verbose_mode=true
+
+# -- or install cert manager 
+#certmanager_install=true
+#certmanager_enable=true
+
+# do Installation
+doInstallation
