@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: jenkins-ingress
+  namespace: default
+spec:
+  rules:
+  - host: jenkins.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: left-umbrellabird-jenkins
+          servicePort: 8080
+        path: /
+tls:
