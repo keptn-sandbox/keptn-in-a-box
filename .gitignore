@@ -1,2 +1,4 @@
 # Temporary MD files
 *~*.md
+# No generated file
+**/gen/**
