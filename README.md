@@ -39,14 +39,10 @@ For spinning up instances automatically with AWS completely configured and set u
 
 ### 💻The Keptn-in-a-Box Bash installation
 
-![#](doc/keptn-in-a-box.png | width=100)
-
-
-<table style="width:100%">
+<table>
   <tr>
     <td>
-    <p align="center">
-    </p>
+    <p>
     The bash file is scripted in a modular fashion allowing you with  control flags to enable or disable the modules that you want to install in your box. This allows you to have a very slim cluster running keptn with the bare minimal resources or to have a full blown cluster with pretty much all the desired features and frameworks for your CI/CD pipelines and performance testings.
     <ol>
     <li><a href="keptn-in-a-box.sh">keptn-in-a-box.sh</a></li>
@@ -55,7 +51,7 @@ For spinning up instances automatically with AWS completely configured and set u
     </p>
     </td>
     <td>
-   <img src="doc/keptn-in-a-box.png" title="Keptn-in-a-Box"> 
+      <img src="doc/keptn-in-a-box.png" width="700px" title="Keptn-in-a-Box"> 
     </td>
   </tr>
 </table>
@@ -294,12 +290,25 @@ To Inspect do
 ```bash
 less +F /tmp/install.log
 ```
-
 and to have a verbose output (of every executed command) set the following control flag `verbose_mode=true` 
+
+
+## DeepDive into the project (understanding how Microk8s, NGINX Ingress routing, Istio and Keptn work together)
+
+This project was first presented to the Keptn Community in a Keptn Developer Meeting on the 23rd of April 2020.
+
+#### 📹Here is the recording of the Video: Keptn in a Box - Delivering Autonomous Cloud out of the Box
+[![Keptn in a Box - Delivering Autonomous Cloud out of the Box](doc/Keptn-in-a-box-delivering-Autonomous-Cloud-out-of-the-box-YouTube.png)]([Keptn-in-a-box-delivering-Autonomous-Cloud-out-of-the-box-YouTube.png](https://www.youtube.com/watch?v=A9ZYdih0anE))
+
+
+Join the [Keptn Community](https://github.com/keptn/community) for more interesting projects and keep up to date with Keptn!
+
+
+#### On a high level Kubernetes architecture this is how the setup of the Microkubernetes machine is setted up:
+![#](doc/micro-diagram-with-keptn.png)
 
 ## Contributing
 If you have any ideas for improvements or want to contribute that's great. Create a pull request or file an issue.
-
 
 ## Author 
 sergio.hinojosa@dynatrace.com
