@@ -1,6 +1,6 @@
 #!/bin/bash
-## Ubuntu Server 18.04 LTS (HVM) for full functionality sice 2xlarge 
-## Microkubernetes 1.15, Keptn 6.1 with Istio 1.5, Helm 1.2, Docker, Registry, OneAgent and ActiveGate
+## Ubuntu Server 20.04 LTS or 18.04 LTS  (HVM) for full functionality size 2xlarge 
+## Microkubernetes 1.15, Keptn 6.1 with Istio 1.5, Helm 1.2, Docker, Registry, Dynatrace OneAgent and Dynatrace ActiveGate
 
 ## ----  Define variables ----
 LOGFILE='/tmp/install.log'
@@ -64,7 +64,7 @@ if [ -f "$FUNCTIONS_FILE" ]; then
     echo "The functions file $FUNCTIONS_FILE exists locally, loading functions from it."
 else 
     echo "The functions file $FUNCTIONS_FILE does not exist, getting it from github."
-    curl -o functions.sh https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/functions/functions.sh
+    curl -o functions.sh https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh
 fi
 
 
