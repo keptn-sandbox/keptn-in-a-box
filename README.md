@@ -235,12 +235,12 @@ installationModulesMinimal
 
 #installationModulesFull
 ```
-The same applies for Full.
+The same applies for full.
 
 ### Change your own Domain
 By default the Script will get the public ip and give it a magic domain with nip.io like ip=1.2.3.4 will become 1-2-3-4.nip.io. This way with an NGINX Ingress Keptn and all Istio and Kubernetes services are available with subdomains via the standard HTTP ports 443 and 80.
 
-This is a sample could be if I'm running my box in a VirtualMachine in my home network:
+This example could apply if I want to run a box in a VirtualMachine in my home network:
 ```bash
 DOMAIN=192.168.0.1.nip.io
 ```
@@ -282,7 +282,7 @@ Feel free to experiment and change the versions. We will try to keep the list up
 
 
 ###  Create your custom installation
-At the beggining of the  `functions.sh` file the installation modules are listed. You can enable them in the `keptn-in-a-box.sh` file before calling the `doInstallation` function.
+At the begining of the  `functions.sh` file the installation modules are listed. You can enable them in the `keptn-in-a-box.sh` file before calling the `doInstallation` function.
 
 ### Troubleshooting and inspecting the installation
 To Inspect do 
@@ -300,7 +300,7 @@ This project was first presented to the Keptn Community in a Keptn Developer Mee
 #### 📹Here is the recording of the Video: Keptn in a Box - Delivering Autonomous Cloud out of the Box
 <a alt="Keptn in a Box - Delivering Autonomous Cloud out of the Box" href="https://www.youtube.com/watch?v=A9ZYdih0anE" target="_blank"><img src="doc/Keptn-in-a-box-delivering-Autonomous-Cloud-out-of-the-box-YouTube.png" width="500px" title="Keptn-in-a-Box"/></a>
 
-      
+
 Join the [Keptn Community](https://github.com/keptn/community) for more interesting projects and keep up to date with Keptn!
 
 
