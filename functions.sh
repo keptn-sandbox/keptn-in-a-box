@@ -333,7 +333,7 @@ keptndemoDeployCartsloadgenerator(){
 resourcesClone(){
     if [ "$resources_clone" = true ] ; then
       printInfo " ***** Clone Keptn-in-a-Box Resources ***** "
-      bashas "git clone https://github.com/sergiohinojosa/keptn-in-a-box ~/keptn-in-a-box"
+      bashas "git clone $KEPTN_IN_A_BOX_REPO ~/keptn-in-a-box"
     fi
 }
 
@@ -366,8 +366,7 @@ keptnInstall(){
       chmod +x keptn 
       mv keptn /usr/local/bin/keptn
       printInfo " ***** Install Keptn with own installer passing DOMAIN via CM **** "
-      bashas "kubectl create configmap keptn-domain --from-literal=domain=$DOMAIN"
-      bashas "echo 'y' | keptn install --platform=kubernetes --istio-install-option=Reuse --gateway=LoadBalancer --keptn-installer-image=shinojosa/keptninstaller:6.1.customdomain"
+      bashas "echo 'y' | keptn install --platform=kubernetes --istio-install-option=Reuse --ingress-install-option=Reuse --domain $DOMAIN"
     fi
 }
 
