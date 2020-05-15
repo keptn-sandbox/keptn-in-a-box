@@ -85,10 +85,13 @@ For spinning up instances automatically with AWS completely configured and set u
 ## 💾 Sizing
 
 This section will give you an idea the nedded size for your Box. But it all dependson the modules you want to install and what is your goal and usecase.
-The installer comes with 3 predefined modules: **minimal**, **default** and **full**.
+The installer comes with 3 predefined modules: **minimal**, **default** and **full**. 
 
-Below is a table for the sizing reference if you run a local VM or are virtualizing locally.
+### 🕐 Installation time
+From the testing in AWS minimal installation takes ~ 4 minutes to complete and full ~ 8 minutes. 
+
 ### AWS sizings for reference 
+Below is a table for the sizing reference if you run a local VM or are virtualizing locally.
 
 | **Size**   | **vCPUs** | **Memory (GiB)** |
 | ---------- | --------- | ---------------- |
@@ -132,7 +135,7 @@ git clone https://github.com/keptn-sandbox/keptn-in-a-box ; cd keptn-in-a-box
 sudo ./keptn-in-a-box.sh &
 ```
 
-And that was it! Yes that easy! Now if you notice is that there is an & in the command. This will send the installation job in the background. You will not see any output since stdout and stderr are piped to a logfile which is located by default in **/tmp/install.log** 
+And that was it! Yes that easy!  Now if you notice is that there is an & in the command. This will send the installation job in the background. You will not see any output since stdout and stderr are piped to a logfile which is located by default in **/tmp/install.log** 
 
 For inspecting the installation on realtime type:
 ```bash

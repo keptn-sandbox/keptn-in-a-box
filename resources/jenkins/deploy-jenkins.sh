@@ -12,8 +12,8 @@ else
     echo $DOMAIN
 fi
 
-echo "Installing Jenkins"
-helm install stable/jenkins
+#echo "Installing Jenkins"
+#helm install stable/jenkins
 
 cat ing-jenkins.yaml | \
   sed 's~domain.placeholder~'"$DOMAIN"'~' > ./gen/ing-jenkins.yaml

@@ -9,7 +9,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: left-umbrellabird-jenkins
+          serviceName: jenkins
           servicePort: 8080
         path: /
 tls:

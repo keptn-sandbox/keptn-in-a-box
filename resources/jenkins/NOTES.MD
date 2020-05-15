@@ -7,8 +7,16 @@ https://dev.to/psfeng/setting-up-jenkins-on-microk8s-4b8a
 
 https://akomljen.com/set-up-a-jenkins-ci-cd-pipeline-with-kubernetes/
 
+
+
+# Install Jenkins
+helm init
+helm repo update
+helm install stable/jenkins -n jenkins -f values.yaml
+
+
 # Print jenkins password
-kubectl get secret left-umbrellabird-jenkins -ojsonpath={.data.jenkins-admin-password} | base64 --decode
+kubectl get secret jenkins -ojsonpath={.data.jenkins-admin-password} | base64 --decode
 
 # For deleting Jenkins
 helm del --purge jenkins
@@ -20,9 +28,12 @@ https://plugins.jenkins.io/pipeline-utility-steps/
 blueocean
 
 
+> In here
 # Add the Keptn Library
 
 but as GIT and not Legacy
+
+
 
 ## https://github.com/keptn-sandbox/keptn-jenkins-library
 
