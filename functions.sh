@@ -33,7 +33,6 @@ microk8s_expose_kubernetes_api=false
 microk8s_expose_kubernetes_dashboard=false
 create_workshop_user=false
 
-
 installationModulesDefault(){
   # INSTALLATION MODULES
   update_ubuntu=true
@@ -366,7 +365,7 @@ keptnInstall(){
       chmod +x keptn 
       mv keptn /usr/local/bin/keptn
       printInfo " ***** Install Keptn with own installer passing DOMAIN via CM **** "
-      bashas "echo 'y' | keptn install --platform=kubernetes --istio-install-option=Reuse --ingress-install-option=Reuse --domain $DOMAIN"
+      bashas "echo 'y' | keptn install --platform=kubernetes --ingress-install-option=Reuse --domain $DOMAIN"
     fi
 }
 

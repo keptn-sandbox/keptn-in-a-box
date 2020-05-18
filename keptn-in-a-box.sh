@@ -32,13 +32,18 @@ DOMAIN=
 ISTIO_VERSION=1.5.1
 HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
-KEPTN_VERSION=0.6.1
-KEPTN_DT_SERVICE_VERSION=0.6.2
-KEPTN_DT_SLI_SERVICE_VERSION=0.3.1
-KEPTN_EXAMPLES_BRANCH=0.6.1
+KEPTN_VERSION=0.6.2
+KEPTN_DT_SERVICE_VERSION=0.7.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.4.1
+KEPTN_EXAMPLES_BRANCH=0.6.2
 TEASER_IMAGE="shinojosa/nginxacm"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.15/stable"
+#Definitions for development purpouses
+#KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
+#FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh"
+KEPTN_IN_A_BOX_REPO="https://github.com/sergiohinojosa/keptn-in-a-box"
+FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/sergiohinojosa/keptn-in-a-box/dev/functions.sh"
 
 ## ----  Write all to the logfile ----
 if [ "$pipe_log" = true ] ; then
@@ -65,7 +70,7 @@ if [ -f "$FUNCTIONS_FILE" ]; then
     echo "The functions file $FUNCTIONS_FILE exists locally, loading functions from it."
 else 
     echo "The functions file $FUNCTIONS_FILE does not exist, getting it from github."
-    curl -o functions.sh https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh
+    curl -o functions.sh $FUNCTIONS_FILE_REPO
 fi
 
 # Comfortable function for setting the sudo user.
@@ -81,7 +86,6 @@ shopt -s expand_aliases
 
 # --- Loading the functions in the current shell
 source $FUNCTIONS_FILE
-
 
 # --- Enable the installation Modules --- 
 # Uncomment for installing the Default 
@@ -99,5 +103,6 @@ installationModulesDefault
 #certmanager_install=true
 #certmanager_enable=true
 
+keptn_bridge_eap=false
 # *** Do Installation 
 doInstallation
