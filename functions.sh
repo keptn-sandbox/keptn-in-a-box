@@ -364,8 +364,8 @@ keptnInstall(){
       tar -xvf keptn.tar
       chmod +x keptn 
       mv keptn /usr/local/bin/keptn
-      printInfo " ***** Install Keptn with own installer passing DOMAIN via CM **** "
-      bashas "echo 'y' | keptn install --platform=kubernetes --ingress-install-option=Reuse --domain $DOMAIN"
+      printInfo " ***** Install Keptn with own installer passing DOMAIN via Parameter (omiting istio val) **** "
+      bashas "echo 'y' | keptn install --platform=kubernetes --ingress-install-option=Reuse --domain $DOMAIN --keptn-installer-image=shinojosa/keptninstaller:6.2"
     fi
 }
 
