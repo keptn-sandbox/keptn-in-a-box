@@ -251,7 +251,7 @@ microk8sEnableBasic(){
     # TODO EAdding new NGINX Ingress Image since the 0.24.0 (Shipepd by default with Micro1.15) fails due pullback. 
     #  0.24 Has over 150 Vulnerabilities. https://quay.io/repository/kubernetes-ingress-controller/nginx-ingress-controller-amd64?tag=0.24.1&tab=tags
     # TODO Remove this when upgrading to a newer Micro Version when Keptn is supports 1.16+
-    bashas "microk8s.kubectl set image daemonset.apps/nginx-ingress-microk8s-controller nginx=quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0"
+    bashas "microk8s.kubectl set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0"
     waitForAllPods
 }
 
