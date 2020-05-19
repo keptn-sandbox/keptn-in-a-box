@@ -45,6 +45,7 @@ MICROK8S_CHANNEL="1.15/stable"
 KEPTN_IN_A_BOX_REPO="https://github.com/sergiohinojosa/keptn-in-a-box"
 FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/sergiohinojosa/keptn-in-a-box/dev/functions.sh"
 
+
 ## ----  Write all to the logfile ----
 if [ "$pipe_log" = true ] ; then
   echo "Piping all output to logfile $LOGFILE"
