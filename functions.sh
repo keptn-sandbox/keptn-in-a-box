@@ -2,6 +2,7 @@
 
 # This file contains the functions for installing Keptn-in-a-Box
 # For the variables 6 version definitions do it in the keptn-in-a-box.sh file
+#TODO Comment Sections of File nicer
 
 #  Listing of all the installation modules
 verbose_mode=false
@@ -271,9 +272,9 @@ microk8sStart(){
 microk8sEnableBasic(){
     printInfoSection "Enable DNS, Storage, NGINX Ingress"
     bashas 'microk8s.enable dns storage ingress'
-    # TODO EAdding new NGINX Ingress Image since the 0.24.0 (Shipepd by default with Micro1.15)
-    #  0.24 Has over 150 Vulnerabilities. https://quay.io/repository/kubernetes-ingress-controller/nginx-ingress-controller-amd64?tag=0.24.1&tab=tags
-    # TODO Remove this when upgrading to a newer Micro Version when Keptn is supports 1.16+
+    # TODO Remove this image when upgrading to a newer Micro Version when Keptn is supports 1.16+
+    # Adding new NGINX Ingress Image since the 0.24.0 (Shipepd by default with Micro1.15)
+    # 0.24 Has over 150 Vulnerabilities. https://quay.io/repository/kubernetes-ingress-controller/nginx-ingress-controller-amd64?tag=0.24.1&tab=tags
     bashas "microk8s.kubectl set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0"
     waitForAllPods
 }
@@ -501,15 +502,12 @@ doInstallation(){
   # Record time of installation
   SECONDS=0
 
-
   validateSudo  
   setBashas
   dynatracePrintValidateCredentials
 
   enableVerbose
-  exit 1
   updateUbuntu
-
   setupProAliases 
 
   dockerInstall
@@ -543,8 +541,9 @@ doInstallation(){
   createWorkshopUser
   certmanagerEnable
   printInstalltime
+ 
   # TODO print Ingress Hosts in a nicer way
-  # TODO Add wrapper shell to load and call functions with parameters
+  # TODO Add functionality (wrapper) shell to load and call functions independently with parameters
 }
 
 printInfo "Keptn-in-a-Box installation functions loaded in the current shell"
