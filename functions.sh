@@ -5,10 +5,9 @@
 #TODO Comment Sections of File nicer
 
 #  Listing of all the installation modules
-
 # ======================================================================
 #                                                                      #
-#                Single Modules Flags                                 #
+#                Single Modules Flags                                  #
 #                                                                      #
 # ======================================================================
 verbose_mode=false
@@ -41,14 +40,13 @@ microk8s_expose_kubernetes_dashboard=false
 create_workshop_user=false
 
 
-
 # ======================================================================
 #             ------- Installation Bundles  --------                   #
 #  Each bundle has a set of modules (or functions) that will be        #
 #  activated upon installation.                                        #
 # ======================================================================
 
-installationModulesDefault(){
+installationBundleDefault(){
   # INSTALLATION MODULES
   update_ubuntu=true
   docker_install=true
@@ -78,28 +76,32 @@ installationModulesDefault(){
   keptndemo_cartsonboard=true
   microk8s_expose_kubernetes_api=true
   microk8s_expose_kubernetes_dashboard=true
+  # By default no WorkshopUser will be created
   create_workshop_user=false
 }
 
-installationModulesFull(){
-  # installation default
-  installationModulesDefault
-  enable_registry=true
+installationBundleWorkshop(){
+  installationBundleDefault
+  create_workshop_user=true
+}
 
+installationBundleAll(){
+  # installation default
+  installationBundleDefault
+  enable_registry=true
   # plus all others 
   certmanager_install=true
   certmanager_enable=true
   create_workshop_user=true
 }
 
-installationModulesMinimal(){
+installationBundleMinimal(){
   # The minimal to have a full keptn working 
   # with exposed istio and keptn over nginx 
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
   setup_proaliases=true
-
   istio_install=true
   keptn_install=true
   resources_clone=true
@@ -111,6 +113,10 @@ installationModulesMinimal(){
 
 
 
+# ======================================================================
+#          ------- Util Functions -------                              #
+#                                                                      #
+# ======================================================================
 thickline="======================================================================"
 halfline="============"
 thinline="______________________________________________________________________"
@@ -181,7 +187,12 @@ enableVerbose(){
     fi
 }
 
-# Installation functions
+# ======================================================================
+#          ----- Installation Functions -------                        #
+#  The functions will be triggered if their flag is setted to true     #
+#                                                                      #
+# ======================================================================
+
 updateUbuntu(){
     if [ "$update_ubuntu" = true ] ; then
       printInfoSection "Updating Ubuntu apt registry"
@@ -314,6 +325,8 @@ dynatraceActiveGateInstall(){
       printInfoSection "Installation of Active Gate"
       wget -nv -O activegate.sh "https://$DT_TENANT/api/v1/deployment/installer/gateway/unix/latest?Api-Token=$DT_PAAS_TOKEN&arch=x86&flavor=default"
       sh activegate.sh 
+      printInfo "removing ActiveGate installer."
+      rm activegate.sh
     fi
 }
 
@@ -374,8 +387,9 @@ keptndemoDeployCartsloadgenerator(){
 
 resourcesClone(){
     if [ "$resources_clone" = true ] ; then
-      printInfoSection "Clone Keptn-in-a-Box Resources"
-      bashas "git clone $KEPTN_IN_A_BOX_REPO ~/keptn-in-a-box"
+      KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
+      printInfoSection "Clone Keptn-in-a-Box Resources in $KEPTN_IN_A_BOX_DIR"
+      bashas "git clone $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR"
     fi
 }
 
