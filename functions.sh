@@ -5,6 +5,12 @@
 #TODO Comment Sections of File nicer
 
 #  Listing of all the installation modules
+
+# ======================================================================
+#                                                                      #
+#                Single Modules Flags                                 #
+#                                                                      #
+# ======================================================================
 verbose_mode=false
 update_ubuntu=false
 docker_install=false
@@ -33,6 +39,14 @@ keptndemo_cartsonboard=false
 microk8s_expose_kubernetes_api=false
 microk8s_expose_kubernetes_dashboard=false
 create_workshop_user=false
+
+
+
+# ======================================================================
+#             ------- Installation Bundles  --------                   #
+#  Each bundle has a set of modules (or functions) that will be        #
+#  activated upon installation.                                        #
+# ======================================================================
 
 installationModulesDefault(){
   # INSTALLATION MODULES
@@ -70,7 +84,6 @@ installationModulesDefault(){
 installationModulesFull(){
   # installation default
   installationModulesDefault
-  
   enable_registry=true
 
   # plus all others 
@@ -98,7 +111,7 @@ installationModulesMinimal(){
 
 
 
-line="======================================================================"
+thickline="======================================================================"
 halfline="============"
 thinline="______________________________________________________________________"
 
@@ -120,7 +133,7 @@ printInfo() {
 }
 
 printInfoSection(){
-  echo "[Keptn-In-A-Box|INFO] $(timestamp) |$line"
+  echo "[Keptn-In-A-Box|INFO] $(timestamp) |$thickline"
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |$halfline $1 $halfline"
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |$thinline"
 }
@@ -134,7 +147,7 @@ validateSudo(){
    printError "Keptn-in-a-Box must be run with sudo rights. Exiting installation" 
    exit 1
   fi
-  printInfo "Keptn-in-a-Box running with sudo rights." 
+  printInfo "Keptn-in-a-Box installing with sudo rights:ok" 
 }
 
 waitForAllPods(){
@@ -275,6 +288,7 @@ microk8sEnableBasic(){
     # TODO Remove this image when upgrading to a newer Micro Version when Keptn is supports 1.16+
     # Adding new NGINX Ingress Image since the 0.24.0 (Shipepd by default with Micro1.15)
     # 0.24 Has over 150 Vulnerabilities. https://quay.io/repository/kubernetes-ingress-controller/nginx-ingress-controller-amd64?tag=0.24.1&tab=tags
+    printInfoSection "Upgrading NGINX Image to (quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0) - faster, lighter and secure."
     bashas "microk8s.kubectl set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0"
     waitForAllPods
 }
@@ -289,7 +303,7 @@ microk8sEnableDashboard(){
 
 microk8sEnableRegistry(){
     if [ "$enable_registry" = true ] ; then
-      printInfoSection "Enable own Docker Registry "
+      printInfoSection "Enable own Docker Registry"
       bashas 'microk8s.enable registry'
       waitForAllPods
     fi
@@ -297,7 +311,7 @@ microk8sEnableRegistry(){
 
 dynatraceActiveGateInstall(){
     if [ "$dynatrace_activegate_install" = true ] ; then
-      printInfoSection " Installation of Active Gate "
+      printInfoSection "Installation of Active Gate"
       wget -nv -O activegate.sh "https://$DT_TENANT/api/v1/deployment/installer/gateway/unix/latest?Api-Token=$DT_PAAS_TOKEN&arch=x86&flavor=default"
       sh activegate.sh 
     fi
@@ -489,10 +503,17 @@ createWorkshopUser(){
 printInstalltime(){
     DURATION=$SECONDS
     printInfoSection "Installation complete :)"
-    printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds "
+    printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds"
     printInfo "Keptn & Kubernetes Exposed Ingress Endpoints"
     bashas "kubectl get ing -A"
 }
+
+
+# ======================================================================
+#            ---- The Installation Function -----                      #
+#  The order of the subfunctions are defined in a sequencial order     #
+#  since ones depend on another.                                       #
+# ======================================================================
 
 doInstallation(){
   echo ""
@@ -546,4 +567,5 @@ doInstallation(){
   # TODO Add functionality (wrapper) shell to load and call functions independently with parameters
 }
 
+# When the functions are loaded in the Keptn-in-a-box Shell this message will be printed out.
 printInfo "Keptn-in-a-Box installation functions loaded in the current shell"
