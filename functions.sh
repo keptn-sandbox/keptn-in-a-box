@@ -192,7 +192,6 @@ enableVerbose(){
 #  The functions will be triggered if their flag is setted to true     #
 #                                                                      #
 # ======================================================================
-
 updateUbuntu(){
     if [ "$update_ubuntu" = true ] ; then
       printInfoSection "Updating Ubuntu apt registry"
@@ -361,6 +360,8 @@ certmanagerInstall(){
 }
 
 certmanagerEnable(){
+    # TODO: Delegate single Ingresses into own directories (demo, api, jenkins)
+    # TODO: SSL Enable via Kubectl Patch
     if [ "$certmanager_enable" = true ] ; then
       printInfoSection "Installing ClusterIssuer with HTTP Letsencrypt"
       bashas "kubectl apply -f ~/keptn-in-a-box/resources/istio/clusterissuer.yaml"
@@ -386,6 +387,7 @@ keptndemoDeployCartsloadgenerator(){
 }
 
 resourcesClone(){
+    #TODO Parameterize the whole directory where to clone?
     if [ "$resources_clone" = true ] ; then
       KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
       printInfoSection "Clone Keptn-in-a-Box Resources in $KEPTN_IN_A_BOX_DIR"
