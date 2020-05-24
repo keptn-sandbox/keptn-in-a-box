@@ -1,14 +1,14 @@
 #!/bin/bash
+# This file contains the functions for installing Keptn-in-a-Box.
+# Each function contains a boolean flag so the installations 
+# can be highly customized.
+KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
+KEPTN_EXAMPLES_DIR="~/examples"
 
-# This file contains the functions for installing Keptn-in-a-Box
-# For the variables 6 version definitions do it in the keptn-in-a-box.sh file
-#TODO Comment Sections of File nicer
-
-#  Listing of all the installation modules
 # ======================================================================
-#                                                                      #
-#                Single Modules Flags                                  #
-#                                                                      #
+#       -------- Function boolean flags ----------                     #
+#  Each function flag representas a function and will be evaluated     #
+#  before execution.                                                   #
 # ======================================================================
 verbose_mode=false
 update_ubuntu=false
@@ -39,15 +39,12 @@ microk8s_expose_kubernetes_api=false
 microk8s_expose_kubernetes_dashboard=false
 create_workshop_user=false
 
-
 # ======================================================================
 #             ------- Installation Bundles  --------                   #
 #  Each bundle has a set of modules (or functions) that will be        #
 #  activated upon installation.                                        #
 # ======================================================================
-
 installationBundleDefault(){
-  # INSTALLATION MODULES
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
@@ -115,7 +112,8 @@ installationBundleMinimal(){
 
 # ======================================================================
 #          ------- Util Functions -------                              #
-#                                                                      #
+#  A set of util functions for logging, validating and                 #
+#  executing commands.                                                 # 
 # ======================================================================
 thickline="======================================================================"
 halfline="============"
@@ -132,7 +130,6 @@ setBashas(){
 timestamp() {
   date +"[%Y-%m-%d %H:%M:%S]"
 }
-
 
 printInfo() {
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |>->-> $1 <-<-<|"
@@ -189,8 +186,9 @@ enableVerbose(){
 
 # ======================================================================
 #          ----- Installation Functions -------                        #
-#  The functions will be triggered if their flag is setted to true     #
-#                                                                      #
+# The functions for installing the different modules and capabilities. #
+# Some functions depend on each other, for understanding the order of  #
+# execution see the function doInstallation() defined at the bottom    #
 # ======================================================================
 updateUbuntu(){
     if [ "$update_ubuntu" = true ] ; then
@@ -364,16 +362,16 @@ certmanagerEnable(){
     # TODO: SSL Enable via Kubectl Patch
     if [ "$certmanager_enable" = true ] ; then
       printInfoSection "Installing ClusterIssuer with HTTP Letsencrypt"
-      bashas "kubectl apply -f ~/keptn-in-a-box/resources/istio/clusterissuer.yaml"
+      bashas "kubectl apply -f $KEPTN_IN_A_BOX_DIR/resources/istio/clusterissuer.yaml"
       waitForAllPods
       printInfo "Create Valid SSL Certificates"
       if [ "$resources_route_istio_ingress" = true ] ; then
         printInfo "Route Traffic to IstioGateway and for known Istio Endpoints with SSL"
-        bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-ssl-istio.sh \"$DOMAIN\""
+        bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && bash expose-ssl-istio.sh \"$DOMAIN\""
       fi
       if [ "$microk8s_expose_kubernetes_api" = true ] ; then
         printInfo "Exposing the Kubernetes Cluster API with SSL"
-        bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api-ssl.sh \"$DOMAIN\""
+        bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-api-ssl.sh \"$DOMAIN\""
       fi
     fi
 }
@@ -389,7 +387,6 @@ keptndemoDeployCartsloadgenerator(){
 resourcesClone(){
     #TODO Parameterize the whole directory where to clone?
     if [ "$resources_clone" = true ] ; then
-      KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
       printInfoSection "Clone Keptn-in-a-Box Resources in $KEPTN_IN_A_BOX_DIR"
       bashas "git clone $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR"
     fi
@@ -398,21 +395,21 @@ resourcesClone(){
 keptnExamplesClone(){
     if [ "$keptn_examples_clone" = true ] ; then
       printInfoSection "Clone Keptn Exmaples $KEPTN_EXAMPLES_BRANCH"
-      bashas "git clone --branch $KEPTN_EXAMPLES_BRANCH https://github.com/keptn/examples.git ~/examples --single-branch"
+      bashas "git clone --branch $KEPTN_EXAMPLES_BRANCH https://github.com/keptn/examples.git $KEPTN_EXAMPLES_DIR --single-branch"
     fi
 }
 
 dynatraceSaveCredentials(){
     if [ "$dynatrace_savecredentials" = true ] ; then
       printInfoSection "Save Dynatrace credentials"
-      bashas "cd ~/keptn-in-a-box/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
     fi
 }
 
 resourcesRouteIstioIngress(){
     if [ "$resources_route_istio_ingress" = true ] ; then
       printInfoSection "Route Traffic to IstioGateway and for known Istio Endpoints to $DOMAIN"
-      bashas "cd ~/keptn-in-a-box/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && bash expose-istio.sh \"$DOMAIN\""
     fi
 }
 
@@ -454,7 +451,7 @@ keptnBridgeExpose(){
     if [ "$keptn_bridge_expose" = true ] ; then
       printInfoSection "Expose Bridge via VirtualService"
       KEPTN_DOMAIN=$(bashas "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
-      bashas "cd ~/keptn-in-a-box/resources/expose-bridge && bash expose-bridge.sh \"$KEPTN_DOMAIN\"" 
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/expose-bridge && bash expose-bridge.sh \"$KEPTN_DOMAIN\"" 
     fi
 }
 
@@ -468,28 +465,28 @@ keptnBridgeEap(){
 keptndemoUnleash(){
     if [ "$keptndemo_unleash" = true ] ; then
       printInfoSection "Deploy Unleash-Server"
-      bashas "cd ~/examples/unleash-server/ && bash ~/keptn-in-a-box/resources/demo/deploy_unleashserver.sh" 
+      bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh" 
     fi
 }
 
 dynatraceConfigureWorkloads(){
     if [ "$dynatrace_configure_workloads" = true ] ; then
       printInfoSection "Configuring Dynatrace Workloads for the Cluster (via Dynatrace and K8 API)"
-      bashas "cd ~/keptn-in-a-box/resources/dynatrace && bash configure-k8.sh" 
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash configure-k8.sh" 
     fi
 }
 
 microk8sExposeKubernetesApi(){
     if [ "$microk8s_expose_kubernetes_api" = true ] ; then
       printInfoSection "Exposing the Kubernetes Cluster API"
-      bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
     fi
 }
 
 microk8sExposeKubernetesDashboard(){
     if [ "$microk8s_expose_kubernetes_dashboard" = true ] ; then
       printInfoSection "Exposing the Kubernetes Dashboard"
-      bashas "cd ~/keptn-in-a-box/resources/k8-services && bash expose-kubernetes-dashboard.sh \"$DOMAIN\"" 
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-dashboard.sh \"$DOMAIN\"" 
     fi
 }
 
@@ -497,8 +494,8 @@ keptndemoCartsonboard(){
     if [ "$keptndemo_cartsonboard" = true ] ; then
       printInfoSection "Keptn onboarding Carts"
       #TODO Parameterize Carts Version.
-      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/onboard_carts.sh && bash ~/keptn-in-a-box/resources/demo/onboard_carts_qualitygates.sh"
-      bashas "cd ~/examples/onboarding-carts/ && bash ~/keptn-in-a-box/resources/demo/deploy_carts_0.sh"
+      bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts.sh && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts_qualitygates.sh"
+      bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_carts_0.sh"
     fi
 }
 
@@ -526,11 +523,10 @@ printInstalltime(){
 
 
 # ======================================================================
-#            ---- The Installation Function -----                      #
+#            ---- The Installation function -----                      #
 #  The order of the subfunctions are defined in a sequencial order     #
 #  since ones depend on another.                                       #
 # ======================================================================
-
 doInstallation(){
   echo ""
   printInfoSection "Init Installation at  `date` by user `whoami`"
@@ -578,7 +574,6 @@ doInstallation(){
   createWorkshopUser
   certmanagerEnable
   printInstalltime
- 
   # TODO print Ingress Hosts in a nicer way
   # TODO Add functionality (wrapper) shell to load and call functions independently with parameters
 }
