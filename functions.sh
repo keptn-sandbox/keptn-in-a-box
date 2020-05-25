@@ -78,13 +78,14 @@ installationBundleDemo(){
 }
 
 installationBundleWorkshop(){
-  installationBundleDefault
+  installationBundleDemo
   create_workshop_user=true
 }
 
 installationBundleAll(){
   # installation default
-  installationBundleDefault
+  installationBundleWorkshop
+  
   enable_registry=true
   # plus all others 
   certmanager_install=true
