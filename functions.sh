@@ -30,6 +30,7 @@ dynatrace_configure_monitoring=false
 dynatrace_activegate_install=false
 dynatrace_configure_workloads=false
 keptn_bridge_expose=false
+#TODO Remove Bridge EAP?
 keptn_bridge_eap=false
 keptndemo_teaser_pipeline=false
 keptndemo_cartsload=false
@@ -44,7 +45,7 @@ create_workshop_user=false
 #  Each bundle has a set of modules (or functions) that will be        #
 #  activated upon installation.                                        #
 # ======================================================================
-installationBundleDefault(){
+installationBundleDemo(){
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
@@ -66,7 +67,6 @@ installationBundleDefault(){
   dynatrace_activegate_install=true
   dynatrace_configure_workloads=true
   keptn_bridge_expose=true
-  keptn_bridge_eap=true
   keptndemo_teaser_pipeline=true
   keptndemo_cartsload=true
   keptndemo_unleash=true
@@ -92,7 +92,7 @@ installationBundleAll(){
   create_workshop_user=true
 }
 
-installationBundleMinimal(){
+installationBundleKeptnOnly(){
   # The minimal to have a full keptn working 
   # with exposed istio and keptn over nginx 
   update_ubuntu=true
