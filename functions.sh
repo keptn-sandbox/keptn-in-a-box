@@ -79,6 +79,7 @@ installationBundleDemo(){
 
 installationBundleWorkshop(){
   installationBundleDemo
+  enable_registry=true
   create_workshop_user=true
 }
 
@@ -102,8 +103,15 @@ installationBundleKeptnOnly(){
   setup_proaliases=true
   istio_install=true
   keptn_install=true
+  helm_install=true
+  keptn_examples_clone=true
   resources_clone=true
   resources_route_istio_ingress=true
+  dynatrace_savecredentials=true
+  dynatrace_configure_monitoring=true
+  dynatrace_activegate_install=true
+  dynatrace_configure_workloads=true
+
   keptn_bridge_expose=true
   microk8s_expose_kubernetes_api=true
   keptndemo_teaser_pipeline=true
@@ -207,7 +215,7 @@ dynatracePrintValidateCredentials(){
     printInfo "Cleaned tenant=$DT_TENANT" 
     DT_API_TOKEN=$APITOKEN
     DT_PAAS_TOKEN=$PAASTOKEN
-    printInfo ""
+    printInfo "-------------------------------"
     printInfo "Dynatrace Tenant: $DT_TENANT"
     printInfo "Dynatrace API Token: $DT_API_TOKEN"
     printInfo "Dynatrace PaaS Token: $DT_PAAS_TOKEN"
@@ -416,7 +424,7 @@ resourcesRouteIstioIngress(){
 
 keptnInstall(){
     if [ "$keptn_install" = true ] ; then
-      printInfoSection "Download & Configure Keptn Client $KEPTN_VERSION"
+      printInfoSection "Download & Install Keptn $KEPTN_VERSION"
       wget -q -O keptn.tar "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/${KEPTN_VERSION}_keptn-linux.tar"
       tar -xvf keptn.tar
       chmod +x keptn 
