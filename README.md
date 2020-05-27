@@ -51,7 +51,7 @@ For spinning up instances automatically with AWS completely configured and set u
     </p>
     </td>
     <td>
-      <img src="doc/keptn-in-a-box.png" width="700px" title="Keptn-in-a-Box"> 
+      <img src="doc/keptn-in-a-box.png" width="500px" title="Keptn-in-a-Box"> 
     </td>
   </tr>
 </table>
