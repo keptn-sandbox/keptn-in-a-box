@@ -24,6 +24,7 @@
 #      ----- Variables Definitions -----           #
 # ==================================================
 LOGFILE='/tmp/install.log'
+touch $LOGFILE
 chmod 775 $LOGFILE
 pipe_log=true
 
@@ -57,7 +58,7 @@ ISTIO_VERSION=1.5.1
 HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
 KEPTN_VERSION=0.6.2
-KEPTN_DT_SERVICE_VERSION=0.7.0
+KEPTN_DT_SERVICE_VERSION=0.7.1
 KEPTN_DT_SLI_SERVICE_VERSION=0.4.1
 KEPTN_EXAMPLES_BRANCH=0.6.2
 TEASER_IMAGE="shinojosa/nginxacm"
