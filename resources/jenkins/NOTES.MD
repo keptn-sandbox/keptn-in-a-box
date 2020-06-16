@@ -25,11 +25,23 @@ https://plugins.jenkins.io/pipeline-utility-steps/
 blueocean
 
 
-> In here
-# Add the Keptn Library
+# !!!!Add the Keptn Library
+
+>Global Pipeline Libraries
+keptn-library
+master
+
+url= https://github.com/keptn-sandbox/keptn-jenkins-library.git
+# Add the Global ENV Variables!!!??
+> Global ENV Variables
+
+KEPTN_API_TOKEN
+KEPTN_BRIDGE
+KEPTN_ENDPOINT
+
+
 
 but as GIT and not Legacy
-
 
 
 ## https://github.com/keptn-sandbox/keptn-jenkins-library
@@ -63,9 +75,9 @@ https://github.com/keptn-sandbox/keptn-jenkins-library
 tag evalservice
 
 
-# http://18-130-213-16.nip.io/easytravel/rest/journeys/recommendation/  -> EasytravelService
+# http://xxxxx.nip.io/easytravel/rest/journeys/recommendation/  -> EasytravelService
 
-http://18-130-213-16.nip.io
+http://xxxxx.nip.io
 /easytravel/rest/journeys/recommendation/:recomendation;/easytravel/rest/config/nodejsurl:nodeUrl;/easytravel/rest/config/blogurl:blogUrl;/easytravel/rest/bookings/recent/5:recentBookings
 
 /easytravel/rest/config/nodejsurl
@@ -75,9 +87,7 @@ http://18-130-213-16.nip.io
 /:homepage;/echo:echo;/version:version;/invoke?url=www.keptn.sh:invoke
 
 
-curl -X GET -H " x-token: J07C4MQg5G8+C1KmJrwAMA==" -H "Content-Type: application/json" https://api.keptn.3-10-178-206.nip.io/v1/event?keptnContext=01c2b624-105b-4537-90a4-d0ca2ffa9b48&type=sh.keptn.events.evaluation-done
-
-J07C4MQg5G8+C1KmJrwAMA==
+curl -X GET -H " x-token: " -H "Content-Type: application/json" https://api.keptn.xxxxx.nip.io/v1/event?keptnContext=xxxx--xxx&type=sh.keptn.events.evaluation-done
 
 -H "Content-Type: application/json"
 

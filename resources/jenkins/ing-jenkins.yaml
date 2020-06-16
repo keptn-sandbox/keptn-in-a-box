@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: jenkins-ingress
-  namespace: default
+  namespace: jenkins
 spec:
   rules:
   - host: jenkins.domain.placeholder

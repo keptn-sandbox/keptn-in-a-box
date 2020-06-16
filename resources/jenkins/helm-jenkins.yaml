@@ -1,13 +1,14 @@
 # Default values for jenkins.
 # This is a YAML-formatted file.
 # Declare name/value pairs to be passed into your templates.
-# name: value
+#name: 
 
 ## Overrides for generated resource names
 # See templates/_helpers.tpl
-# nameOverride:
-# fullnameOverride:
-# namespaceOverride:
+
+nameOverride: jenkins
+fullnameOverride: jenkins
+namespaceOverride: jenkins
 
 # For FQDN resolving of the master service. Change this value to match your existing configuration.
 # ref: https://github.com/kubernetes/dns/blob/master/docs/specification.md
@@ -125,7 +126,7 @@ master:
   # Set min/max heap here if needed with:
   # javaOpts: "-Xms512m -Xmx512m"
   # jenkinsOpts: ""
-  # jenkinsUrl: ""
+  jenkinsUrl: "http://jenkins.domain.placeholder"
   # If you set this prefix and use ingress controller then you might want to set the ingress path below
   # jenkinsUriPrefix: "/jenkins"
   # Enable pod security context (must be `true` if runAsUser or fsGroup are set)
@@ -215,7 +216,7 @@ master:
     - http_request:1.8.26
     - pipeline-utility-steps:2.5.0
     - blueocean:1.23.1
-  #  - kubernetes:1.25.3
+    - kubernetes:1.25.3
   #  - workflow-job:2.38
   #  - workflow-aggregator:2.6
   #  - credentials-binding:1.21
@@ -466,13 +467,16 @@ agent:
   #   mountPath: /var/myapp/mysecret
   #   secretName: mysecret
   # Pod-wide ennvironment, these vars are visible to any container in the agent pod
-  envVars: []
-  # - name: PATH
-  #   value: /usr/local/bin
+  envVars: 
+   - name: KEPTN_API_TOKEN
+     value: "keptn-token"
+   - name: KEPTN_BRIDGE
+     value: "keptn-bridge"
+   - name: KEPTN_ENDPOINT
+     value: "keptn-endpoint"
   nodeSelector: {}
   # Key Value selectors. Ex:
   # jenkins-agent: v1
-
   # Executed command when side container gets started
   command:
   args: "${computer.jnlpmac} ${computer.name}"
@@ -641,10 +645,10 @@ backup:
    # jenkinsgcp:
   ## Use this key for GCP credentials
      # gcpcredentials: credentials.json
-  env: []
+  env:
   # Example environment variable required for AWS credentials chain
-  # - name: "AWS_REGION"
-  #   value: "us-east-1"
+  #- name: "AWS_REGION"
+  #  value: "us-east-1"
   resources:
     requests:
       memory: 1Gi

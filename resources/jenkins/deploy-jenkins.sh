@@ -12,10 +12,15 @@ else
     echo $DOMAIN
 fi
 
-#echo "Installing Jenkins"
-#helm install stable/jenkins
+echo "Create namespace jenkins"
+kubectl create ns jenkins
 
-cat ing-jenkins.yaml | \
-  sed 's~domain.placeholder~'"$DOMAIN"'~' > ./gen/ing-jenkins.yaml
+echo "Replace Values for Ingress and Jenkins URL"
+sed 's~domain.placeholder~'"$DOMAIN"'~' helm-jenkins.yaml > gen/helm-jenkins.yaml
+sed 's~domain.placeholder~'"$DOMAIN"'~' ing-jenkins.yaml > gen/ing-jenkins.yaml
 
+echo "Installing Jenkins via Helm"
+helm install stable/jenkins -n jenkins -f gen/helm-jenkins.yaml
+
+echo "Create Jenkins Ingress"
 kubectl apply -f gen/ing-jenkins.yaml
