@@ -1,6 +1,5 @@
 
 
-
 https://github.com/helm/charts/tree/master/stable/jenkins
 
 https://dev.to/psfeng/setting-up-jenkins-on-microk8s-4b8a
@@ -8,17 +7,15 @@ https://dev.to/psfeng/setting-up-jenkins-on-microk8s-4b8a
 https://akomljen.com/set-up-a-jenkins-ci-cd-pipeline-with-kubernetes/
 
 
-
 # Install Jenkins
 helm init
 helm repo update
 helm install stable/jenkins -n jenkins -f values.yaml
 
-
 # Print jenkins password
 kubectl get secret jenkins -ojsonpath={.data.jenkins-admin-password} | base64 --decode
 
-# For deleting Jenkins
+# For deleting Jenkins (and the deleted deployment)
 helm del --purge jenkins
 
 # Add the plugins

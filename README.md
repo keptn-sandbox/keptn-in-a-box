@@ -58,6 +58,10 @@ For spinning up instances automatically with AWS completely configured and set u
 
 
 
+## 📚Tutorial
+For a step by step understanding of how Keptn-in-a-Box works and how to use it, take a look at the Keptn in a Box tutorial [https://tutorials.keptn.sh/tutorials/keptn-in-a-box/)](https://tutorials.keptn.sh/tutorials/keptn-in-a-box)
+
+
 ## Prerequisites
 
 - [Ubuntu](https://ubuntu.com/#download) with internet connection (tested on 18.04 LTS and 20.04 LTS)
@@ -100,7 +104,7 @@ Below is a table for the sizing reference if you run a local VM or are virtualiz
 | t2.xlarge  | 4         | 16               |
 | t2.2xlarge | 8         | 32               |
 
-### installationModulesMinimal
+### installationBundleKeptnOnly
 The minimum required for running a Single Node Kubernetes cluster with keptn full features is a t2.medium (2 vCPU and 4 Gib of RAM) and 10 Gigabytes of disk space. If you feel frisky go for this size but the experience won't be the best. 
 
 Adding more RAM and more CPUs will speed up things. Depending what you want to achieve. Also consider that you'll have available less than 2 Gigs of disk space. This is the available disk after a minimal installation.
@@ -112,10 +116,10 @@ Filesystem      Size  Used Avail Use% Mounted on
 ```
 
 
-### installationModulesDefault
+### installationBundleDemo
 The minimum required for running the default modules is t2.large with 13 Gigs of Disk space. We recommend 20 Gigs and t2.xlarge for the best experience.
 
-### installationModulesFull
+### installationBundleAll
 The minimum required for running the default modules is t2.large with 13 Gigs of Disk space.We recommend 20 Gigs and t2.2xlarge for the best experience.
 
 ## Get started in 1 - 2 - 3
@@ -144,7 +148,7 @@ less +F /tmp/install.log
 
 #####  The installed modules
 
-The default installation is **installationModulesDefault** which sets the control flag to true to the following modules:
+The default installation is **installationBundlesDefault** which sets the control flag to true to the following modules:
 
 
 ```bash
