@@ -25,44 +25,15 @@ https://plugins.jenkins.io/pipeline-utility-steps/
 blueocean
 
 
-# !!!!Add the Keptn Library
+# Add the Keptn Library - OK JCAAC
 
->Global Pipeline Libraries
-keptn-library
-master
-
+# Global Pipeline Libraries
 url= https://github.com/keptn-sandbox/keptn-jenkins-library.git
-# Add the Global ENV Variables!!!??
-> Global ENV Variables
-
+# Add the Global ENV Variables
+#  Global ENV Variables
 KEPTN_API_TOKEN
 KEPTN_BRIDGE
 KEPTN_ENDPOINT
-
-
-
-but as GIT and not Legacy
-
-
-## https://github.com/keptn-sandbox/keptn-jenkins-library
-
-## add the variables als ENV variables
-KEPTN_ENDPOINT=https://api.keptn.$(kubectl get cm keptn-domain -n keptn -ojsonpath={.data.app_domain})
-KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
-
-KEPTN_ENDPOINT=https://api.keptn.domain.placeholder
-KEPTN_BRIDGE=https://bridge.keptn.domain.placeholder
-KEPTN_API_TOKEN=xxxxx
-
-Once you have everything configured use it in your Jenkins Pipeline like this
-
-@library('keptn-library')
-import sh.keptn.Keptn
-def keptn = new sh.keptn.Keptn()
-
-.......?? now what?
-
-https://github.com/keptn-sandbox/jenkins-tutorial
 
 # Copy pipeline
 

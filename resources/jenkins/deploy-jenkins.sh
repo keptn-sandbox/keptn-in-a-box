@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 if [ $# -eq 1 ]; then
     # Read JSON and set it in the CREDS variable 
@@ -16,8 +16,22 @@ echo "Create namespace jenkins"
 kubectl create ns jenkins
 
 echo "Replace Values for Ingress and Jenkins URL"
-sed 's~domain.placeholder~'"$DOMAIN"'~' helm-jenkins.yaml > gen/helm-jenkins.yaml
+
+KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
+KEPTN_ENDPOINT="https://api.keptn.$DOMAIN"
+KEPTN_BRIDGE="http://bridge.keptn.$DOMAIN"
+
+sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
+    -e 's~KEPTN_API_TOKEN.placeholder~'"$KEPTN_API_TOKEN"'~' \
+    -e 's~KEPTN_ENDPOINT.placeholder~'"$KEPTN_ENDPOINT"'~' \
+    -e 's~KEPTN_BRIDGE.placeholder~'"$KEPTN_BRIDGE"'~' \
+    helm-jenkins.yaml > gen/helm-jenkins.yaml
+
 sed 's~domain.placeholder~'"$DOMAIN"'~' ing-jenkins.yaml > gen/ing-jenkins.yaml
+
+helm init
+
+helm repo update
 
 echo "Installing Jenkins via Helm"
 helm install stable/jenkins -n jenkins -f gen/helm-jenkins.yaml

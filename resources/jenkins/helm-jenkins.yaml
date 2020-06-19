@@ -77,7 +77,7 @@ master:
   #      command:
   #      - "uname"
   #      - "-a"
-  numExecutors: 0
+  numExecutors: 5
   customJenkinsLabels: []
   # configAutoReload requires UseSecurity is set to true:
   useSecurity: true
@@ -126,7 +126,7 @@ master:
   # Set min/max heap here if needed with:
   # javaOpts: "-Xms512m -Xmx512m"
   # jenkinsOpts: ""
-  jenkinsUrl: "http://jenkins.domain.placeholder"
+  jenkinsUrl: "http://jenkins.DOMAIN.placeholder"
   # If you set this prefix and use ingress controller then you might want to set the ingress path below
   # jenkinsUriPrefix: "/jenkins"
   # Enable pod security context (must be `true` if runAsUser or fsGroup are set)
@@ -217,11 +217,11 @@ master:
     - pipeline-utility-steps:2.5.0
     - blueocean:1.23.1
     - kubernetes:1.25.3
+    - configuration-as-code:1.41
   #  - workflow-job:2.38
   #  - workflow-aggregator:2.6
   #  - credentials-binding:1.21
   #  - git:4.2.2
-  #  - configuration-as-code:1.39
 
   # Enable to always override the installed plugins with the values of 'master.installPlugins' on upgrade or redeployment.
   # overwritePlugins: true
@@ -259,12 +259,34 @@ master:
   # become the content of the configuration yaml file.  The first line after this is a JCasC root element, eg jenkins, credentials,
   # etc.  Best reference is https://<jenkins_url>/configuration-as-code/reference.  The example below creates a welcome message:
   JCasC:
-    enabled: false
+    enabled: true
     defaultConfig: false
-    configScripts: {}
-    # welcome-message: |
-    #   jenkins:
-    #     systemMessage: Welcome to our CI\CD server.  This Jenkins is configured and managed 'as code'.
+    configScripts:
+      welcome-message: |
+       jenkins:
+         systemMessage:   🚀 Welcome to your Keptn in a Box 📦 CI\CD server! 
+                        This Jenkins is configured and managed 'as code' 🛠
+         globalNodeProperties:
+         - envVars:
+             env:
+             - key: KEPTN_API_TOKEN
+               value: KEPTN_API_TOKEN.placeholder
+             - key: KEPTN_BRIDGE
+               value: KEPTN_BRIDGE.placeholder
+             - key: KEPTN_ENDPOINT
+               value: KEPTN_ENDPOINT.placeholder
+      keptn-library:  |
+       unclassified: 
+         globalLibraries:
+           libraries:
+           - defaultVersion: "master"
+             name: "keptn-library"
+             retriever:
+               modernSCM:
+                 scm:
+                   git:
+                     remote: "https://github.com/keptn-sandbox/keptn-jenkins-library.git"
+                    
   # Optionally specify additional init-containers
   customInitContainers: []
   # - name: custom-init
@@ -467,13 +489,7 @@ agent:
   #   mountPath: /var/myapp/mysecret
   #   secretName: mysecret
   # Pod-wide ennvironment, these vars are visible to any container in the agent pod
-  envVars: 
-   - name: KEPTN_API_TOKEN
-     value: "keptn-token"
-   - name: KEPTN_BRIDGE
-     value: "keptn-bridge"
-   - name: KEPTN_ENDPOINT
-     value: "keptn-endpoint"
+  #envVars: 
   nodeSelector: {}
   # Key Value selectors. Ex:
   # jenkins-agent: v1
