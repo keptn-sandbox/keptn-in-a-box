@@ -48,7 +48,8 @@ https://raw.githubusercontent.com/keptn-sandbox/jenkins-tutorial/master/usecases
 
 # MZ
 # Dashboard
-
+http://18-130-14-238.nip.io/easytravel
+/:home;/rest/users/random:users;/rest/bookings/recent/3:bookings;/rest/journeys/special-offers:special-offers
 
 curl -X GET -H " x-token: " -H "Content-Type: application/json" https://api.keptn.xxxxx.nip.io/v1/event?keptnContext=xxxx--xxx&type=sh.keptn.events.evaluation-done
 
