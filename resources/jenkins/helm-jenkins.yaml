@@ -218,6 +218,7 @@ master:
     - blueocean:1.23.1
     - kubernetes:1.25.3
     - configuration-as-code:1.41
+    - job-dsl:1.77
   #  - workflow-job:2.38
   #  - workflow-aggregator:2.6
   #  - credentials-binding:1.21
@@ -250,7 +251,6 @@ master:
   jobs: {}
   #  test: |-
   #    <<xml here>>
-
   # Below is the implementation of Jenkins Configuration as Code.  Add a key under configScripts for each configuration area,
   # where each corresponds to a plugin or section of the UI.  Each key (prior to | character) is just a label, and can be any value.
   # Keys are only used to give the section a meaningful name.  The only restriction is they may only contain RFC 1123 \ DNS label
@@ -286,6 +286,63 @@ master:
                  scm:
                    git:
                      remote: "https://github.com/keptn-sandbox/keptn-jenkins-library.git"
+      pipeline-qualitygates:  | 
+        jobs:
+          - script: >
+              pipelineJob('🚦QualityGates validation') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/acm-workshops/jenkins-tutorial.git')
+                        }
+                        branch('*/master')
+                      }
+                    }
+                    scriptPath 'usecases/uc1_qualitygates/keptnevaluation.Jenkinsfile'
+                    lightweight()
+                  }
+                }
+              }
+      pipeline-qualitygates-test:  | 
+        jobs:
+          - script: >
+              pipelineJob(' ✅ Test & QG validation') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/acm-workshops/jenkins-tutorial.git')
+                        }
+                        branch('*/master')
+                      }
+                    }
+                    scriptPath 'usecases/uc1_qualitygates/keptnevaluatewithtest.Jenkinsfile'
+                    lightweight()
+                  }
+                }
+              }
+      pipeline-qualitygates-performance:  | 
+        jobs:
+          - script: >
+              pipelineJob(' 🏁🚦 Performance Test & QG validation') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/acm-workshops/jenkins-tutorial.git')
+                        }
+                        branch('*/master')
+                      }
+                    }
+                    scriptPath 'usecases/uc1_qualitygates/keptnperftesting.Jenkinsfile'
+                    lightweight()
+                  }
+                }
+              }
                     
   # Optionally specify additional init-containers
   customInitContainers: []

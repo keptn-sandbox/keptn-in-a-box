@@ -1,9 +1,7 @@
 
 
 https://github.com/helm/charts/tree/master/stable/jenkins
-
 https://dev.to/psfeng/setting-up-jenkins-on-microk8s-4b8a
-
 https://akomljen.com/set-up-a-jenkins-ci-cd-pipeline-with-kubernetes/
 
 
@@ -27,6 +25,7 @@ blueocean
 
 # Add the Keptn Library - OK JCAAC
 
+
 # Global Pipeline Libraries
 url= https://github.com/keptn-sandbox/keptn-jenkins-library.git
 # Add the Global ENV Variables
@@ -35,27 +34,20 @@ KEPTN_API_TOKEN
 KEPTN_BRIDGE
 KEPTN_ENDPOINT
 
-# Copy pipeline
+
+# Add Pipelines
+
+https://github.com/acm-workshops/jenkins-tutorial/blob/master/usecases/uc1_qualitygates/keptnevaluation.Jenkinsfile
+
+
 
 https://raw.githubusercontent.com/keptn-sandbox/jenkins-tutorial/master/usecases/uc1_qualitygates/keptnevaluatewithtest.Jenkinsfile
 
-Git
 
-https://github.com/keptn-sandbox/keptn-jenkins-library
+# tag evalservice
 
-tag evalservice
-
-
-# http://xxxxx.nip.io/easytravel/rest/journeys/recommendation/  -> EasytravelService
-
-http://xxxxx.nip.io
-/easytravel/rest/journeys/recommendation/:recomendation;/easytravel/rest/config/nodejsurl:nodeUrl;/easytravel/rest/config/blogurl:blogUrl;/easytravel/rest/bookings/recent/5:recentBookings
-
-/easytravel/rest/config/nodejsurl
-/easytravel/rest/config/blogurl
-/easytravel/rest/bookings/recent/5
-
-/:homepage;/echo:echo;/version:version;/invoke?url=www.keptn.sh:invoke
+# MZ
+# Dashboard
 
 
 curl -X GET -H " x-token: " -H "Content-Type: application/json" https://api.keptn.xxxxx.nip.io/v1/event?keptnContext=xxxx--xxx&type=sh.keptn.events.evaluation-done
