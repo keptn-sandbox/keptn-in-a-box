@@ -4,6 +4,8 @@ https://github.com/helm/charts/tree/master/stable/jenkins
 https://dev.to/psfeng/setting-up-jenkins-on-microk8s-4b8a
 https://akomljen.com/set-up-a-jenkins-ci-cd-pipeline-with-kubernetes/
 
+# SRE https://github.com/keptn/spec/blob/master/sre.md#remediation-action
+
 
 # Install Jenkins
 helm init
@@ -50,6 +52,8 @@ https://raw.githubusercontent.com/keptn-sandbox/jenkins-tutorial/master/usecases
 # Dashboard
 http://18-130-14-238.nip.io/easytravel
 /:home;/rest/users/random:users;/rest/bookings/recent/3:bookings;/rest/journeys/special-offers:special-offers
+
+/:homepage;/contact:contact;/login:login;/rest/bookings/recent/3:bookings;/rest/journeys/special-offers:special-offers
 
 curl -X GET -H " x-token: " -H "Content-Type: application/json" https://api.keptn.xxxxx.nip.io/v1/event?keptnContext=xxxx--xxx&type=sh.keptn.events.evaluation-done
 

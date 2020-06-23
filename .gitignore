@@ -2,3 +2,7 @@
 *~*.md
 # No generated file
 **/gen/**
+# loc files
+**-loc**
+# No mounted file shares
+**sshfs**

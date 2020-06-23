@@ -219,8 +219,8 @@ master:
     - kubernetes:1.25.3
     - configuration-as-code:1.41
     - job-dsl:1.77
-  #  - workflow-job:2.38
-  #  - workflow-aggregator:2.6
+    - workflow-job:2.38
+    - workflow-aggregator:2.6
   #  - credentials-binding:1.21
   #  - git:4.2.2
 
@@ -290,7 +290,7 @@ master:
       pipeline-qualitygates:  | 
         jobs:
           - script: >
-              pipelineJob('1.- QualityGate validation') {
+              pipelineJob('01-qualitygate-evaluation') {
                 definition {
                   cpsScm {
                     scm {
@@ -309,7 +309,7 @@ master:
       pipeline-qualitygates-test:  | 
         jobs:
           - script: >
-              pipelineJob('2.- Simple Test and QualityGate validation') {
+              pipelineJob('02-simpletest-qualitygate') {
                 definition {
                   cpsScm {
                     scm {
@@ -328,7 +328,7 @@ master:
       pipeline-qualitygates-performance:  | 
         jobs:
           - script: >
-              pipelineJob('3.- Performance Test and QualityGate validation') {
+              pipelineJob('03-performancetest-qualitygate') {
                 definition {
                   cpsScm {
                     scm {
