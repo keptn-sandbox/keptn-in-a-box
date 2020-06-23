@@ -1,0 +1,88 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # We allow HTTP and HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Instructs the controller to send TLS connections directly 
+    #to the backend instead of letting NGINX decrypt the communication
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    # In some scenarios the exposed URL in the backend service differs
+    # from the specified path in the Ingress rule. Without a
+    # rewrite any request will return 404
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  name: istio-ingress
+  namespace: istio-system
+spec:
+  rules:
+  # Wildcard routing for all exposed istio services. 
+  # Kubernetes Fake Certificate will be used if hostname 
+  # (SNI) does not match the rules below. 
+  - http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /
+  # On base domain we have NGINX running.
+  # Deploy Keptn Teaser 
+  - host: domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: homepage
+          servicePort: 80
+        path: /
+  - host: api.keptn.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /
+  - host: bridge.keptn.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /
+  - host: unleash.unleash-dev.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /
+  - host: carts.sockshop-dev.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /
+  - host: carts.sockshop-staging.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /
+  - host: carts.sockshop-production.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /
+  tls:
+  - hosts:
+    - domain.placeholder
+    - api.keptn.domain.placeholder
+    - bridge.keptn.domain.placeholder
+    - carts.sockshop-dev.domain.placeholder
+    - carts.sockshop-staging.domain.placeholder
+    - carts.sockshop-production.domain.placeholder
+    - unleash.unleash-dev.domain.placeholder
+    #secretName: domain

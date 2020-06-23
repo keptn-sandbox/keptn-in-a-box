@@ -1,9 +1,42 @@
 #!/bin/bash
 # This file contains the functions for installing Keptn-in-a-Box.
-# Each function contains a boolean flag so the installations 
+# Each function contains a boolean flag so the installations
 # can be highly customized.
+
+# ==================================================
+#      ----- Components Versions -----             #
+# ==================================================
+ISTIO_VERSION=1.5.1
+HELM_VERSION=2.12.3
+CERTMANAGER_VERSION=0.14.0
+KEPTN_VERSION=0.6.2
+KEPTN_DT_SERVICE_VERSION=0.7.1
+KEPTN_DT_SLI_SERVICE_VERSION=0.4.1
+KEPTN_EXAMPLES_BRANCH=0.6.2
+TEASER_IMAGE="shinojosa/nginxacm"
+KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
+MICROK8S_CHANNEL="1.15/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
+KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
+FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh"
+
+KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
+KEPTN_EXAMPLES_DIR="~/examples"
+
+# - The user to run the commands from. Will be overwritten when executing this shell with sudo, this is just needed when spinning machines programatically and running the script with root without an interactive shell 
+USER="ubuntu"
+
+# Comfortable function for setting the sudo user.
+if [ -n "${SUDO_USER}" ] ; then
+  USER=$SUDO_USER
+fi
+echo "running sudo commands as $USER"
+
+# Wrapper for runnig commands for the real owner and not as root
+alias bashas="sudo -H -u ${USER} bash -c"
+# Expand aliases for non-interactive shell
+shopt -s expand_aliases
 
 # ======================================================================
 #       -------- Function boolean flags ----------                     #
@@ -45,7 +78,7 @@ create_workshop_user=false
 #  Each bundle has a set of modules (or functions) that will be        #
 #  activated upon installation.                                        #
 # ======================================================================
-installationBundleDemo(){
+installationBundleDemo() {
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
@@ -77,26 +110,26 @@ installationBundleDemo(){
   create_workshop_user=false
 }
 
-installationBundleWorkshop(){
+installationBundleWorkshop() {
   installationBundleDemo
   enable_registry=true
   create_workshop_user=true
 }
 
-installationBundleAll(){
+installationBundleAll() {
   # installation default
   installationBundleWorkshop
-  
+
   enable_registry=true
-  # plus all others 
+  # plus all others
   certmanager_install=true
   certmanager_enable=true
   create_workshop_user=true
 }
 
-installationBundleKeptnOnly(){
-  # The minimal to have a full keptn working 
-  # with exposed istio and keptn over nginx 
+installationBundleKeptnOnly() {
+  # The minimal to have a full keptn working
+  # with exposed istio and keptn over nginx
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
@@ -117,18 +150,33 @@ installationBundleKeptnOnly(){
   keptndemo_teaser_pipeline=true
 }
 
+installationBundleKeptnQualityGates() {
+  # The minimal to have a full keptn working
+  # with exposed istio and keptn over nginx
+  update_ubuntu=true
+  docker_install=true
+  microk8s_install=true
+  setup_proaliases=true
+  keptn_install_qualitygates=true
+  resources_clone=true
+  resources_route_istio_ingress=true
+  #TODO Dynatrace Integration?
+  keptn_bridge_expose=true
 
+  # Should be fine
+  microk8s_expose_kubernetes_api=true
+}
 
 # ======================================================================
 #          ------- Util Functions -------                              #
 #  A set of util functions for logging, validating and                 #
-#  executing commands.                                                 # 
+#  executing commands.                                                 #
 # ======================================================================
 thickline="======================================================================"
 halfline="============"
 thinline="______________________________________________________________________"
 
-setBashas(){
+setBashas() {
   # Wrapper for runnig commands for the real owner and not as root
   alias bashas="sudo -H -u ${USER} bash -c"
   # Expand aliases for non-interactive shell
@@ -144,7 +192,7 @@ printInfo() {
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |>->-> $1 <-<-<|"
 }
 
-printInfoSection(){
+printInfoSection() {
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |$thickline"
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |$halfline $1 $halfline"
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |$thinline"
@@ -154,43 +202,43 @@ printError() {
   echo "[Keptn-In-A-Box|ERROR] $(timestamp) |x-x-> $1 <-x-x|"
 }
 
-validateSudo(){
+validateSudo() {
   if [[ $EUID -ne 0 ]]; then
-   printError "Keptn-in-a-Box must be run with sudo rights. Exiting installation" 
-   exit 1
+    printError "Keptn-in-a-Box must be run with sudo rights. Exiting installation"
+    exit 1
   fi
-  printInfo "Keptn-in-a-Box installing with sudo rights:ok" 
+  printInfo "Keptn-in-a-Box installing with sudo rights:ok"
 }
 
-waitForAllPods(){
-    RETRY=0; 
-    RETRY_MAX=24; 
-    # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
-    CMD="bashas \"kubectl get pods -A 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
-    printInfo "Checking and wait for all pods to run."
-    while [[ $RETRY -lt $RETRY_MAX ]]; do
-      pods_not_ok=$(eval "$CMD")
-      if [[ "$pods_not_ok" == '0' ]]; then
+waitForAllPods() {
+  RETRY=0
+  RETRY_MAX=24
+  # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
+  CMD="bashas \"kubectl get pods -A 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
+  printInfo "Checking and wait for all pods to run."
+  while [[ $RETRY -lt $RETRY_MAX ]]; do
+    pods_not_ok=$(eval "$CMD")
+    if [[ "$pods_not_ok" == '0' ]]; then
       printInfo "All pods are running."
       break
-      fi
-      RETRY=$[$RETRY+1]
-      printInfo "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $pods_not_ok PoDs to finish or be in state Running ..."
-      sleep 10
-    done
-
-    if [[ $RETRY == $RETRY_MAX ]]; then
-      printError "Pods in namespace ${NAMESPACE} are not running. Exiting installation..."
-      bashas "kubectl get pods --field-selector=status.phase!=Running -A"
-      exit 1
     fi
+    RETRY=$(($RETRY + 1))
+    printInfo "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $pods_not_ok PoDs to finish or be in state Running ..."
+    sleep 10
+  done
+
+  if [[ $RETRY == $RETRY_MAX ]]; then
+    printError "Pods in namespace ${NAMESPACE} are not running. Exiting installation..."
+    bashas "kubectl get pods --field-selector=status.phase!=Running -A"
+    exit 1
+  fi
 }
 
-enableVerbose(){
-    if [ "$verbose_mode" = true ] ; then
-      printInfo "Activating verbose mode"
-      set -x
-    fi
+enableVerbose() {
+  if [ "$verbose_mode" = true ]; then
+    printInfo "Activating verbose mode"
+    set -x
+  fi
 }
 
 # ======================================================================
@@ -199,20 +247,20 @@ enableVerbose(){
 # Some functions depend on each other, for understanding the order of  #
 # execution see the function doInstallation() defined at the bottom    #
 # ======================================================================
-updateUbuntu(){
-    if [ "$update_ubuntu" = true ] ; then
-      printInfoSection "Updating Ubuntu apt registry"
-      apt update
-    fi
+updateUbuntu() {
+  if [ "$update_ubuntu" = true ]; then
+    printInfoSection "Updating Ubuntu apt registry"
+    apt update
+  fi
 }
 
-dynatracePrintValidateCredentials(){
+dynatracePrintValidateCredentials() {
   printInfoSection "Printing Dynatrace Credentials"
-  if [ -n "${TENANT}" ] ; then
+  if [ -n "${TENANT}" ]; then
     printInfo "Shuffle the variables for name convention with Keptn & Dynatrace"
     PROTOCOL="https://"
     DT_TENANT=${TENANT#"$PROTOCOL"}
-    printInfo "Cleaned tenant=$DT_TENANT" 
+    printInfo "Cleaned tenant=$DT_TENANT"
     DT_API_TOKEN=$APITOKEN
     DT_PAAS_TOKEN=$PAASTOKEN
     printInfo "-------------------------------"
@@ -228,329 +276,345 @@ dynatracePrintValidateCredentials(){
   fi
 }
 
-dockerInstall(){
-    if [ "$docker_install" = true ] ; then
-      printInfoSection "Installing Docker and J Query"
-      printInfo "Install J Query"
-      apt install jq -y 
-      printInfo "Install Docker"
-      apt install docker.io -y  
-      service docker start
-      usermod -a -G docker $USER
-    fi
+dockerInstall() {
+  if [ "$docker_install" = true ]; then
+    printInfoSection "Installing Docker and J Query"
+    printInfo "Install J Query"
+    apt install jq -y
+    printInfo "Install Docker"
+    apt install docker.io -y
+    service docker start
+    usermod -a -G docker $USER
+  fi
 }
 
-setupProAliases(){
-    if [ "$setup_proaliases" = true ] ; then
-      printInfoSection "Adding Bash and Kubectl Pro CLI aliases to .bash_aliases for user ubuntu and root "
-      echo "
+setupProAliases() {
+  if [ "$setup_proaliases" = true ]; then
+    printInfoSection "Adding Bash and Kubectl Pro CLI aliases to .bash_aliases for user ubuntu and root "
+    echo "
       # Alias for ease of use of the CLI
       alias las='ls -las' 
       alias hg='history | grep' 
       alias h='history' 
       alias vaml='vi -c \"set syntax:yaml\" -' 
       alias vson='vi -c \"set syntax:json\" -' 
-      alias pg='ps -aux | grep' " > /root/.bash_aliases
-      homedir=$(eval echo ~$USER)
-      cp /root/.bash_aliases $homedir/.bash_aliases
-    fi
+      alias pg='ps -aux | grep' " >/root/.bash_aliases
+    homedir=$(eval echo ~$USER)
+    cp /root/.bash_aliases $homedir/.bash_aliases
+  fi
 }
 
-setupMagicDomainPublicIp(){
-    printInfoSection "Setting up the Domain"
-    if [ -n "${DOMAIN}" ] ; then
-      printInfo "The following domain is defined: $DOMAIN"
-      export DOMAIN
-    else
-      printInfo "No DOMAIN is defined, converting the public IP in a magic nip.io domain"
-      PUBLIC_IP=$(curl -s ifconfig.me) 
-      PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g')
-      export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io" 
-      printInfo "Magic Domain: $DOMAIN"
-    fi
+setupMagicDomainPublicIp() {
+  printInfoSection "Setting up the Domain"
+  if [ -n "${DOMAIN}" ]; then
+    printInfo "The following domain is defined: $DOMAIN"
+    export DOMAIN
+  else
+    printInfo "No DOMAIN is defined, converting the public IP in a magic nip.io domain"
+    PUBLIC_IP=$(curl -s ifconfig.me)
+    PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g')
+    export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io"
+    printInfo "Magic Domain: $DOMAIN"
+  fi
 }
 
-microk8sInstall(){
-    if [ "$microk8s_install" = true ] ; then
+microk8sInstall() {
+  if [ "$microk8s_install" = true ]; then
     printInfoSection "Installing Microkubernetes with Kubernetes Version $MICROK8S_CHANNEL"
     snap install microk8s --channel=$MICROK8S_CHANNEL --classic
-    
+
     printInfo "allowing the execution of priviledge pods "
     bash -c "echo \"--allow-privileged=true\" >> /var/snap/microk8s/current/args/kube-apiserver"
-    
+
     printInfo "Add user $USER to microk8 usergroup"
     usermod -a -G microk8s $USER
 
     printInfo "Update IPTABLES, allow traffic for pods (internal and external) "
     iptables -P FORWARD ACCEPT
     ufw allow in on cni0 && sudo ufw allow out on cni0
-    ufw default allow routed 
+    ufw default allow routed
 
     printInfo "Add alias to Kubectl (Bash completion for kubectl is already enabled in microk8s)"
-    snap alias microk8s.kubectl kubectl 
+    snap alias microk8s.kubectl kubectl
 
     printInfo "Add Snap to the system wide environment."
     sed -i 's~/usr/bin:~/usr/bin:/snap/bin:~g' /etc/environment
-    fi
+  fi
 }
 
-microk8sStart(){
-    printInfoSection "Starting Microk8s"
-    bashas 'microk8s.start'
+microk8sStart() {
+  printInfoSection "Starting Microk8s"
+  bashas 'microk8s.start'
 }
 
-microk8sEnableBasic(){
-    printInfoSection "Enable DNS, Storage, NGINX Ingress"
-    bashas 'microk8s.enable dns storage ingress'
-    # TODO Remove this image when upgrading to a newer Micro Version when Keptn is supports 1.16+
-    # Adding new NGINX Ingress Image since the 0.24.0 (Shipepd by default with Micro1.15)
-    # 0.24 Has over 150 Vulnerabilities. https://quay.io/repository/kubernetes-ingress-controller/nginx-ingress-controller-amd64?tag=0.24.1&tab=tags
-    printInfoSection "Upgrading NGINX Image to (quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0) - faster, lighter and secure."
-    bashas "microk8s.kubectl set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0"
+microk8sEnableBasic() {
+  printInfoSection "Enable DNS, Storage, NGINX Ingress"
+  bashas 'microk8s.enable dns storage ingress'
+  # TODO Remove this image when upgrading to a newer Micro Version when Keptn is supports 1.16+
+  # Adding new NGINX Ingress Image since the 0.24.0 (Shipepd by default with Micro1.15)
+  # 0.24 Has over 150 Vulnerabilities. https://quay.io/repository/kubernetes-ingress-controller/nginx-ingress-controller-amd64?tag=0.24.1&tab=tags
+  printInfoSection "Upgrading NGINX Image to (quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0) - faster, lighter and secure."
+  bashas "microk8s.kubectl set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0"
+  waitForAllPods
+}
+
+microk8sEnableDashboard() {
+  if [ "$enable_k8dashboard" = true ]; then
+    printInfoSection " Enable Kubernetes Dashboard"
+    bashas 'microk8s.enable dashboard'
     waitForAllPods
+  fi
 }
 
-microk8sEnableDashboard(){
-    if [ "$enable_k8dashboard" = true ] ; then
-      printInfoSection " Enable Kubernetes Dashboard"
-      bashas 'microk8s.enable dashboard'
-      waitForAllPods
+microk8sEnableRegistry() {
+  if [ "$enable_registry" = true ]; then
+    printInfoSection "Enable own Docker Registry"
+    bashas 'microk8s.enable registry'
+    waitForAllPods
+  fi
+}
+
+dynatraceActiveGateInstall() {
+  if [ "$dynatrace_activegate_install" = true ]; then
+    printInfoSection "Installation of Active Gate"
+    wget -nv -O activegate.sh "https://$DT_TENANT/api/v1/deployment/installer/gateway/unix/latest?Api-Token=$DT_PAAS_TOKEN&arch=x86&flavor=default"
+    sh activegate.sh
+    printInfo "removing ActiveGate installer."
+    rm activegate.sh
+  fi
+}
+
+istioInstall() {
+  if [ "$istio_install" = true ]; then
+    printInfoSection "Install istio $ISTIO_VERSION into /Opt and add it to user/local/bin"
+    curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
+    mv istio-$ISTIO_VERSION /opt/istio-$ISTIO_VERSION
+    chmod +x -R /opt/istio-$ISTIO_VERSION/
+    ln -s /opt/istio-$ISTIO_VERSION/bin/istioctl /usr/local/bin/istioctl
+    bashas "echo 'y' | istioctl manifest apply"
+    waitForAllPods
+  fi
+}
+
+helmInstall() {
+  if [ "$helm_install" = true ]; then
+    printInfoSection "Installing HELM Client v$HELM_VERSION"
+    wget -O getHelm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get
+    chmod +x getHelm.sh
+    ./getHelm.sh -v v$HELM_VERSION
+    helm init
+  fi
+}
+
+certmanagerInstall() {
+  if [ "$certmanager_install" = true ]; then
+    printInfoSection "Install CertManager $CERTMANAGER_VERSION"
+    bashas "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v$CERTMANAGER_VERSION/cert-manager.yaml"
+    waitForAllPods
+  fi
+}
+
+certmanagerEnable() {
+  # TODO: Delegate single Ingresses into own directories (demo, api, jenkins)
+  # TODO: SSL Enable via Kubectl Patch
+  if [ "$certmanager_enable" = true ]; then
+    printInfoSection "Installing ClusterIssuer with HTTP Letsencrypt"
+    bashas "kubectl apply -f $KEPTN_IN_A_BOX_DIR/resources/istio/clusterissuer.yaml"
+    waitForAllPods
+    printInfo "Create Valid SSL Certificates"
+    if [ "$resources_route_istio_ingress" = true ]; then
+      printInfo "Route Traffic to IstioGateway and for known Istio Endpoints with SSL"
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && bash expose-ssl-istio.sh \"$DOMAIN\""
     fi
-}
-
-microk8sEnableRegistry(){
-    if [ "$enable_registry" = true ] ; then
-      printInfoSection "Enable own Docker Registry"
-      bashas 'microk8s.enable registry'
-      waitForAllPods
+    if [ "$microk8s_expose_kubernetes_api" = true ]; then
+      printInfo "Exposing the Kubernetes Cluster API with SSL"
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-api-ssl.sh \"$DOMAIN\""
     fi
+  fi
 }
 
-dynatraceActiveGateInstall(){
-    if [ "$dynatrace_activegate_install" = true ] ; then
-      printInfoSection "Installation of Active Gate"
-      wget -nv -O activegate.sh "https://$DT_TENANT/api/v1/deployment/installer/gateway/unix/latest?Api-Token=$DT_PAAS_TOKEN&arch=x86&flavor=default"
-      sh activegate.sh 
-      printInfo "removing ActiveGate installer."
-      rm activegate.sh
-    fi
+keptndemoDeployCartsloadgenerator() {
+  # https://github.com/sergiohinojosa/keptn-in-a-box/resources/cartsloadgenerator
+  if [ "$keptndemo_cartsload" = true ]; then
+    printInfoSection "Deploy Cartsload Generator"
+    bashas "kubectl create deploy cartsloadgen --image=shinojosa/cartsloadgen:keptn"
+  fi
 }
 
-istioInstall(){
-    if [ "$istio_install" = true ] ; then
-      printInfoSection "Install istio $ISTIO_VERSION into /Opt and add it to user/local/bin"
-      curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh - 
-      mv istio-$ISTIO_VERSION /opt/istio-$ISTIO_VERSION 
-      chmod +x -R /opt/istio-$ISTIO_VERSION/
-      ln -s /opt/istio-$ISTIO_VERSION/bin/istioctl /usr/local/bin/istioctl
-      bashas "echo 'y' | istioctl manifest apply"
-      waitForAllPods
-    fi
+resourcesClone() {
+  #TODO Parameterize the whole directory where to clone?
+  if [ "$resources_clone" = true ]; then
+    printInfoSection "Clone Keptn-in-a-Box Resources in $KEPTN_IN_A_BOX_DIR"
+    bashas "git clone $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR"
+  fi
 }
 
-helmInstall(){
-    if [ "$helm_install" = true ] ; then
-      printInfoSection "Installing HELM Client v$HELM_VERSION"
-      wget -O getHelm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get
-      chmod +x getHelm.sh
-      ./getHelm.sh -v v$HELM_VERSION
-      helm init 
-    fi
+keptnExamplesClone() {
+  if [ "$keptn_examples_clone" = true ]; then
+    printInfoSection "Clone Keptn Exmaples $KEPTN_EXAMPLES_BRANCH"
+    bashas "git clone --branch $KEPTN_EXAMPLES_BRANCH https://github.com/keptn/examples.git $KEPTN_EXAMPLES_DIR --single-branch"
+  fi
 }
 
-certmanagerInstall(){
-    if [ "$certmanager_install" = true ] ; then
-      printInfoSection "Install CertManager $CERTMANAGER_VERSION"
-      bashas "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v$CERTMANAGER_VERSION/cert-manager.yaml"
-      waitForAllPods
-    fi
+dynatraceSaveCredentials() {
+  if [ "$dynatrace_savecredentials" = true ]; then
+    printInfoSection "Save Dynatrace credentials"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
+  fi
 }
 
-certmanagerEnable(){
-    # TODO: Delegate single Ingresses into own directories (demo, api, jenkins)
-    # TODO: SSL Enable via Kubectl Patch
-    if [ "$certmanager_enable" = true ] ; then
-      printInfoSection "Installing ClusterIssuer with HTTP Letsencrypt"
-      bashas "kubectl apply -f $KEPTN_IN_A_BOX_DIR/resources/istio/clusterissuer.yaml"
-      waitForAllPods
-      printInfo "Create Valid SSL Certificates"
-      if [ "$resources_route_istio_ingress" = true ] ; then
-        printInfo "Route Traffic to IstioGateway and for known Istio Endpoints with SSL"
-        bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && bash expose-ssl-istio.sh \"$DOMAIN\""
-      fi
-      if [ "$microk8s_expose_kubernetes_api" = true ] ; then
-        printInfo "Exposing the Kubernetes Cluster API with SSL"
-        bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-api-ssl.sh \"$DOMAIN\""
-      fi
-    fi
+resourcesRouteIstioIngress() {
+  if [ "$resources_route_istio_ingress" = true ]; then
+    printInfoSection "Route Traffic to IstioGateway and for known Istio Endpoints to $DOMAIN"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && bash expose-istio.sh \"$DOMAIN\""
+  fi
 }
 
-keptndemoDeployCartsloadgenerator(){
-    # https://github.com/sergiohinojosa/keptn-in-a-box/resources/cartsloadgenerator
-    if [ "$keptndemo_cartsload" = true ] ; then
-      printInfoSection "Deploy Cartsload Generator"
-      bashas "kubectl create deploy cartsloadgen --image=shinojosa/cartsloadgen:keptn"
-    fi
+keptnInstall() {
+  if [ "$keptn_install" = true ]; then
+    keptnInstallClient
+    printInfoSection "Install Keptn with own installer passing DOMAIN via Parameter (omiting istio val)"
+    #TODO Remove own installer when the Istio validation for Istio 1.5+ is ok.
+    bashas "echo 'y' | keptn install --platform=kubernetes --ingress-install-option=Reuse --domain=$DOMAIN --keptn-installer-image=shinojosa/keptninstaller:6.2"
+  fi
 }
 
-resourcesClone(){
-    #TODO Parameterize the whole directory where to clone?
-    if [ "$resources_clone" = true ] ; then
-      printInfoSection "Clone Keptn-in-a-Box Resources in $KEPTN_IN_A_BOX_DIR"
-      bashas "git clone $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR"
-    fi
+keptnInstallClient() {
+  printInfoSection "Download & Install Keptn $KEPTN_VERSION"
+  wget -q -O keptn.tar "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/${KEPTN_VERSION}_keptn-linux.tar"
+  tar -xvf keptn.tar
+  chmod +x keptn
+  mv keptn /usr/local/bin/keptn
 }
 
-keptnExamplesClone(){
-    if [ "$keptn_examples_clone" = true ] ; then
-      printInfoSection "Clone Keptn Exmaples $KEPTN_EXAMPLES_BRANCH"
-      bashas "git clone --branch $KEPTN_EXAMPLES_BRANCH https://github.com/keptn/examples.git $KEPTN_EXAMPLES_DIR --single-branch"
-    fi
+keptnInstallQualityGates() {
+  if [ "$keptn_install_qualitygates" = true ]; then
+    keptnInstallClient
+    echo "Test"
+    printInfoSection "Install Keptn on QualityGates mode only"
+    bashas "echo 'y' | keptn install --platform=kubernetes --domain=$DOMAIN --use-case=quality-gates --ingress-install-option=Reuse"
+    #TODO Remove the NGINX 
+    printInfo "Removing the extra Nginx since it is not needed."
+    bashas "kubectl delete ns ingress-nginx"
+    waitForAllPods
+  fi
 }
 
-dynatraceSaveCredentials(){
-    if [ "$dynatrace_savecredentials" = true ] ; then
-      printInfoSection "Save Dynatrace credentials"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
-    fi
+keptndemoTeaserPipeline() {
+  if [ "$keptndemo_teaser_pipeline" = true ]; then
+    printInfoSection "Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview $TEASER_IMAGE"
+    bashas "kubectl -n istio-system create deploy homepage --image=${TEASER_IMAGE}"
+    bashas "kubectl -n istio-system expose deploy homepage --port=80 --type=NodePort"
+  fi
 }
 
-resourcesRouteIstioIngress(){
-    if [ "$resources_route_istio_ingress" = true ] ; then
-      printInfoSection "Route Traffic to IstioGateway and for known Istio Endpoints to $DOMAIN"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && bash expose-istio.sh \"$DOMAIN\""
-    fi
+dynatraceConfigureMonitoring() {
+  if [ "$dynatrace_configure_monitoring" = true ]; then
+    printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
+    bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$DT_PAAS_TOKEN\""
+    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
+    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/$KEPTN_DT_SLI_SERVICE_VERSION/deploy/service.yaml"
+    printInfo "Wait for the Service to be created"
+    waitForAllPods
+    bashas "keptn configure monitoring dynatrace"
+    waitForAllPods
+  fi
 }
 
-keptnInstall(){
-    if [ "$keptn_install" = true ] ; then
-      printInfoSection "Download & Install Keptn $KEPTN_VERSION"
-      wget -q -O keptn.tar "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/${KEPTN_VERSION}_keptn-linux.tar"
-      tar -xvf keptn.tar
-      chmod +x keptn 
-      mv keptn /usr/local/bin/keptn
-      printInfo "Install Keptn with own installer passing DOMAIN via Parameter (omiting istio val)"
-      #TODO Remove own installer when the Istio validation for Istio 1.5+ is ok.
-      bashas "echo 'y' | keptn install --platform=kubernetes --ingress-install-option=Reuse --domain $DOMAIN --keptn-installer-image=shinojosa/keptninstaller:6.2"
-    fi
+keptnBridgeExpose() {
+  if [ "$keptn_bridge_expose" = true ]; then
+    printInfoSection "Expose Bridge via VirtualService"
+    KEPTN_DOMAIN=$(bashas "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/expose-bridge && bash expose-bridge.sh \"$KEPTN_DOMAIN\""
+  fi
 }
 
-keptndemoTeaserPipeline(){
-    if [ "$keptndemo_teaser_pipeline" = true ] ; then
-      printInfoSection "Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview $TEASER_IMAGE"
-      bashas "kubectl -n istio-system create deploy homepage --image=${TEASER_IMAGE}"
-      bashas "kubectl -n istio-system expose deploy homepage --port=80 --type=NodePort"
-    fi
+keptnBridgeEap() {
+  if [ "$keptn_bridge_eap" = true ]; then
+    printInfoSection "Keptn Bridge update to EAP"
+    bashas "kubectl -n keptn set image deployment/bridge bridge=${KEPTN_BRIDGE_IMAGE} --record"
+  fi
 }
 
-dynatraceConfigureMonitoring(){
-    if [ "$dynatrace_configure_monitoring" = true ] ; then
-      printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
-      bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$DT_PAAS_TOKEN\""
-      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
-      bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/$KEPTN_DT_SLI_SERVICE_VERSION/deploy/service.yaml"
-      printInfo "Wait for the Service to be created"
-      waitForAllPods
-      bashas "keptn configure monitoring dynatrace"
-      waitForAllPods
-    fi
+keptndemoUnleash() {
+  if [ "$keptndemo_unleash" = true ]; then
+    printInfoSection "Deploy Unleash-Server"
+    bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh"
+  fi
 }
 
-keptnBridgeExpose(){
-    if [ "$keptn_bridge_expose" = true ] ; then
-      printInfoSection "Expose Bridge via VirtualService"
-      KEPTN_DOMAIN=$(bashas "kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}")
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/expose-bridge && bash expose-bridge.sh \"$KEPTN_DOMAIN\"" 
-    fi
+dynatraceConfigureWorkloads() {
+  if [ "$dynatrace_configure_workloads" = true ]; then
+    printInfoSection "Configuring Dynatrace Workloads for the Cluster (via Dynatrace and K8 API)"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash configure-k8.sh"
+  fi
 }
 
-keptnBridgeEap(){
-    if [ "$keptn_bridge_eap" = true ] ; then
-      printInfoSection "Keptn Bridge update to EAP"
-      bashas "kubectl -n keptn set image deployment/bridge bridge=${KEPTN_BRIDGE_IMAGE} --record"
-    fi
+microk8sExposeKubernetesApi() {
+  if [ "$microk8s_expose_kubernetes_api" = true ]; then
+    printInfoSection "Exposing the Kubernetes Cluster API"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
+  fi
 }
 
-keptndemoUnleash(){
-    if [ "$keptndemo_unleash" = true ] ; then
-      printInfoSection "Deploy Unleash-Server"
-      bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh" 
-    fi
+microk8sExposeKubernetesDashboard() {
+  if [ "$microk8s_expose_kubernetes_dashboard" = true ]; then
+    printInfoSection "Exposing the Kubernetes Dashboard"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-dashboard.sh \"$DOMAIN\""
+  fi
 }
 
-dynatraceConfigureWorkloads(){
-    if [ "$dynatrace_configure_workloads" = true ] ; then
-      printInfoSection "Configuring Dynatrace Workloads for the Cluster (via Dynatrace and K8 API)"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash configure-k8.sh" 
-    fi
+keptndemoCartsonboard() {
+  if [ "$keptndemo_cartsonboard" = true ]; then
+    printInfoSection "Keptn onboarding Carts"
+    #TODO Parameterize Carts Version.
+    bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts.sh && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts_qualitygates.sh"
+    bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_carts_0.sh"
+  fi
 }
 
-microk8sExposeKubernetesApi(){
-    if [ "$microk8s_expose_kubernetes_api" = true ] ; then
-      printInfoSection "Exposing the Kubernetes Cluster API"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-api.sh \"$DOMAIN\""
-    fi
+createWorkshopUser() {
+  if [ "$create_workshop_user" = true ]; then
+    printInfoSection "Creating Workshop User from user($USER) into($NEWUSER)"
+    homedirectory=$(eval echo ~$USER)
+    cp -R $homedirectory /home/$NEWUSER
+    useradd -s /bin/bash -d /home/$NEWUSER -m -G sudo -p $(openssl passwd -1 $NEWPWD) $NEWUSER
+    usermod -a -G docker $NEWUSER
+    usermod -a -G microk8s $NEWUSER
+    printInfo "Warning: allowing SSH passwordAuthentication into the sshd_config"
+    sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    service sshd restart
+  fi
 }
 
-microk8sExposeKubernetesDashboard(){
-    if [ "$microk8s_expose_kubernetes_dashboard" = true ] ; then
-      printInfoSection "Exposing the Kubernetes Dashboard"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/k8-services && bash expose-kubernetes-dashboard.sh \"$DOMAIN\"" 
-    fi
+printInstalltime() {
+  DURATION=$SECONDS
+  printInfoSection "Installation complete :)"
+  printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds"
+  printInfo "Keptn & Kubernetes Exposed Ingress Endpoints"
+  bashas "kubectl get ing -A"
 }
-
-keptndemoCartsonboard(){
-    if [ "$keptndemo_cartsonboard" = true ] ; then
-      printInfoSection "Keptn onboarding Carts"
-      #TODO Parameterize Carts Version.
-      bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts.sh && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts_qualitygates.sh"
-      bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_carts_0.sh"
-    fi
-}
-
-createWorkshopUser(){
-    if [ "$create_workshop_user" = true ] ; then
-      printInfoSection "Creating Workshop User from user($USER) into($NEWUSER)"
-      homedirectory=$(eval echo ~$USER)
-      cp -R $homedirectory /home/$NEWUSER
-      useradd -s /bin/bash -d /home/$NEWUSER -m -G sudo -p $(openssl passwd -1 $NEWPWD) $NEWUSER
-      usermod -a -G docker $NEWUSER
-      usermod -a -G microk8s $NEWUSER
-      printInfo "Warning: allowing SSH passwordAuthentication into the sshd_config"
-      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
-      service sshd restart
-    fi
-}
-
-printInstalltime(){
-    DURATION=$SECONDS
-    printInfoSection "Installation complete :)"
-    printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds"
-    printInfo "Keptn & Kubernetes Exposed Ingress Endpoints"
-    bashas "kubectl get ing -A"
-}
-
 
 # ======================================================================
 #            ---- The Installation function -----                      #
 #  The order of the subfunctions are defined in a sequencial order     #
 #  since ones depend on another.                                       #
 # ======================================================================
-doInstallation(){
+doInstallation() {
   echo ""
-  printInfoSection "Init Installation at  `date` by user `whoami`"
+  printInfoSection "Init Installation at  $(date) by user $(whoami)"
   printInfo "Setting up Microk8s (SingleNode K8s Dev Cluster) with Keptn"
   echo ""
   # Record time of installation
   SECONDS=0
 
-  validateSudo  
+  validateSudo
   setBashas
   dynatracePrintValidateCredentials
 
   enableVerbose
   updateUbuntu
-  setupProAliases 
+  setupProAliases
 
   dockerInstall
   microk8sInstall

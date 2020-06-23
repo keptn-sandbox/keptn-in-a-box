@@ -26,13 +26,10 @@
 LOGFILE='/tmp/install.log'
 touch $LOGFILE
 chmod 775 $LOGFILE
-pipe_log=true
+pipe_log=false
 
 # - The installation will look for this file locally, if not found it will pull it form github.
 FUNCTIONS_FILE='functions.sh'
-
-# - The user to run the commands from. Will be overwritten when executing this shell with sudo, this is just needed when spinning machines programatically and running the script with root without an interactive shell 
-USER="ubuntu"
 
 # ---- Workshop User  ---- 
 # The flag 'create_workshop_user'=true is per default set to false. If it's set to to it'll clone the home directory from USER and allow SSH login with the given text password )
@@ -50,25 +47,6 @@ APITOKEN=
 # if no DOMAIN is setted, the public IP of the machine will be converted to a magic nip.io domain 
 # ---- Define your Domain ----   
 DOMAIN=
-
-# ==================================================
-#      ----- Components Versions -----             #
-# ==================================================
-ISTIO_VERSION=1.5.1
-HELM_VERSION=2.12.3
-CERTMANAGER_VERSION=0.14.0
-KEPTN_VERSION=0.6.2
-KEPTN_DT_SERVICE_VERSION=0.7.1
-KEPTN_DT_SLI_SERVICE_VERSION=0.4.1
-KEPTN_EXAMPLES_BRANCH=0.6.2
-TEASER_IMAGE="shinojosa/nginxacm"
-KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
-MICROK8S_CHANNEL="1.15/stable"
-KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
-KEPTN_EXAMPLES_DIR="~/examples"
-KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
-FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh"
-
 
 ## ----  Write all output to the logfile ----
 if [ "$pipe_log" = true ] ; then
@@ -113,20 +91,27 @@ shopt -s expand_aliases
 source $FUNCTIONS_FILE
 
 # ==================================================
+#      ----- Override Components Versions -----    #
+# ==================================================
+#MICROK8S_CHANNEL="1.15/stable"
+#KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
+#KEPTN_EXAMPLES_DIR="~/examples"
+
+# ==================================================
 #    ----- Select your installation Bundle -----   #
 # ==================================================
 # Uncomment for installing only Keptn 
 # installationBundleKeptnOnly
 
 # - Comment out if selecting another bundle
-installationBundleDemo
+#installationBundleDemo
+installationBundleKeptnQualityGates
 
 # - Uncomment for installing Keptn-in-a-Box for Workshops
 # installationBundleWorkshop
 
 # - Uncomment below for installing all features
 #installationBundleAll
-
 
 # ==================================================
 # ---- Enable or Disable specific functions -----  #
