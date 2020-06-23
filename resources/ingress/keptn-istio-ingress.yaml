@@ -12,7 +12,7 @@ metadata:
     # from the specified path in the Ingress rule. Without a
     # rewrite any request will return 404
     nginx.ingress.kubernetes.io/rewrite-target: /
-  name: istio-ingress
+  name: keptn-istio-ingress
   namespace: istio-system
 spec:
   rules:
@@ -25,13 +25,11 @@ spec:
           serviceName: istio-ingressgateway
           servicePort: 80
         path: /
-  # On base domain we have NGINX running.
-  # Deploy Keptn Teaser 
-  - host: domain.placeholder
+  - host: api.keptn
     http:
       paths:
       - backend:
-          serviceName: homepage
+          serviceName: istio-ingressgateway
           servicePort: 80
         path: /
   - host: api.keptn.domain.placeholder
@@ -48,41 +46,8 @@ spec:
           serviceName: istio-ingressgateway
           servicePort: 80
         path: /
-  - host: unleash.unleash-dev.domain.placeholder
-    http:
-      paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
-        path: /
-  - host: carts.sockshop-dev.domain.placeholder
-    http:
-      paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
-        path: /
-  - host: carts.sockshop-staging.domain.placeholder
-    http:
-      paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
-        path: /
-  - host: carts.sockshop-production.domain.placeholder
-    http:
-      paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
-        path: /
   tls:
   - hosts:
-    - domain.placeholder
+    - api.keptn
     - api.keptn.domain.placeholder
     - bridge.keptn.domain.placeholder
-    - carts.sockshop-dev.domain.placeholder
-    - carts.sockshop-staging.domain.placeholder
-    - carts.sockshop-production.domain.placeholder
-    - unleash.unleash-dev.domain.placeholder
-    #secretName: domain

@@ -1,0 +1,8 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt"
+    spec:
+      tls:
+        secretName: homepage-ingress-tls
