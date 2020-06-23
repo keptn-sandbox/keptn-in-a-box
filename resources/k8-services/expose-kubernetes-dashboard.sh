@@ -7,7 +7,7 @@ if [ $# -eq 1 ]; then
 else
     echo "No Domain has been passed, getting it from public ip"
     export PUBLIC_IP=$(curl -s ifconfig.me) 
-    PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g')
+    PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g') 
     export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io"
     echo $DOMAIN
 fi

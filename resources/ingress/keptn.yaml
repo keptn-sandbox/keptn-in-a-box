@@ -34,6 +34,6 @@ spec:
         path: /
   tls:
   - hosts:
-    - api.keptn
     - api.keptn.domain.placeholder
     - bridge.keptn.domain.placeholder
+    #secretName: keptn-tls

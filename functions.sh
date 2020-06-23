@@ -500,6 +500,15 @@ keptnInstallQualityGates() {
   fi
 }
 
+# TODO Add this function and test cert withouth istio and with
+keptnDeployHomepage() {
+  if [ "$keptndeploy_homepage" = true ]; then
+    printInfoSection "Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview $TEASER_IMAGE"
+    bashas "kubectl -n default create deploy homepage --image=${TEASER_IMAGE}"
+    bashas "kubectl -n default expose deploy homepage --port=80 --type=NodePort"
+  fi
+}
+
 keptndemoTeaserPipeline() {
   if [ "$keptndemo_teaser_pipeline" = true ]; then
     printInfoSection "Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview $TEASER_IMAGE"

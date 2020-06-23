@@ -12,25 +12,15 @@ metadata:
     # from the specified path in the Ingress rule. Without a
     # rewrite any request will return 404
     nginx.ingress.kubernetes.io/rewrite-target: /
-  name: sockshop-ingress
+    #cert-manager.io/cluster-issuer: "letsencrypt"
+  name: unleash-ingress
   namespace: istio-system
 spec:
   rules:
-  - host: carts.sockshop-dev.domain.placeholder
-    http:
-      paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
-        path: /
-  - host: carts.sockshop-staging.domain.placeholder
-    http:
-      paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
-        path: /
-  - host: carts.sockshop-production.domain.placeholder
+  # Wildcard routing for all exposed istio services. 
+  # Kubernetes Fake Certificate will be used if hostname 
+  # (SNI) does not match the rules below. 
+  - host: unleash.unleash-dev.domain.placeholder
     http:
       paths:
       - backend:
@@ -39,6 +29,5 @@ spec:
         path: /
   tls:
   - hosts:
-    - carts.sockshop-dev.domain.placeholder
-    - carts.sockshop-staging.domain.placeholder
-    - carts.sockshop-production.domain.placeholder
+    - unleash.unleash-dev.domain.placeholder
+    #secretName: unleash-tls

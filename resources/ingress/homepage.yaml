@@ -12,26 +12,21 @@ metadata:
     # from the specified path in the Ingress rule. Without a
     # rewrite any request will return 404
     nginx.ingress.kubernetes.io/rewrite-target: /
-  name: unleash-ingress
-  namespace: istio-system
+    #cert-manager.io/cluster-issuer: "letsencrypt"
+  name: homepage-ingress
+  namespace: default
 spec:
   rules:
-  # Wildcard routing for all exposed istio services. 
-  # Kubernetes Fake Certificate will be used if hostname 
-  # (SNI) does not match the rules below. 
-  - http:
-      paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
-        path: /
-  - host: unleash.unleash-dev.domain.placeholder
+  # On base domain we have NGINX running.
+  # Deploy Keptn Teaser
+  - host: domain.placeholder
     http:
       paths:
       - backend:
-          serviceName: istio-ingressgateway
+          serviceName: homepage
           servicePort: 80
         path: /
   tls:
   - hosts:
-    - unleash.unleash-dev.domain.placeholder
+    - domain.placeholder
+    #secretName: homepage-tls
