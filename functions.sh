@@ -20,7 +20,6 @@ KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
 
-
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 
@@ -43,6 +42,7 @@ shopt -s expand_aliases
 #  Each function flag representas a function and will be evaluated     #
 #  before execution.                                                   #
 # ======================================================================
+# If you add varibles here, dont forget the function definition and the priting in printFlags function.
 verbose_mode=false
 update_ubuntu=false
 docker_install=false
@@ -63,6 +63,8 @@ dynatrace_configure_monitoring=false
 dynatrace_activegate_install=false
 dynatrace_configure_workloads=false
 
+jenkins_deploy=false
+
 keptn_bridge_eap=false
 keptndeploy_homepage=false
 keptndemo_cartsload=false
@@ -79,6 +81,7 @@ create_workshop_user=false
 #  activated upon installation.                                        #
 # ======================================================================
 installationBundleDemo() {
+  selected_bundle="installationBundleDemo"
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
@@ -118,6 +121,8 @@ installationBundleWorkshop() {
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
   patch_kubernetes_dashboard=true
+
+  selected_bundle="installationBundleWorkshop"
 }
 
 installationBundleAll() {
@@ -129,7 +134,10 @@ installationBundleAll() {
   certmanager_install=true
   certmanager_enable=true
   create_workshop_user=true
+
   jenkins_deploy=true
+
+  selected_bundle="installationBundleAll"
 }
 
 installationBundleKeptnOnly() {
@@ -138,7 +146,8 @@ installationBundleKeptnOnly() {
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
-  enable_k8dashboard=true
+  enable_k8dashboard=tru
+
   setup_proaliases=true
   istio_install=true
   keptn_install=true
@@ -148,27 +157,50 @@ installationBundleKeptnOnly() {
 
   dynatrace_savecredentials=true
   dynatrace_configure_monitoring=true
-  dynatrace_activegate_install=true
-  dynatrace_configure_workloads=true
 
   expose_kubernetes_api=true
+  expose_kubernetes_dashboard=true
+
   keptndeploy_homepage=true
+
+  selected_bundle="installationBundleKeptnOnly"
 }
 
 installationBundleKeptnQualityGates() {
-  # The minimal to have a full keptn working
-  # with exposed istio and keptn over nginx
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
   setup_proaliases=true
+  keptndeploy_homepage=true
+
+  dynatrace_savecredentials=true
+  dynatrace_configure_monitoring=true
   # For the QualityGates both flags needs to be enabled
   keptn_install=true
   keptn_install_qualitygates=true
   resources_clone=true
-
   # Should be fine
   expose_kubernetes_api=true
+  selected_bundle="installationBundleKeptnQualityGates"
+}
+
+installationBundlePerformanceAsAService() {
+  installationBundleKeptnQualityGates
+  update_ubuntu=true
+  docker_install=true
+  microk8s_install=true
+  setup_proaliases=true
+  keptndeploy_homepage=true
+
+  dynatrace_savecredentials=true
+  dynatrace_configure_monitoring=true
+  # For the QualityGates both flags needs to be enabled
+  keptn_install=true
+  keptn_install_qualitygates=true
+  resources_clone=true
+  # Should be fine
+  expose_kubernetes_api=true
+  selected_bundle="installationBundlePerformanceAsAService"
 }
 
 # ======================================================================
@@ -483,7 +515,7 @@ keptnInstallClient() {
 
 keptnInstall() {
   if [ "$keptn_install" = true ]; then
-    
+
     keptnInstallClient
 
     if [ "$keptn_install_qualitygates" = true ]; then
@@ -618,6 +650,14 @@ printInstalltime() {
   bashas "kubectl get ing -A"
 }
 
+printFlags() {
+  printInfoSection "Function Flags values"
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  do 
+    echo "$i = ${!i}"
+  done
+}
+
 # ======================================================================
 #            ---- The Installation function -----                      #
 #  The order of the subfunctions are defined in a sequencial order     #
@@ -631,8 +671,12 @@ doInstallation() {
   # Record time of installation
   SECONDS=0
 
+  printFlags
+  
+  echo ""
   validateSudo
   setBashas
+
   dynatracePrintValidateCredentials
 
   enableVerbose
