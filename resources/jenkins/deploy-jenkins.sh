@@ -5,11 +5,9 @@ if [ $# -eq 1 ]; then
     DOMAIN=$1
     echo "Domain has been passed: $DOMAIN"
 else
-    echo "No Domain has been passed, getting it from public ip"
-    export PUBLIC_IP=$(curl -s ifconfig.me) 
-    PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g')
-    export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io"
-    echo $DOMAIN
+    echo "No Domain has been passed, getting it from Keptn"
+    DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
+     echo "Keptn Domain: $DOMAIN"
 fi
 
 echo "Create namespace jenkins"
@@ -27,14 +25,5 @@ sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
     -e 's~KEPTN_BRIDGE.placeholder~'"$KEPTN_BRIDGE"'~' \
     helm-jenkins.yaml > gen/helm-jenkins.yaml
 
-sed 's~domain.placeholder~'"$DOMAIN"'~' ing-jenkins.yaml > gen/ing-jenkins.yaml
-
-helm init
-
-helm repo update
-
 echo "Installing Jenkins via Helm"
 helm install stable/jenkins -n jenkins -f gen/helm-jenkins.yaml
-
-echo "Create Jenkins Ingress"
-kubectl apply -f gen/ing-jenkins.yaml

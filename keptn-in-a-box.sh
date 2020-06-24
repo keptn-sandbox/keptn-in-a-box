@@ -104,8 +104,9 @@ source $FUNCTIONS_FILE
 # installationBundleKeptnOnly
 
 # - Comment out if selecting another bundle
-#installationBundleDemo
-installationBundleKeptnQualityGates
+installationBundleDemo
+
+#installationBundleKeptnQualityGates
 
 # - Uncomment for installing Keptn-in-a-Box for Workshops
 # installationBundleWorkshop

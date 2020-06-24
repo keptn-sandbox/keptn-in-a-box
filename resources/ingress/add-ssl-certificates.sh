@@ -10,3 +10,4 @@ done
 
 echo "Create a certificate for each ingress in the gen/ssl directory"
 kubectl apply -f gen/ssl/
+

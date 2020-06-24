@@ -8,7 +8,7 @@ else
 fi
 
 echo "About to create a VirtualService to the Keptn Bridge service to this domain $DOMAIN"
-cat ./manifests/bridge.yaml | \
-  sed 's~domain.placeholder~'"$DOMAIN"'~' > ./manifests/gen/bridge.yaml
+cat ./bridge.yaml | \
+  sed 's~domain.placeholder~'"$DOMAIN"'~' > ./gen/bridge.yaml
   
-kubectl apply -f ./manifests/gen/bridge.yaml
+kubectl apply -f ./gen/bridge.yaml
