@@ -26,15 +26,15 @@
 LOGFILE='/tmp/install.log'
 touch $LOGFILE
 chmod 775 $LOGFILE
-pipe_log=false
+pipe_log=true
 
 # - The installation will look for this file locally, if not found it will pull it form github.
 FUNCTIONS_FILE='functions.sh'
 
 # ---- Workshop User  ---- 
 # The flag 'create_workshop_user'=true is per default set to false. If it's set to to it'll clone the home directory from USER and allow SSH login with the given text password )
-NEWUSER="dynatrace"
-NEWPWD="dynatrace"
+NEWUSER="student"
+NEWPWD="secr3t"
 
 # ---- Define Dynatrace Environment ---- 
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
@@ -47,6 +47,12 @@ APITOKEN=
 # if no DOMAIN is setted, the public IP of the machine will be converted to a magic nip.io domain 
 # ---- Define your Domain ----   
 DOMAIN=
+
+# ==================================================
+#      ----- Functions Location -----                #
+# ==================================================
+FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh"
+
 
 ## ----  Write all output to the logfile ----
 if [ "$pipe_log" = true ] ; then
@@ -96,7 +102,7 @@ source $FUNCTIONS_FILE
 #MICROK8S_CHANNEL="1.15/stable"
 #KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 #KEPTN_EXAMPLES_DIR="~/examples"
-
+#KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
 # ==================================================
 #    ----- Select your installation Bundle -----   #
 # ==================================================
@@ -113,6 +119,9 @@ installationBundleDemo
 
 # - Uncomment below for installing all features
 #installationBundleAll
+
+# - Uncomment below for installing a PerformanceAsAService Box
+#installationBundlePerformanceAsAService
 
 # ==================================================
 # ---- Enable or Disable specific functions -----  #
