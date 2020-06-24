@@ -146,7 +146,7 @@ installationBundleKeptnOnly() {
   update_ubuntu=true
   docker_install=true
   microk8s_install=true
-  enable_k8dashboard=tru
+  enable_k8dashboard=true
 
   setup_proaliases=true
   istio_install=true
