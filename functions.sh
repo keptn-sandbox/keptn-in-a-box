@@ -19,7 +19,7 @@ MICROK8S_CHANNEL="1.15/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
-FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh"
+
 
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
@@ -663,6 +663,7 @@ doInstallation() {
   keptnBridgeEap
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
+  jenkinsDeploy
   createWorkshopUser
   certmanagerEnable
   printInstalltime
