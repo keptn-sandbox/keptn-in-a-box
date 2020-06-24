@@ -167,39 +167,25 @@ installationBundleKeptnOnly() {
 }
 
 installationBundleKeptnQualityGates() {
-  update_ubuntu=true
-  docker_install=true
-  microk8s_install=true
-  setup_proaliases=true
-  keptndeploy_homepage=true
+  installationBundleKeptnOnly
+  
+  # We dont need istio nor helm
+  istio_install=false
+  helm_install=false
 
-  dynatrace_savecredentials=true
-  dynatrace_configure_monitoring=true
-  # For the QualityGates both flags needs to be enabled
-  keptn_install=true
+  # For the QualityGates we need both flags needs to be enabled
   keptn_install_qualitygates=true
-  resources_clone=true
-  # Should be fine
-  expose_kubernetes_api=true
+
   selected_bundle="installationBundleKeptnQualityGates"
 }
 
 installationBundlePerformanceAsAService() {
   installationBundleKeptnQualityGates
-  update_ubuntu=true
-  docker_install=true
-  microk8s_install=true
-  setup_proaliases=true
-  keptndeploy_homepage=true
 
-  dynatrace_savecredentials=true
-  dynatrace_configure_monitoring=true
-  # For the QualityGates both flags needs to be enabled
-  keptn_install=true
-  keptn_install_qualitygates=true
-  resources_clone=true
-  # Should be fine
-  expose_kubernetes_api=true
+  # Jenkins needs Helm for the Chart to be installed
+  helm_install=true
+  jenkins_deploy=true
+
   selected_bundle="installationBundlePerformanceAsAService"
 }
 
@@ -591,6 +577,9 @@ keptndemoUnleash() {
   if [ "$keptndemo_unleash" = true ]; then
     printInfoSection "Deploy Unleash-Server"
     bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh"
+
+    printInfoSection "Expose Unleash-Server"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
   fi
 }
 
@@ -625,6 +614,10 @@ keptndemoCartsonboard() {
     #TODO Parameterize Carts Version.
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts.sh && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts_qualitygates.sh"
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_carts_0.sh"
+
+    printInfoSection "Keptn Exposing the Onboarded Carts Application"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} sockshop"
+
   fi
 }
 
