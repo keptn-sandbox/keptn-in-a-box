@@ -112,6 +112,7 @@ source $FUNCTIONS_FILE
 # - Comment out if selecting another bundle
 installationBundleDemo
 
+# - Comment out if only want to install the QualityGates functionality
 #installationBundleKeptnQualityGates
 
 # - Uncomment for installing Keptn-in-a-Box for Workshops
