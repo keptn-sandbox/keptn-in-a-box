@@ -48,6 +48,11 @@ APITOKEN=
 # ---- Define your Domain ----   
 DOMAIN=
 
+# ---- The Email Account for the Certmanager ClusterIssuer with Let's encrypt ---- 
+# ---- By not providing an Email and letting certificates get generated will end up in 
+# face Email accounts Enabling certificates with lets encrypt and not changing for your email will end up in cert rate limits for: nip.io: see https://letsencrypt.org/docs/rate-limits/ 
+CERTMANAGER_EMAIL=
+
 # ==================================================
 #      ----- Functions Location -----                #
 # ==================================================

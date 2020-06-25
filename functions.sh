@@ -434,7 +434,7 @@ helmInstall() {
 
 certmanagerInstall() {
   if [ "$certmanager_install" = true ]; then
-    printInfoSection "Install CertManager $CERTMANAGER_VERSION"
+    printInfoSection "Install CertManager $CERTMANAGER_VERSION with Email Account ($CERTMANAGER_EMAIL)"
     bashas "kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v$CERTMANAGER_VERSION/cert-manager.yaml"
     waitForAllPods
   fi
@@ -442,8 +442,10 @@ certmanagerInstall() {
 
 certmanagerEnable() {
   if [ "$certmanager_enable" = true ]; then
-    printInfoSection "Installing ClusterIssuer with HTTP Letsencrypt"
-    bashas "kubectl apply -f $KEPTN_IN_A_BOX_DIR/resources/ingress/clusterissuer.yaml"
+    printInfoSection "Installing ClusterIssuer with HTTP Letsencrypt for ($CERTMANAGER_EMAIL)"
+
+    #bashas "kubectl apply -f $KEPTN_IN_A_BOX_DIR/resources/ingress/clusterissuer.yaml"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-clusterissuer.sh $CERTMANAGER_EMAIL"
     waitForAllPods
     printInfo "Creating SSL Certificates with Let's encrypt for the exposed ingresses"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash add-ssl-certificates.sh"
