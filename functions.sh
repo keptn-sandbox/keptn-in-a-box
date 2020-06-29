@@ -10,6 +10,7 @@ ISTIO_VERSION=1.5.1
 HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
 KEPTN_VERSION=0.6.2
+KEPTN_JMETER_SERVICE_VERSION=0.2.0
 KEPTN_DT_SERVICE_VERSION=0.7.1
 KEPTN_DT_SLI_SERVICE_VERSION=0.4.2
 KEPTN_EXAMPLES_BRANCH=0.6.2
@@ -65,6 +66,7 @@ dynatrace_activegate_install=false
 dynatrace_configure_workloads=false
 
 jenkins_deploy=false
+jmeter_extended_service=false
 
 keptn_bridge_eap=false
 keptndeploy_homepage=false
@@ -186,6 +188,8 @@ installationBundlePerformanceAsAService() {
   # Jenkins needs Helm for the Chart to be installed
   helm_install=true
   jenkins_deploy=true
+  # Adding JMeter extended Service
+  jmeter_extended_service=true
 
   selected_bundle="installationBundlePerformanceAsAService"
 }
@@ -550,6 +554,13 @@ jenkinsDeploy() {
   fi
 }
 
+jmeterExtendedService() {
+  if [ "$jmeter_extended_service" = true ]; then
+    printInfoSection "Deploying JMeter Extended Service"
+    bashas "kubectl apply -f  https://raw.githubusercontent.com/keptn-contrib/jmeter-extended-service/release-$KEPTN_JMETER_SERVICE_VERSION/deploy/service.yaml"
+  fi
+}
+
 dynatraceConfigureMonitoring() {
   if [ "$dynatrace_configure_monitoring" = true ]; then
     printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
@@ -648,7 +659,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,jmeter_extended_service,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
   do 
     echo "$i = ${!i}"
   done
@@ -704,9 +715,13 @@ doInstallation() {
   dynatraceConfigureMonitoring
   dynatraceConfigureWorkloads
   keptnBridgeEap
+  
+  jenkinsDeploy
+  jmeterExtendedService
+
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
-  jenkinsDeploy
+  
   createWorkshopUser
   certmanagerEnable
   printInstalltime
