@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://dt-cdn.net/">
   <meta name="robots" content="noindex, follow">
-  <title>Dynatrace</title>
+  <title>Keptn in a Box 📦</title>
   <link rel="icon" type="image/x-icon" href="https://assets.dynatrace.com/groundhog/v6.1.2/assets/images/favicon.ico">
 
   <script type="text/javascript">
@@ -85,6 +85,10 @@
       text-decoration: none;
       color: #ffffff;
       font-style: normal;
+    }
+
+    a:hover {
+      color: aqua;
     }
 
     @media screen and (min-width: 320px) {
@@ -866,26 +870,51 @@
         <p style="color:white;font-size: larger;">Accelerate IT transformation to NoOps, innovate faster and
           deliver better business
           outcomes.</p>
-        <p style="color:cornflowerblue;">Welcome to your single node dev Kubernetes Cluster <a style="color: aqua;"
-            id="hostname"></a>
+        <p style="color:cornflowerblue;">Welcome to your single node Keptn in a Box 📦 Kubernetes Cluster <a
+            style="color: aqua;" id="hostname"></a>
         </p>
-        <div>
-          <a id="keptnapi">🌐keptn rest api &nbsp;&nbsp;</a>
-          <a id="bridge">🌐keptn's bridge &nbsp;&nbsp;</a>
-          <a id="unleash">🌐 unleash</a>
-        </div>
-        </br>
-        <div><a id="pipeline"> 🛒 Carts delivery pipeline overview </a>
-        </div>
-        </br>
-        <div>
-          <a style="font-size: small;" id="cartsdev">dev 🛒</a><a>|</a>
-          <a style="font-size: small;" id="cartsstage">staging 🛒 </a><a>|</a>
-          <a style="font-size: small;" id="cartsprod">prod 🛒</a>
-        </div>
-        </br>
-        </br>
+        <div style="font-style: italic ;">Here is a list of links for accessing the installed components:</div>
+        <div class="links">
 
+          <div>
+            <ul>
+              <div style="font-weight: bold;">🕸Kubernetes</div>
+              <li><a id="k8api">🌐API</a></li>
+              <li><a id="kubernetes"> 📊Dashboard</a></li>
+            </ul>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <div style="font-weight: bold;">Keptn</div>
+              <li><a id="keptnapi">🌐API </a></li>
+              <li><a id="bridge">Bridge </a></li>
+            </ul>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <div style="font-weight: bold;">🚦CI/CD </div>
+              <li><a id="jenkins">Jenkins </a></li>
+              <li><a id="unleash">Unleash</a></li>
+            </ul>
+          </div>
+        </div>
+        </br>
+        </br>
+        <div>
+          <ul>
+            <div style="font-weight: bold;"> 🛒 Sockshop Demo links</div>
+            <li><a id="pipeline"> delivery pipeline overview 👓</a></li>
+            <li>
+              <div>stages:
+                <a style="font-size: small;" id="cartsdev">development </a><a>|</a>
+                <a style="font-size: small;" id="cartsstage">staging </a><a>|</a>
+                <a style="font-size: small;" id="cartsprod">production </a>
+              </div>
+            </li>
+          </ul>
+        </div>
         <!--  ACM Pic
           <img alt="Cloud" width="800px" sizes="((min-width: 300px) and (not (media: print))) 50vw, 100vw"
           data-action="zoom" data-src="https://dt-cdn.net/images/platform-wheel-1236-9b2e70f8d1.png"
@@ -895,24 +924,30 @@
           src="https://dt-cdn.net/images/platform-wheel-1236-9b2e70f8d1.png" data-was-processed="true">
           </img>
           -->
-
-        <p>Installed in this cluster you have:</p>
-        <div class="links">
-          <div class="links__left">
-            <a>Helm</a>
-            <a>Istio</a>
-            <a target="_blank" href="https://Microk8s.io">Microk8s</a>
-            <a target="_blank" href="https://keptn.sh">Keptn</a>
-          </div>
-          <div class="links__right">
-            <a target="_blank"
-              href="https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/oneagent-with-helm/">OneAgent
-              Operator</a>
-            <a target="_blank"
-              href="https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/monitoring/connect-kubernetes-clusters-to-dynatrace/">Kubernetes
-              Cluster Monitoring</a>
+          <!-- 
+        <div>
+          <p>The installed components in this cluster can be (but not limited to):</p>
+          <div class="links">
+            <div class="links__left">
+              <a target="_blank" href="https://helm.sh">Helm</a>
+              <a target="_blank" href="https://istio.io">Istio</a>
+              <a target="_blank" href="https://Microk8s.io">Microk8s</a>
+              <a target="_blank" href="https://keptn.sh">Keptn</a>
+              <a target="_blank" href="https://www.jenkins.io">Jenkins</a>
+              <a target="_blank" href="https://unleash.github.io/">Unleash</a>
+            </div>
+            <div class="links__right">
+              <a target="_blank"
+                href="https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/oneagent-with-helm/">OneAgent
+                Operator</a>
+              <a target="_blank"
+                href="https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/monitoring/connect-kubernetes-clusters-to-dynatrace/">Kubernetes
+                Cluster Monitoring</a>
+            </div>
           </div>
         </div>
+
+          -->
         <br>
         <br>
         <p style="font-style:italic;font-size: medium;">"Successful DevOps teams embark on the path to NoOps by
@@ -939,6 +974,9 @@
 
         replaceInE("hostname", hostname);
         addLink("pipeline", hostname + "/pipeline");
+        addLink("jenkins", "jenkins." + hostname);
+        addLink("k8api", "api.kubernetes." + hostname);
+        addLink("kubernetes", "kubernetes." + hostname);
         addLink("keptnapi", "api.keptn." + hostname + "/swagger-ui");
         addLink("bridge", "bridge.keptn." + hostname);
         addLink("cartsdev", "carts.sockshop-dev." + hostname);
