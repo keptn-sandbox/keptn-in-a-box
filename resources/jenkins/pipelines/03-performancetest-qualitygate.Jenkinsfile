@@ -4,9 +4,9 @@ def keptn = new sh.keptn.Keptn()
 node {
     properties([
         parameters([
-         string(defaultValue: 'perfaasproject', description: 'Name of your Keptn Project for Performance as a Self-Service', name: 'Project', trim: false), 
-         string(defaultValue: 'performance', description: 'Stage in your Keptn project used for Performance Feedback', name: 'Stage', trim: false), 
-         string(defaultValue: 'perfaasservice', description: 'Servicename used to keep SLIs, SLOs, test files ...', name: 'Service', trim: false),
+         string(defaultValue: 'performance', description: 'Name of your Keptn Project for Performance as a Self-Service', name: 'Project', trim: false), 
+         string(defaultValue: 'performancestage', description: 'Stage in your Keptn project used for Performance Feedback', name: 'Stage', trim: false), 
+         string(defaultValue: 'evalservice', description: 'Servicename used to keep SLIs, SLOs, test files ...', name: 'Service', trim: false),
          choice(choices: ['dynatrace', 'prometheus',''], description: 'Select which monitoring tool should be configured as SLI provider', name: 'Monitoring', trim: false),
          choice(choices: ['performance', 'performance_10', 'performance_50', 'performance_100', 'performance_long'], description: 'Test Strategy aka Workload, e.g: performance, performance_10, performance_50, performance_100, performance_long', name: 'TestStrategy', trim: false),
          choice(choices: ['perftest','basic'], description: 'Decide which set of SLIs you want to evaluate. The sample comes with: basic and perftest', name: 'SLI'),
@@ -55,5 +55,17 @@ node {
         } else {
             echo "Not waiting for results. Please check the Keptns bridge for the details!"
         }
+
+        // Generating the Report so you can access the results directly in Keptns Bridge
+        publishHTML(
+            target: [
+                allowMissing         : false,
+                alwaysLinkToLastBuild: false,
+                keepAll              : true,
+                reportDir            : ".",
+                reportFiles          : 'keptn.html',
+                reportName           : "Keptn Result in Bridge"
+            ]
+        )
     }
 }

@@ -139,6 +139,7 @@ installationBundleAll() {
   create_workshop_user=true
 
   jenkins_deploy=true
+  jmeter_extended_service=true
 
   selected_bundle="installationBundleAll"
 }

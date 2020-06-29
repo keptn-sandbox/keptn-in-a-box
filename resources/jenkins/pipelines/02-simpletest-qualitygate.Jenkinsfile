@@ -4,9 +4,9 @@ def keptn = new sh.keptn.Keptn()
 node {
     properties([
         parameters([
-         string(defaultValue: 'testwithqgproject', description: 'Name of your Keptn Project for Quality Gate Feedback ', name: 'Project', trim: false), 
+         string(defaultValue: 'qualitygate-simpletest', description: 'Name of your Keptn Project for Quality Gate Feedback ', name: 'Project', trim: false), 
          string(defaultValue: 'qualitystage', description: 'Stage in your Keptn project used for for Quality Gate Feedback', name: 'Stage', trim: false), 
-         string(defaultValue: 'testservice', description: 'Servicename used to keep SLIs and SLOs', name: 'Service', trim: false),
+         string(defaultValue: 'evalservice', description: 'Servicename used to keep SLIs and SLOs', name: 'Service', trim: false),
          choice(choices: ['dynatrace', 'prometheus',''], description: 'Select which monitoring tool should be configured as SLI provider', name: 'Monitoring', trim: false),
          choice(choices: ['perftest','basic'], description: 'Decide which set of SLIs you want to evaluate. The sample comes with: basic and perftest', name: 'SLI'),
          string(defaultValue: 'http://easytravel.demo.dynatrace.com', description: 'URI of the application you want to run a test against', name: 'DeploymentURI', trim: false),
@@ -92,5 +92,17 @@ node {
         } else {
             echo "Not waiting for results. Please check the Keptns bridge for the details!"
         }
+
+        // Generating the Report so you can access the results directly in Keptns Bridge
+        publishHTML(
+            target: [
+                allowMissing         : false,
+                alwaysLinkToLastBuild: false,
+                keepAll              : true,
+                reportDir            : ".",
+                reportFiles          : 'keptn.html',
+                reportName           : "Keptn Result in Bridge"
+            ]
+        )
     }
 }
