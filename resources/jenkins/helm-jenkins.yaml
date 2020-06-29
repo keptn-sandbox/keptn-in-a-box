@@ -315,12 +315,12 @@ master:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/acm-workshops/jenkins-tutorial.git') 
+                          url('https://github.com/keptn-sandbox/keptn-in-a-box.git') 
                         }
                         branch('*/master')
                       }
                     }
-                    scriptPath 'usecases/uc1_qualitygates/keptnevaluatewithtest.Jenkinsfile'
+                    scriptPath 'resources/jenkins/pipelines/02-simpletest-qualitygate.Jenkinsfile'
                     lightweight()
                   }
                 }
@@ -334,12 +334,12 @@ master:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/acm-workshops/jenkins-tutorial.git')
+                          url('https://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
                         branch('*/master')
                       }
                     }
-                    scriptPath 'usecases/uc1_qualitygates/keptnperftesting.Jenkinsfile'
+                    scriptPath 'resources/jenkins/pipelines/03-performancetest-qualitygate.Jenkinsfile'
                     lightweight()
                   }
                 }
