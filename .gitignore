@@ -6,3 +6,5 @@
 **-loc**
 # No mounted file shares
 **sshfs**
+# No DS Store files
+.DS_Store

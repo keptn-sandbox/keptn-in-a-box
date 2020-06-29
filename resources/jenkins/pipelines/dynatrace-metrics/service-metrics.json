@@ -1,0 +1,414 @@
+{
+    "totalCount": 68,
+    "nextPageKey": null,
+    "metrics": [
+        {
+            "metricId": "builtin:service.cpu.perRequest",
+            "displayName": "CPU time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.cpu.time",
+            "displayName": "Service CPU time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.dbChildCallCount",
+            "displayName": "Number of calls to databases",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.dbChildCallTime",
+            "displayName": "Time spent in database calls",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.dbconnections.failure",
+            "displayName": "Failed connections",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.dbconnections.failureRate",
+            "displayName": "Connection failure rate",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.dbconnections.success",
+            "displayName": "Successful connections",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.dbconnections.successRate",
+            "displayName": "Connection success rate",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.dbconnections.total",
+            "displayName": "Total number of connections",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.client.count",
+            "displayName": "Number of client side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.client.rate",
+            "displayName": "Failure rate (client side  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.errors.client.successCount",
+            "displayName": "Number of calls without  client side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.fivexx.count",
+            "displayName": "Number of HTTP 5xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.fivexx.rate",
+            "displayName": "Failure rate (HTTP 5xx  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.errors.fivexx.successCount",
+            "displayName": "Number of calls without  HTTP 5xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.fourxx.count",
+            "displayName": "Number of HTTP 4xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.fourxx.rate",
+            "displayName": "Failure rate (HTTP 4xx  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.errors.fourxx.successCount",
+            "displayName": "Number of calls without  HTTP 4xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.group.total.count",
+            "displayName": "Number of any errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.group.total.rate",
+            "displayName": "Failure rate (any  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.errors.group.total.successCount",
+            "displayName": "Number of calls without  any errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.server.count",
+            "displayName": "Number of server side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.server.rate",
+            "displayName": "Failure rate (server side  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.errors.server.successCount",
+            "displayName": "Number of calls without  server side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.total.count",
+            "displayName": "Number of any errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.errors.total.rate",
+            "displayName": "Failure rate (any  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.errors.total.successCount",
+            "displayName": "Number of calls without  any errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.ioTime",
+            "displayName": "IO time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.count.client",
+            "displayName": "Request count - client",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.count.server",
+            "displayName": "Request count - server",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.count.total",
+            "displayName": "Request count",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.cpu.perRequest",
+            "displayName": "CPU per request",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.cpu.time",
+            "displayName": "Service method CPU time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.dbChildCallCount",
+            "displayName": "Number of calls to databases",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.dbChildCallTime",
+            "displayName": "Time spent in database calls",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.client.count",
+            "displayName": "Number of client side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.client.rate",
+            "displayName": "Failure rate (client side  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.client.successCount",
+            "displayName": "Number of calls without  client side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.fivexx.count",
+            "displayName": "Number of HTTP 5xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.fivexx.rate",
+            "displayName": "Failure rate (HTTP 5xx  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.fivexx.successCount",
+            "displayName": "Number of calls without  HTTP 5xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.fourxx.count",
+            "displayName": "Number of HTTP 4xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.fourxx.rate",
+            "displayName": "Failure rate (HTTP 4xx  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.fourxx.successCount",
+            "displayName": "Number of calls without  HTTP 4xx errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.server.count",
+            "displayName": "Number of server side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.server.rate",
+            "displayName": "Failure rate (server side  errors)",
+            "description": "",
+            "unit": "Percent"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.errors.server.successCount",
+            "displayName": "Number of calls without  server side errors",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.ioTime",
+            "displayName": "IO time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.lockTime",
+            "displayName": "Lock time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.nonDbChildCallCount",
+            "displayName": "Number of calls to other services",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.nonDbChildCallTime",
+            "displayName": "Time spent in calls to other services",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.response.client",
+            "displayName": "Client side response time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.response.server",
+            "displayName": "Server side response time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.response.time",
+            "displayName": "Method response time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.totalProcessingTime",
+            "displayName": "Total processing time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.keyRequest.waitTime",
+            "displayName": "Wait time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.lockTime",
+            "displayName": "Lock time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.nonDbChildCallCount",
+            "displayName": "Number of calls to other services",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.nonDbChildCallTime",
+            "displayName": "Time spent in calls to other services",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.requestCount.client",
+            "displayName": "Request count - client",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.requestCount.server",
+            "displayName": "Request count - server",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.requestCount.total",
+            "displayName": "Request count",
+            "description": "",
+            "unit": "Count"
+        },
+        {
+            "metricId": "builtin:service.response.client",
+            "displayName": "Client side response time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.response.server",
+            "displayName": "Server side response time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.response.time",
+            "displayName": "Response time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.totalProcessingTime",
+            "displayName": "Total processing time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.totalProcessingTime.group.totalProcessingTime",
+            "displayName": "Total processing time",
+            "description": "",
+            "unit": "MicroSecond"
+        },
+        {
+            "metricId": "builtin:service.waitTime",
+            "displayName": "Wait time",
+            "description": "",
+            "unit": "MicroSecond"
+        }
+    ]
+}

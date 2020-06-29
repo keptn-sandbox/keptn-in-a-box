@@ -502,7 +502,7 @@ keptnInstallClient() {
   tar -xvf keptn.tar
   chmod +x keptn
   mv keptn /usr/local/bin/keptn
-  echo "remote keptn.tar"
+  printInfo "remove keptn.tar"
   rm keptn.tar
 }
 
