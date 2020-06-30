@@ -263,7 +263,7 @@ This will install single node kubernetes cluster, keptn, k8 dashboard and expose
 ### 🏁🚦Performance as a Service  (installationBundlePerformanceAsAService)
 This scenario will create a Box for delivering Performance as a Service in an instant. It will install the QualityGates functionality of Keptn  (not installing the other Keptn services and/or components such as Istio). It will install Jenkins preconfigured and managed as Code with 3 example pipelines. You only need to Tag your service in Dynatrace and (if wanting to do a loadtest) provide the URL of your application do a sample Loadtest and validate it. 
 If you want to learn more about Qualitygates and SRE Driven development, take a look at the following tutorial:
-https://tutorials.keptn.sh/tutorials/keptn-progressive-delivery-dynatrace/i
+https://tutorials.keptn.sh/tutorials/keptn-progressive-delivery-dynatrace/
 
 #### The sample pipelines
 <img src="doc/qualitygates.png" width="450px" title="Keptn-in-a-Box"> 
