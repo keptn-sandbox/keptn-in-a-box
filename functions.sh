@@ -640,8 +640,12 @@ createWorkshopUser() {
   if [ "$create_workshop_user" = true ]; then
     printInfoSection "Creating Workshop User from user($USER) into($NEWUSER)"
     homedirectory=$(eval echo ~$USER)
+    printInfo "copy home directories and configurations"
     cp -R $homedirectory /home/$NEWUSER
+    printInfo "Create user"
     useradd -s /bin/bash -d /home/$NEWUSER -m -G sudo -p $(openssl passwd -1 $NEWPWD) $NEWUSER
+    printInfo "Change diretores rights -r"
+    chown -R $NEWUSER:$NEWUSER /home/$NEWUSER
     usermod -a -G docker $NEWUSER
     usermod -a -G microk8s $NEWUSER
     printInfo "Warning: allowing SSH passwordAuthentication into the sshd_config"
