@@ -15,10 +15,9 @@ For spinning up instances automatically with AWS completely configured and set u
 ## 🥜Keptn-in-a-Box - Features in a Nutshell
 - Update the ubuntu repository
 - Installation of Docker (for building own Docker images)
-- Installation of Microkubernetes (v1.15)
+- Installation of Microkubernetes
 - Allow the Kube-API to run priviledged pods (necessary for deploying the FullStack Agent via Operator)
 - Update IPTABLES: allowing traffic for pods internal and external
-- Create a user (dynatrace in this case) with it's own Home directory and SSH access for doing the Hands-On workshop
 - Set up of useful BASH Aliases for working with the command line
 - Enable autocompletion of Kubectl
 - Installation of Dynatrace ActiveGate and configuration of [Cluster](https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/monitoring/connect-kubernetes-clusters-to-dynatrace/) and [Workload monitoring](https://www.dynatrace.com/support/help/technology-support/cloud-platforms/kubernetes/monitoring/monitor-workloads-kubernetes/)
@@ -27,14 +26,15 @@ For spinning up instances automatically with AWS completely configured and set u
 - Enabling own Docker Registry for the Cluster
 - Convert the public IP in a (magic) domain ([nip.io](https://nip.io/)) for being able to expose all the needed services with subdomains.
 - Routing of traffic to Istio-Ingressgateway via a Kubernetes NGINX Ingress using standard HTTP(S) ports 80 and 443. This way we dont need a public IP from the Cloud Provider
-- Installation of Keptn 
+- Installation of Keptn (QualityGates also available)
 - Expose the Keptn-Bridge Service
 - Installation of Dynatrace OneAgent via Keptn
+- Deployment of Jenkins preconfigured und managed as code
 - Deployment of the Unleash-Server
 - Onboard of the Sockshop-Carts Sample project
 - Deployment of a cartsloadgenerator PoD
-- Deployment of a Autonomous Cloud teaser home page with links to the pipeline, bridge keptn-api. 
-- Creation of valid SSL certificates with Certmanager and HTTPs Let's encrypt.
+- Deployment of a Autonomous Cloud teaser home page with links to the pipeline, kubernetes api, keptn-bridge, keptn-api, jenkins 
+- Creation of valid SSL certificates for the exposed endpoints with Certmanager and HTTPs Let's encrypt.
 - Create a user account and copy the standard user (ubuntu on this case) with his own home directory (a replica) and allowing SSH connections with text password. Useful for spinning an army of workshop clusters. 
 
 ### 💻The Keptn-in-a-Box Bash installation
@@ -80,10 +80,11 @@ For a step by step understanding of how Keptn-in-a-Box works and how to use it, 
   ├── cartsloadgenerator    Sources of the load container of the carts app 
   ├── demo                  Scripts for Onboarding the Carts app  
   ├── dynatrace             Scripts for integrating with Dynatrace
-  ├── expose-bridge         YAML files for exposing the bridge
   ├── homepage              Sources of the homepage for displaying the Autonomous Cloud teaser  
-  ├── istio                 YAML files for mapping istio ingressgw to the nginx ingress
-  └── k8-services           YAML files for exposing the k8 services
+  ├── ingress               Files and logic for mapping, exposing the endpoints and services. Creation of Certificates.  
+  ├── jenkins               Deployment and configuration for Jenkins managed as code.
+  ├── misc                  Miscelaneous (patch kubernetes dashboard)
+  └── virtualservices       YAML files for virtualservices 
 ```
 
 ## 💾 Sizing
@@ -232,17 +233,51 @@ With the **installationModulesDefault** or **installationModulesFull** Dynatrace
 
 The keptn-in-a-box project is highly customizable (obviously since it's a bashfile) below are some customizations that are the most used. All customizations can and should be done in the ** keptn-in-a-box.sh** file and not in the **functions.sh** file. This way you keep a nice delegation of tasks and functionality. 
 
-### Change the installation type to Minimal or Full
-Comment out the Default and uncomment the installation type you want. For example for minimal:
+### Change the installation Bundle
+Comment out the Default and uncomment the installation type you want. For example for a Demo:
 
 ```bash
-#installationModulesDefault
+# ==================================================
+#    ----- Select your installation Bundle -----   #
+# ==================================================
+# Uncomment for installing only Keptn 
+# installationBundleKeptnOnly
 
-installationModulesMinimal
+# - Comment out if selecting another bundle
+installationBundleDemo
 
-#installationModulesFull
+# - Comment out if only want to install only the QualityGates functionality
+#installationBundleKeptnQualityGates
+
+# - Uncomment for installing Keptn-in-a-Box for Workshops
+# installationBundleWorkshop
+
+# - Uncomment below for installing all features
+#installationBundleAll
+
+# - Uncomment below for installing a PerformanceAsAService Box
+#installationBundlePerformanceAsAService
 ```
-The same applies for full.
+This will install single node kubernetes cluster, keptn, k8 dashboard and expose the endpoints. It will also clone the examples, onboard the carts sample app and add a quality gate.  
+
+### 🏁🚦Performance as a Service  (installationBundlePerformanceAsAService)
+This scenario will create a Box for delivering Performance as a Service in an instant. It will install the QualityGates functionality of Keptn  (not installing the other Keptn services and/or components such as Istio). It will install Jenkins preconfigured and managed as Code with 3 example pipelines. You only need to Tag your service in Dynatrace and (if wanting to do a loadtest) provide the URL of your application do a sample Loadtest and validate it. 
+If you want to learn more about Qualitygates and SRE Driven development, take a look at the following tutorial:
+https://tutorials.keptn.sh/tutorials/keptn-progressive-delivery-dynatrace/i
+
+#### The sample pipelines
+<img src="doc/qualitygates.png" width="450px" title="Keptn-in-a-Box"> 
+
+For example triggering the first quality gate and evaluating a service will look something like this:
+
+<img src="doc/pipeline-validation.png" width="450px" title="Keptn-in-a-Box"> 
+
+> Info: The first launch of the pipeline wil fail since they need to be initialized and they need parameters to do so. it is ok, on the second run, it will ask you for your information.
+
+
+1. 01-qualitygate-evaluation -  will do only the evaluation of the given service and timeframe
+2. 02-simpletest-qualitygate - will do a simple multi-step test directly from Jenkins via HTTP and do the validation via keptn.
+3. 03-performancetest-qualitygate - will do a Loadtest based on a simple JMeter script. 
 
 ### Change your own Domain
 By default the Script will get the public ip and give it a magic domain with nip.io like ip=1.2.3.4 will become 1-2-3-4.nip.io. This way with an NGINX Ingress Keptn and all Istio and Kubernetes services are available with subdomains via the standard HTTP ports 443 and 80.
@@ -254,12 +289,19 @@ DOMAIN=192.168.0.1.nip.io
 
 ### 🔒 Generate valid certificates with Lets Encrypt 
 
-By adding/commenting out the following control flags, you'll install Certmanager. A Cluster Issuer will be added and a valid certificate with let's encrypt for your public endpoints will be created. This way the Keptn API and Kubernetes API will have a valid Certificate.
+By adding/commenting out the following control flags, you'll install Certmanager. A Cluster Issuer will be added and a valid certificate with let's encrypt for your public endpoints will be created. This way the exposed Endpoints/Services like the  Keptn API, Homepage, or Kubernetes API will have a valid Certificate. The Certificate renewal will happen automatically.
 
 ```bash
 certmanager_install=true
 certmanager_enable=true
 ```
+
+If you provide your Email, the Cluster issuer will be created with the given email account. If left empty a fake Email account will be generated.
+
+```bash
+CERTMANAGER_EMAIL="youremail@yourdomain.com"
+```
+
 Add the modules before the `doInstallation` 
 
 ### 👨‍💻 Create a Workshop user 
@@ -274,19 +316,28 @@ This variables in combination with the control flag `create_workshop_user=false`
 This are the actual versions of the different Modules
 ```bash
 # **** Installation Versions **** 
+# ==================================================
+#      ----- Components Versions -----             #
+# ==================================================
 ISTIO_VERSION=1.5.1
 HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
-KEPTN_VERSION=0.6.1
-KEPTN_DT_SERVICE_VERSION=0.6.2
-KEPTN_DT_SLI_SERVICE_VERSION=0.3.1
-KEPTN_EXAMPLES_BRANCH=0.6.1
+KEPTN_VERSION=0.6.2
+KEPTN_JMETER_SERVICE_VERSION=0.2.0
+KEPTN_DT_SERVICE_VERSION=0.7.1
+KEPTN_DT_SLI_SERVICE_VERSION=0.4.2
+KEPTN_EXAMPLES_BRANCH=0.6.2
 TEASER_IMAGE="shinojosa/nginxacm"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.15/stable"
+KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
+KEPTN_EXAMPLES_DIR="~/examples"
+KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
+KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
+KEPTN_EXAMPLES_DIR="~/examples"
+
 ```
 Feel free to experiment and change the versions. We will try to keep the list up to date. 
-
 
 ###  Create your custom installation
 At the begining of the  `functions.sh` file the installation modules are listed. You can enable them in the `keptn-in-a-box.sh` file before calling the `doInstallation` function.
