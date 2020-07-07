@@ -376,6 +376,7 @@ microk8sStart() {
 }
 
 microk8sEnableBasic() {
+  #TODO check that Micro is already there, racecondition on ESXI lab machine
   printInfoSection "Enable DNS, Storage, NGINX Ingress"
   bashas 'microk8s.enable dns storage ingress'
   # TODO Remove this image when upgrading to a newer Micro Version when Keptn is supports 1.16+
@@ -493,7 +494,7 @@ keptnExamplesClone() {
 dynatraceSaveCredentials() {
   if [ "$dynatrace_savecredentials" = true ]; then
     printInfoSection "Save Dynatrace credentials"
-    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$PAASTOKEN\" \"$APITOKEN\""
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/ ; bash save-credentials.sh \"$DT_TENANT\" \"$APITOKEN\"" \"$PAASTOKEN\"
   fi
 }
 
