@@ -63,10 +63,7 @@ FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-
 if [ "$pipe_log" = true ] ; then
   echo "Piping all output to logfile $LOGFILE"
   echo "Type 'less +F $LOGFILE' for viewing the output of installation on realtime"
-  echo "If you did not send the job to the background, type \"CTRL + Z\" and \"bg\""
-  echo "CTRL + Z (for pausing this job)"
-  echo "then"
-  echo "bg (for resuming back this job and send it to the background)"
+  echo ""
   # Saves file descriptors so they can be restored to whatever they were before redirection or used 
   # themselves to output to whatever they were before the following redirect.
   exec 3>&1 4>&2

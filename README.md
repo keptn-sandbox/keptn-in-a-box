@@ -137,10 +137,9 @@ git clone https://github.com/keptn-sandbox/keptn-in-a-box ; cd keptn-in-a-box
 
 #### 3. Execute the file with sudo rights.
 ```bash
-sudo ./keptn-in-a-box.sh &
+sudo bash -c './keptn-in-a-box.sh &'
 ```
-
-And that was it! Yes that easy!  Now if you notice is that there is an & in the command. This will send the installation job in the background. You will not see any output since stdout and stderr are piped to a logfile which is located by default in **/tmp/install.log** 
+And that was it! Yes that easy!  Now if you notice is that there is an & in the command. This command will run installation in a bash shell as sudo, will prompt you for the password and will send the job to the background. You will not see any output since stdout and stderr are piped to a logfile which is located by default in **/tmp/install.log** 
 
 For inspecting the installation on realtime type:
 ```bash
