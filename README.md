@@ -167,7 +167,6 @@ The default installation is **installationBundlesDefault** which sets the contro
   dynatrace_configure_monitoring=true
   dynatrace_activegate_install=true
   dynatrace_configure_workloads=true
-  keptn_bridge_expose=true
   keptn_bridge_eap=true
   keptndemo_teaser_pipeline=true
   keptndemo_cartsload=true
@@ -319,22 +318,20 @@ This are the actual versions of the different Modules
 #      ----- Components Versions -----             #
 # ==================================================
 ISTIO_VERSION=1.5.1
-HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
-KEPTN_VERSION=0.6.2
+KEPTN_VERSION=0.7.0
 KEPTN_JMETER_SERVICE_VERSION=0.2.0
-KEPTN_DT_SERVICE_VERSION=0.7.1
-KEPTN_DT_SLI_SERVICE_VERSION=0.4.2
-KEPTN_EXAMPLES_BRANCH=0.6.2
-TEASER_IMAGE="shinojosa/nginxacm"
+KEPTN_DT_SERVICE_VERSION=0.8.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.5.0
+KEPTN_EXAMPLES_BRANCH=0.7.0
+TEASER_IMAGE="shinojosa/nginxacm:0.7"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
-MICROK8S_CHANNEL="1.15/stable"
+MICROK8S_CHANNEL="1.18/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
-
 ```
 Feel free to experiment and change the versions. We will try to keep the list up to date. 
 
