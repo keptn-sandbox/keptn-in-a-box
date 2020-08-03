@@ -370,6 +370,7 @@ microk8sInstall() {
 
     printInfo "Create kubectl file for the user"
     homedirectory=$(eval echo ~$USER)
+    bashas "mkdir $homedirectory/.kube"
     bashas "microk8s.config > $homedirectory/.kube/config"
 
   fi
@@ -423,7 +424,7 @@ istioInstall() {
     mv istio-$ISTIO_VERSION /opt/istio-$ISTIO_VERSION
     chmod +x -R /opt/istio-$ISTIO_VERSION/
     ln -s /opt/istio-$ISTIO_VERSION/bin/istioctl /usr/local/bin/istioctl
-    bashas "echo 'y' | istioctl manifest apply"
+    bashas "echo 'y' | istioctl manifest apply --force"
     waitForAllPods
   fi
 }
@@ -633,6 +634,7 @@ exposeK8Services() {
 
 patchKubernetesDashboard() {
   if [ "$patch_kubernetes_dashboard" = true ]; then
+    printInfoSection "Patching Kubernetes Dashboard, use only learning andfor Workshops"
     echo "Skip Login in K8 Dashboard"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/misc && bash patch-kubernetes-dashboard.sh"
   fi
