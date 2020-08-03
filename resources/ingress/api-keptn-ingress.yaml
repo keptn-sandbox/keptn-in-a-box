@@ -13,7 +13,7 @@ metadata:
     # rewrite any request will return 404
     nginx.ingress.kubernetes.io/rewrite-target: /
     #cert-manager.io/cluster-issuer: "letsencrypt"
-  name: keptn-ingress
+  name: api-keptn-ingress
   namespace: keptn
 spec:
   rules:

@@ -11,9 +11,9 @@ if [[ -d "unleash" ]]; then
 
     # Configure Keptn
     kubectl -n keptn create secret generic unleash --from-literal="UNLEASH_SERVER_URL=http://unleash.unleash-dev/api" --from-literal="UNLEASH_USER=keptn" --from-literal="UNLEASH_TOKEN=keptn"
-    kubectl delete pod -l=run=remediation-service -n keptn
 
-    # Adding the remediation is still needed
+    kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/unleash-service/release-0.1.0/deploy/service.yaml
+    # TODO Adding the remediation is still needed
 else 
     echo "The helmcharts for unleash are not present"
 fi 

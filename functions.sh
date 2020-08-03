@@ -10,8 +10,8 @@ ISTIO_VERSION=1.5.1
 CERTMANAGER_VERSION=0.14.0
 KEPTN_VERSION=0.7.0
 KEPTN_JMETER_SERVICE_VERSION=0.2.0
-KEPTN_DT_SERVICE_VERSION=0.7.1
-KEPTN_DT_SLI_SERVICE_VERSION=0.4.2
+KEPTN_DT_SERVICE_VERSION=0.8.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.5.0
 KEPTN_EXAMPLES_BRANCH=0.7.0
 TEASER_IMAGE="shinojosa/nginxacm"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
@@ -435,9 +435,9 @@ helmInstall() {
     printInfo "Adding alias for helm client"
     snap alias microk8s.helm3 helm
     printInfo "Adding Default repo for  Helm"
-    helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+    bashas "helm repo add stable https://kubernetes-charts.storage.googleapis.com/"
     printInfo "Updating Helm Repository"
-    helm repo update
+    bashas "helm repo update"
   fi
 }
 
@@ -529,7 +529,7 @@ keptnInstall() {
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
       printInfoSection "Routing for the Keptn Services via NGINX Ingress"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn-ingress"
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
       waitForAllPods
       printInfoSection "Configuring Istio for Keptn"
       bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
@@ -537,7 +537,7 @@ keptnInstall() {
       bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
 
       printInfoSection "Authenticate Keptn CLI"
-      KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
+      KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
       KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
       bashas "keptn auth --endpoint=$KEPTN_ENDPOINT --api-token=$KEPTN_API_TOKEN"
     fi
@@ -556,9 +556,6 @@ keptnDeployHomepage() {
 jenkinsDeploy() {
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Deploying Jenkins via Helm. This Jenkins is configured and managed 'as code'"
-    printInfo "Init and updating HELM Repo"
-    bashas "helm init && helm repo update"
-    sleep 10
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} jenkins"
   fi
@@ -574,11 +571,18 @@ jmeterExtendedService() {
 dynatraceConfigureMonitoring() {
   if [ "$dynatrace_configure_monitoring" = true ]; then
     printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
-    bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"DT_PAAS_TOKEN=$DT_PAAS_TOKEN\""
-    # TODO Split concerns when this is solved https://github.com/keptn/enhancement-proposals/issues/20
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/manifests/dynatrace-service/dynatrace-service.yaml"
+    printInfo "Saving Credentials in dynatrace secret in keptn ns"
+    # TODO Why save bridge and other keptn infos in the secret??
+    bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"KEPTN_API_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/api\" --from-literal=\"KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)\" --from-literal=\"KEPTN_BRIDGE_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/bridge\""
+    # Deploy Operator as Help pages
+    printInfo "Deploying the OneAgent Operator"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash deploy_operator.sh"
+    printInfo "Deploying the Dynatrace Service in Keptn"
+    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/service.yaml" 
+
+    printInfo "Setting up Dynatrace SLI provider in Keptn"
     bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/$KEPTN_DT_SLI_SERVICE_VERSION/deploy/service.yaml"
-    printInfo "Wait for the Service to be created"
+    
     waitForAllPods
     bashas "keptn configure monitoring dynatrace"
     waitForAllPods
@@ -598,6 +602,7 @@ keptndemoUnleash() {
     bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh"
 
     printInfoSection "Expose Unleash-Server"
+    #TODO Add Unleash Remediation via bash/curl/yaml
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
   fi
 }
@@ -669,6 +674,15 @@ printInstalltime() {
   printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds"
   printInfoSection "Keptn & Kubernetes Exposed Ingress Endpoints"
   bashas "kubectl get ing -A"
+  printInfoSection "Keptn Bridge access"
+  bashas "keptn configure bridge --output"
+  #TODO IF unleash
+  printInfo "Unleash-Server Access"
+  echo "Username: keptn"
+  echo "Username: keptn"
+  printInfo "Jenkins-Server Access"
+  echo "Username: admin"
+  echo "Username: secret"
 }
 
 printFlags() {

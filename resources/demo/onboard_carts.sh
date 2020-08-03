@@ -12,6 +12,7 @@ if [[ -d "carts" ]]; then
     # Onboarding - prepare  Keptn
     keptn onboard service carts-db --project=sockshop --chart=./carts-db --deployment-strategy=direct
 
+
 else 
     echo "The helmcharts for carts are not present"
 fi 
