@@ -7,13 +7,12 @@
 #      ----- Components Versions -----             #
 # ==================================================
 ISTIO_VERSION=1.5.1
-HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
 KEPTN_VERSION=0.7.0
 KEPTN_JMETER_SERVICE_VERSION=0.2.0
 KEPTN_DT_SERVICE_VERSION=0.7.1
 KEPTN_DT_SLI_SERVICE_VERSION=0.4.2
-KEPTN_EXAMPLES_BRANCH=0.6.2
+KEPTN_EXAMPLES_BRANCH=0.7.0
 TEASER_IMAGE="shinojosa/nginxacm"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.18/stable"
@@ -435,14 +434,10 @@ helmInstall() {
     bashas 'microk8s.enable helm3'
     printInfo "Adding alias for helm client"
     snap alias microk8s.helm3 helm
-    #curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-    #chmod +x get_helm.sh
-    #./get_helm.sh 
-    ##TODO do we need the default repo? check Jenkins
-    #printInfo "Adding Default repo for  Helm"
-    #helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-    #printInfo "Updating Helm Repository"
-    #helm repo update
+    printInfo "Adding Default repo for  Helm"
+    helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+    printInfo "Updating Helm Repository"
+    helm repo update
   fi
 }
 
@@ -536,6 +531,11 @@ keptnInstall() {
       printInfoSection "Routing for the Keptn Services via NGINX Ingress"
       bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn-ingress"
       waitForAllPods
+      printInfoSection "Configuring Istio for Keptn"
+      bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
+      printInfo "Restart Keptn Helm Service"
+      bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
+
       printInfoSection "Authenticate Keptn CLI"
       KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
       KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
