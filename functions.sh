@@ -9,14 +9,14 @@
 ISTIO_VERSION=1.5.1
 HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
-KEPTN_VERSION=0.6.2
+KEPTN_VERSION=0.7.0
 KEPTN_JMETER_SERVICE_VERSION=0.2.0
 KEPTN_DT_SERVICE_VERSION=0.7.1
 KEPTN_DT_SLI_SERVICE_VERSION=0.4.2
 KEPTN_EXAMPLES_BRANCH=0.6.2
 TEASER_IMAGE="shinojosa/nginxacm"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
-MICROK8S_CHANNEL="1.15/stable"
+MICROK8S_CHANNEL="1.18/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
@@ -367,6 +367,11 @@ microk8sInstall() {
 
     printInfo "Add Snap to the system wide environment."
     sed -i 's~/usr/bin:~/usr/bin:/snap/bin:~g' /etc/environment
+
+    printInfo "Create kubectl file for the user"
+    homedirectory=$(eval echo ~$USER)
+    bashas "microk8s.config > $homedirectory/.kube/config"
+
   fi
 }
 
@@ -376,18 +381,12 @@ microk8sStart() {
 }
 
 microk8sEnableBasic() {
-  #TODO check that Micro is already there, racecondition on ESXI lab machine
   printInfoSection "Enable DNS, Storage, NGINX Ingress"
   bashas 'microk8s.enable dns'
   waitForAllPods
   bashas 'microk8s.enable storage'
   waitForAllPods
   bashas 'microk8s.enable ingress'
-  # TODO Remove this image when upgrading to a newer Micro Version when Keptn is supports 1.16+
-  # Adding new NGINX Ingress Image since the 0.24.0 (Shipepd by default with Micro1.15)
-  # 0.24 Has over 150 Vulnerabilities. https://quay.io/repository/kubernetes-ingress-controller/nginx-ingress-controller-amd64?tag=0.24.1&tab=tags
-  printInfoSection "Upgrading NGINX Image to (quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0) - faster, lighter and secure."
-  bashas "microk8s.kubectl set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=quay.io/kubernetes-ingress-controller/nginx-ingress-controller-amd64:0.32.0"
   waitForAllPods
 }
 
@@ -416,7 +415,7 @@ dynatraceActiveGateInstall() {
     rm activegate.sh
   fi
 }
-
+# We install  Istio manually since Microk8s 1.18 classic comes with 1.3.4 and 1.5.1 is leightweit
 istioInstall() {
   if [ "$istio_install" = true ]; then
     printInfoSection "Install istio $ISTIO_VERSION into /Opt and add it to user/local/bin"
@@ -431,14 +430,18 @@ istioInstall() {
 
 helmInstall() {
   if [ "$helm_install" = true ]; then
-    printInfoSection "Installing HELM Client v$HELM_VERSION"
-    wget -O getHelm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get
-    chmod +x getHelm.sh
-    ./getHelm.sh -v v$HELM_VERSION
-    printInfo "Initializing Helm"
-    helm init
-    printInfo "Updating Helm Repository"
-    helm repo update
+    printInfoSection "Installing HELM 3 & Client via Microk8s addon"
+    bashas 'microk8s.enable helm3'
+    printInfo "Adding alias for helm client"
+    snap alias microk8s.helm3 helm
+    #curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    #chmod +x get_helm.sh
+    #./get_helm.sh 
+    ##TODO do we need the default repo? check Jenkins
+    #printInfo "Adding Default repo for  Helm"
+    #helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+    #printInfo "Updating Helm Repository"
+    #helm repo update
   fi
 }
 
@@ -508,7 +511,7 @@ keptnInstallClient() {
   tar -xvf keptn.tar
   chmod +x keptn
   mv keptn /usr/local/bin/keptn
-  printInfo "remove keptn.tar"
+  printInfo "Remove keptn.tar"
   rm keptn.tar
 }
 
@@ -519,23 +522,25 @@ keptnInstall() {
 
     if [ "$keptn_install_qualitygates" = true ]; then
       printInfoSection "Install Keptn on QualityGates mode only"
+      #TODO Check how to install QG only?
       bashas "echo 'y' | keptn install --platform=kubernetes --domain=$DOMAIN --use-case=quality-gates --ingress-install-option=Reuse"
-      #TODO Remove the NGINX when this is solved
-      # https://github.com/keptn/enhancement-proposals/blob/1a6f3e2b3f4d4dc697c12a622e223c4862fd7afc/text/0018-simplify-installer.md
-      printInfo "Removing the extra NGINX since it is not needed."
-      bashas "kubectl delete ns ingress-nginx"
       waitForAllPods
       printInfo "Creating/overwriting the Keptn Ingress and exposing the Brigde"
       bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn"
     else
       ## -- Keptn Installation --
       printInfoSection "Routing to the IstioService-Mesh via NGINX"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn-istio"
-      printInfoSection "Install Keptn with own installer passing DOMAIN via Parameter (omiting istio val)"
-      #TODO Remove own installer when the Istio validation for Istio 1.5+ is ok.
-      bashas "echo 'y' | keptn install --platform=kubernetes --ingress-install-option=Reuse --domain=$DOMAIN --keptn-installer-image=shinojosa/keptninstaller:6.2"
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn-ingress"
+      printInfoSection "Install Keptn with Continuous Delivery UseCase"
+      bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
-      keptnBridgeExposeVirtualService
+      printInfoSection "Authenticate Keptn CLI"
+      KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
+      KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
+      bashas "keptn auth --endpoint=$KEPTN_ENDPOINT --api-token=$KEPTN_API_TOKEN"
+
+      # TODO Remove function
+      #keptnBridgeExposeVirtualService
     fi
   fi
 }
@@ -582,6 +587,7 @@ dynatraceConfigureMonitoring() {
 }
 
 keptnBridgeExposeVirtualService() {
+  # TODO Not needed anymore
   printInfoSection "Expose Bridge via VirtualService"
   bashas "cd $KEPTN_IN_A_BOX_DIR/resources/virtualservices && bash expose-bridge.sh \"$DOMAIN\""
 }
@@ -618,6 +624,10 @@ exposeK8Services() {
   if [ "$expose_kubernetes_dashboard" = true ]; then
     printInfoSection "Exposing the Kubernetes Dashboard"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} k8-dashboard"
+  fi
+  if [ "$istio_install" = true ]; then
+    printInfoSection "Exposing Istio Service Mesh to Nonmapped Hosts"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} istio-ingress"
   fi
 }
 

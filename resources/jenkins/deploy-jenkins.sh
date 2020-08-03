@@ -26,4 +26,4 @@ sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
     helm-jenkins.yaml > gen/helm-jenkins.yaml
 
 echo "Installing Jenkins via Helm"
-helm install stable/jenkins -n jenkins -f gen/helm-jenkins.yaml
+helm install jenkins stable/jenkins -f gen/helm-jenkins.yaml
