@@ -13,7 +13,7 @@ KEPTN_JMETER_SERVICE_VERSION=0.2.0
 KEPTN_DT_SERVICE_VERSION=0.8.0
 KEPTN_DT_SLI_SERVICE_VERSION=0.5.0
 KEPTN_EXAMPLES_BRANCH=0.7.0
-TEASER_IMAGE="shinojosa/nginxacm"
+TEASER_IMAGE="shinojosa/nginxacm:0.7"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.18/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
@@ -576,7 +576,7 @@ dynatraceConfigureMonitoring() {
     bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"KEPTN_API_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/api\" --from-literal=\"KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)\" --from-literal=\"KEPTN_BRIDGE_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/bridge\""
     # Deploy Operator as Help pages
     printInfo "Deploying the OneAgent Operator"
-    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash deploy_operator.sh"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash echo 'y' | deploy_operator.sh"
     printInfo "Deploying the Dynatrace Service in Keptn"
     bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/service.yaml" 
 
@@ -599,7 +599,7 @@ keptnBridgeEap() {
 keptndemoUnleash() {
   if [ "$keptndemo_unleash" = true ]; then
     printInfoSection "Deploy Unleash-Server"
-    bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ && bash echo 'y' | $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh"
+    bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh"
 
     printInfoSection "Expose Unleash-Server"
     #TODO Add Unleash Remediation via bash/curl/yaml
