@@ -1,4 +1,5 @@
 #!/bin/bash
+# Not needed anymore. after 0.7 Is not needed to add a VirtualService.
 if [ $# -eq 1 ]; then
     # Read JSON and set it in the CREDS variable 
     DOMAIN=$1

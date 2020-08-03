@@ -419,7 +419,7 @@ dynatraceActiveGateInstall() {
 # We install  Istio manually since Microk8s 1.18 classic comes with 1.3.4 and 1.5.1 is leightweit
 istioInstall() {
   if [ "$istio_install" = true ]; then
-    printInfoSection "Install istio $ISTIO_VERSION into /Opt and add it to user/local/bin"
+    printInfoSection "Install istio $ISTIO_VERSION into /opt and add it to user/local/bin"
     curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
     mv istio-$ISTIO_VERSION /opt/istio-$ISTIO_VERSION
     chmod +x -R /opt/istio-$ISTIO_VERSION/
@@ -530,18 +530,16 @@ keptnInstall() {
       bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn"
     else
       ## -- Keptn Installation --
-      printInfoSection "Routing to the IstioService-Mesh via NGINX"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn-ingress"
       printInfoSection "Install Keptn with Continuous Delivery UseCase"
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
+      waitForAllPods
+      printInfoSection "Routing for the Keptn Services via NGINX Ingress"
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn-ingress"
       waitForAllPods
       printInfoSection "Authenticate Keptn CLI"
       KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
       KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
       bashas "keptn auth --endpoint=$KEPTN_ENDPOINT --api-token=$KEPTN_API_TOKEN"
-
-      # TODO Remove function
-      #keptnBridgeExposeVirtualService
     fi
   fi
 }
@@ -587,12 +585,6 @@ dynatraceConfigureMonitoring() {
   fi
 }
 
-keptnBridgeExposeVirtualService() {
-  # TODO Not needed anymore
-  printInfoSection "Expose Bridge via VirtualService"
-  bashas "cd $KEPTN_IN_A_BOX_DIR/resources/virtualservices && bash expose-bridge.sh \"$DOMAIN\""
-}
-
 keptnBridgeEap() {
   if [ "$keptn_bridge_eap" = true ]; then
     printInfoSection "Keptn Bridge update to EAP"
@@ -627,7 +619,7 @@ exposeK8Services() {
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} k8-dashboard"
   fi
   if [ "$istio_install" = true ]; then
-    printInfoSection "Exposing Istio Service Mesh to Nonmapped Hosts"
+    printInfoSection "Exposing Istio Service Mesh as fallBack for nonmapped hosts (subdomains)"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} istio-ingress"
   fi
 }
