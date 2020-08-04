@@ -415,6 +415,8 @@ dynatraceActiveGateInstall() {
     rm activegate.sh
   fi
 }
+
+#TODO Upgrade to 1.6.2 to pair with the Keptn tests. Add a Gateway as in the keptn docu. 
 # We install  Istio manually since Microk8s 1.18 classic comes with 1.3.4 and 1.5.1 is leightweit
 istioInstall() {
   if [ "$istio_install" = true ]; then
@@ -434,7 +436,7 @@ helmInstall() {
     bashas 'microk8s.enable helm3'
     printInfo "Adding alias for helm client"
     snap alias microk8s.helm3 helm
-    printInfo "Adding Default repo for  Helm"
+    printInfo "Adding Default repo for Helm"
     bashas "helm repo add stable https://kubernetes-charts.storage.googleapis.com/"
     printInfo "Updating Helm Repository"
     bashas "helm repo update"
@@ -517,20 +519,14 @@ keptnInstall() {
     keptnInstallClient
 
     if [ "$keptn_install_qualitygates" = true ]; then
-      printInfoSection "Install Keptn on QualityGates mode only"
-      #TODO Check how to install QG only?
-      bashas "echo 'y' | keptn install --platform=kubernetes --domain=$DOMAIN --use-case=quality-gates --ingress-install-option=Reuse"
+      printInfoSection "Install Keptn with Continuous Delivery UseCase (no Istio configurtion)"
+      #TODO Improve with no flag?
+      bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
-      printInfo "Creating/overwriting the Keptn Ingress and exposing the Brigde"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptn"
     else
       ## -- Keptn Installation --
       printInfoSection "Install Keptn with Continuous Delivery UseCase"
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
-      waitForAllPods
-      
-      printInfoSection "Routing for the Keptn Services via NGINX Ingress"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
       waitForAllPods
       
       printInfoSection "Configuring Istio for Keptn"
@@ -538,12 +534,16 @@ keptnInstall() {
       
       printInfo "Restart Keptn Helm Service"
       bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
-
-      printInfoSection "Authenticate Keptn CLI"
-      KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
-      KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
-      bashas "keptn auth --endpoint=$KEPTN_ENDPOINT --api-token=$KEPTN_API_TOKEN"
     fi
+
+    printInfoSection "Routing for the Keptn Services via NGINX Ingress"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
+    waitForAllPods
+      
+    printInfoSection "Authenticate Keptn CLI"
+    KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
+    KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
+    bashas "keptn auth --endpoint=$KEPTN_ENDPOINT --api-token=$KEPTN_API_TOKEN"
   fi
 }
 
@@ -568,7 +568,8 @@ dynatraceConfigureMonitoring() {
   if [ "$dynatrace_configure_monitoring" = true ]; then
     printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
     printInfo "Saving Credentials in dynatrace secret in keptn ns"
-    # TODO Why save bridge and other keptn infos in the secret??
+
+    # TODO Why store bridge and other keptn infos in the secret??
     bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"KEPTN_API_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/api\" --from-literal=\"KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)\" --from-literal=\"KEPTN_BRIDGE_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/bridge\""
     # Deploy Operator as Help pages
     printInfo "Deploying the OneAgent Operator"
@@ -678,21 +679,33 @@ printInstalltime() {
   printInfoSection "Installation complete :)"
   printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds"
   printInfoSection "Keptn & Kubernetes Exposed Ingress Endpoints"
+  printInfo "Below you'll find the adresses and the credentials to the exposed services."
+  printInfo "We wish you a lot of fun in your Autonomous Cloud journey!"
+  echo ""
   bashas "kubectl get ing -A"
-  printInfoSection "Keptn Bridge access"
-  bashas "keptn configure bridge --output"
-  #TODO IF unleash
-  printInfo "Unleash-Server Access"
-  echo "Username: keptn"
-  echo "Username: keptn"
-  printInfo "Jenkins-Server Access"
-  echo "Username: admin"
-  echo "Username: password"
+
+  if [ "$keptn_bridge_disable_login" = false ]; then
+    printInfoSection "Keptn Bridge Access"
+    bashas "keptn configure bridge --output"
+  fi
+
+  if [ "$keptndemo_unleash" = true ]; then
+    printInfoSection "Unleash-Server Access"
+    printInfo "Username: keptn"
+    printInfo "Username: keptn"
+  fi
+
+  if [ "$jenkins_deploy" = true ]; then
+    printInfoSection "Jenkins-Server Access"
+    printInfo "Username: admin"
+    printInfo "Username: password"
+  fi 
+
 }
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
   do 
     echo "$i = ${!i}"
   done
