@@ -701,6 +701,12 @@ printInstalltime() {
     printInfo "Username: password"
   fi 
 
+  if [ "$create_workshop_user" = true ]; then
+    printInfoSection "Workshop User Access (SSH Access)"
+    printInfo "ssh ${NEWUSER}@${DOMAIN}"
+    printInfo "Password: ${NEWPWD}"
+  fi 
+  
 }
 
 printFlags() {
