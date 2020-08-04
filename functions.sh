@@ -688,18 +688,19 @@ printInstalltime() {
   if [ "$keptn_bridge_disable_login" = false ]; then
     printInfoSection "Keptn Bridge Access"
     bashas "keptn configure bridge --output"
+    echo ""
   fi
 
   if [ "$keptndemo_unleash" = true ]; then
     printInfoSection "Unleash-Server Access"
     printInfo "Username: keptn"
-    printInfo "Username: keptn"
+    printInfo "Password: keptn"
   fi
 
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Jenkins-Server Access"
     printInfo "Username: admin"
-    printInfo "Username: password"
+    printInfo "Password: password"
   fi 
 
   if [ "$create_workshop_user" = true ]; then
