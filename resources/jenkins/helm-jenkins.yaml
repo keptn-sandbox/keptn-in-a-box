@@ -214,14 +214,16 @@ master:
   # List of plugins to be install during Jenkins master start
   installPlugins:
     - http_request:1.8.26
-    - pipeline-utility-steps:2.5.0
+    - pipeline-utility-steps:2.6.1
     - blueocean:1.23.1
-    - kubernetes:1.25.3
-    - configuration-as-code:1.41
+    - kubernetes:1.26.4
+    - configuration-as-code:1.42
     - job-dsl:1.77
-    - workflow-job:2.38
+    - workflow-job:2.39
     - workflow-aggregator:2.6
     - rebuild:1.31
+    - jdk-tool:1.4
+  #  - command-launcher:1.4
   #  - credentials-binding:1.21
   #  - git:4.2.2
 
