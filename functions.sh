@@ -539,7 +539,8 @@ keptnInstall() {
     printInfoSection "Routing for the Keptn Services via NGINX Ingress"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
     waitForAllPods
-      
+    #We sleep for 5 seconds to give time the Ingress to be ready 
+    sleep 5
     printInfoSection "Authenticate Keptn CLI"
     KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
     KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)

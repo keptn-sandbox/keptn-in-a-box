@@ -113,7 +113,7 @@ Adding more RAM and more CPUs will speed up things. Depending what you want to a
 ```bash
 df -h /
 Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       9.7G  6.9G  2.8G  72% /
+/dev/root        20G  5.8G   14G  30% /
 ```
 
 
