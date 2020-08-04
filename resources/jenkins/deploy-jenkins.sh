@@ -16,8 +16,8 @@ kubectl create ns jenkins
 echo "Replace Values for Ingress and Jenkins URL"
 
 KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
-KEPTN_ENDPOINT="https://api.keptn.$DOMAIN"
-KEPTN_BRIDGE="http://bridge.keptn.$DOMAIN"
+KEPTN_ENDPOINT="http://keptn.$DOMAIN/api"
+KEPTN_BRIDGE="http://keptn.$DOMAIN/bridge"
 
 sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
     -e 's~KEPTN_API_TOKEN.placeholder~'"$KEPTN_API_TOKEN"'~' \
