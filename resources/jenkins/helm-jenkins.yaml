@@ -289,7 +289,7 @@ master:
                modernSCM:
                  scm:
                    git:
-                     remote: "https://github.com/keptn-sandbox/keptn-jenkins-library.git"
+                     remote: "http://github.com/keptn-sandbox/keptn-jenkins-library.git"
       pipeline-qualitygates:  | 
         jobs:
           - script: >
@@ -299,7 +299,7 @@ master:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/keptn-sandbox/keptn-in-a-box.git')
+                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
                         branch('*/master')
                       }
@@ -318,7 +318,7 @@ master:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/keptn-sandbox/keptn-in-a-box.git') 
+                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git') 
                         }
                         branch('*/master')
                       }
@@ -337,7 +337,7 @@ master:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/keptn-sandbox/keptn-in-a-box.git')
+                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
                         branch('*/master')
                       }
