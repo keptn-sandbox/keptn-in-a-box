@@ -6,7 +6,7 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-ISTIO_VERSION=1.6.2
+ISTIO_VERSION=1.5.1
 CERTMANAGER_VERSION=0.14.0
 KEPTN_VERSION=0.7.0
 KEPTN_DT_SERVICE_VERSION=0.8.0
@@ -528,11 +528,14 @@ keptnInstall() {
       printInfoSection "Install Keptn with Continuous Delivery UseCase"
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
+      
       printInfoSection "Routing for the Keptn Services via NGINX Ingress"
       bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
       waitForAllPods
+      
       printInfoSection "Configuring Istio for Keptn"
       bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
+      
       printInfo "Restart Keptn Helm Service"
       bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
 
