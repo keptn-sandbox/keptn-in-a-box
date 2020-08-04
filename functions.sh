@@ -6,10 +6,9 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-ISTIO_VERSION=1.5.1
+ISTIO_VERSION=1.6.2
 CERTMANAGER_VERSION=0.14.0
 KEPTN_VERSION=0.7.0
-KEPTN_JMETER_SERVICE_VERSION=0.2.0
 KEPTN_DT_SERVICE_VERSION=0.8.0
 KEPTN_DT_SLI_SERVICE_VERSION=0.5.0
 KEPTN_EXAMPLES_BRANCH=0.7.0
@@ -59,15 +58,16 @@ keptn_install_qualitygates=false
 keptn_examples_clone=false
 resources_clone=false
 
+
 dynatrace_savecredentials=false
 dynatrace_configure_monitoring=false
 dynatrace_activegate_install=false
 dynatrace_configure_workloads=false
 
 jenkins_deploy=false
-jmeter_extended_service=false
 
 keptn_bridge_eap=false
+keptn_bridge_disable_login=false
 keptndeploy_homepage=false
 keptndemo_cartsload=false
 keptndemo_unleash=false
@@ -112,6 +112,7 @@ installationBundleDemo() {
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
   patch_kubernetes_dashboard=true
+  keptn_bridge_disable_login=true
   # By default no WorkshopUser will be created
   create_workshop_user=false
 }
@@ -123,6 +124,7 @@ installationBundleWorkshop() {
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
   patch_kubernetes_dashboard=true
+  keptn_bridge_disable_login=true
 
   selected_bundle="installationBundleWorkshop"
 }
@@ -136,9 +138,9 @@ installationBundleAll() {
   certmanager_install=true
   certmanager_enable=true
   create_workshop_user=true
+  keptn_bridge_disable_login=true
 
   jenkins_deploy=true
-  jmeter_extended_service=true
 
   selected_bundle="installationBundleAll"
 }
@@ -188,8 +190,6 @@ installationBundlePerformanceAsAService() {
   # Jenkins needs Helm for the Chart to be installed
   helm_install=true
   jenkins_deploy=true
-  # Adding JMeter extended Service
-  jmeter_extended_service=true
 
   selected_bundle="installationBundlePerformanceAsAService"
 }
@@ -561,13 +561,6 @@ jenkinsDeploy() {
   fi
 }
 
-jmeterExtendedService() {
-  if [ "$jmeter_extended_service" = true ]; then
-    printInfoSection "Deploying JMeter Extended Service"
-    bashas "kubectl apply -f  https://raw.githubusercontent.com/keptn-contrib/jmeter-extended-service/release-$KEPTN_JMETER_SERVICE_VERSION/deploy/service.yaml"
-  fi
-}
-
 dynatraceConfigureMonitoring() {
   if [ "$dynatrace_configure_monitoring" = true ]; then
     printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
@@ -595,6 +588,15 @@ keptnBridgeEap() {
     bashas "kubectl -n keptn set image deployment/bridge bridge=${KEPTN_BRIDGE_IMAGE} --record"
   fi
 }
+
+keptnBridgeDisableLogin() {
+  if [ "$keptn_bridge_disable_login" = true ]; then
+    printInfoSection "Keptn Bridge disabling Login"
+    bashas "kubectl -n keptn delete secret bridge-credentials"
+    bashas "kubectl -n keptn delete pods --selector=app.kubernetes.io/name=bridge"
+  fi
+}
+
 
 keptndemoUnleash() {
   if [ "$keptndemo_unleash" = true ]; then
@@ -631,7 +633,7 @@ exposeK8Services() {
 
 patchKubernetesDashboard() {
   if [ "$patch_kubernetes_dashboard" = true ]; then
-    printInfoSection "Patching Kubernetes Dashboard, use only learning andfor Workshops"
+    printInfoSection "Patching Kubernetes Dashboard, use only for learning and Workshops"
     echo "Skip Login in K8 Dashboard"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/misc && bash patch-kubernetes-dashboard.sh"
   fi
@@ -682,12 +684,12 @@ printInstalltime() {
   echo "Username: keptn"
   printInfo "Jenkins-Server Access"
   echo "Username: admin"
-  echo "Username: secret"
+  echo "Username: password"
 }
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,jmeter_extended_service,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
   do 
     echo "$i = ${!i}"
   done
@@ -743,9 +745,9 @@ doInstallation() {
   dynatraceConfigureMonitoring
   dynatraceConfigureWorkloads
   keptnBridgeEap
+  keptnBridgeDisableLogin
   
   jenkinsDeploy
-  jmeterExtendedService
 
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
