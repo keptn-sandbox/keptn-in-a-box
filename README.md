@@ -10,7 +10,7 @@ A simple Bash script will set-up a fully functional Single Node Kubernetes Clust
 For spinning up instances automatically with AWS completely configured and set up, and also automating the creation and management of Dynatrace environments, take a look at this project- [Dynatrace - Rest Tenant Automation](https://github.com/sergiohinojosa/Dynatrace-REST-Tenant-Automation) 
 
 
-![#](doc/ac-concepts-keptninabox.jpg)
+![#](doc/keptn-in-a-box-autonomous-cloud-devops.gif)
 
 ## 🥜Keptn-in-a-Box - Features in a Nutshell
 - Update the ubuntu repository
