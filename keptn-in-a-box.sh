@@ -59,7 +59,7 @@ CERTMANAGER_EMAIL=
 # - Keptn in a Box release
 KIAB_RELEASE="release-0.6.2"
 # - Functions file location
-FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/${RELEASE}/functions.sh"
+FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/${KIAB_RELEASE}/functions.sh"
 
 ## ----  Write all output to the logfile ----
 if [ "$pipe_log" = true ] ; then
