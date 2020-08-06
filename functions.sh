@@ -6,6 +6,8 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
+KIAB_RELEASE="release-0.6.2"
+
 ISTIO_VERSION=1.5.1
 HELM_VERSION=2.12.3
 CERTMANAGER_VERSION=0.14.0
@@ -13,13 +15,14 @@ KEPTN_VERSION=0.6.2
 KEPTN_JMETER_SERVICE_VERSION=0.2.0
 KEPTN_DT_SERVICE_VERSION=0.7.1
 KEPTN_DT_SLI_SERVICE_VERSION=0.4.2
-KEPTN_EXAMPLES_BRANCH=0.6.2
+KEPTN_EXAMPLES_BRANCH="release-0.6.2"
+
 TEASER_IMAGE="shinojosa/nginxacm"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.15/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
-KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
+KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box.git"
 
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
@@ -484,7 +487,7 @@ keptndemoDeployCartsloadgenerator() {
 resourcesClone() {
   if [ "$resources_clone" = true ]; then
     printInfoSection "Clone Keptn-in-a-Box Resources in $KEPTN_IN_A_BOX_DIR"
-    bashas "git clone $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR"
+    bashas "git clone --branch $KIAB_RELEASE $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR --single-branch"
   fi
 }
 
