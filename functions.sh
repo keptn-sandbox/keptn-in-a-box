@@ -700,8 +700,8 @@ printInstalltime() {
 
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Jenkins-Server Access"
-    printInfo "Username: admin"
-    printInfo "Password: password"
+    printInfo "Username: keptn"
+    printInfo "Password: keptn"
   fi 
 
   if [ "$create_workshop_user" = true ]; then
