@@ -6,18 +6,19 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
+KIAB_RELEASE="release-0.7.0"
 ISTIO_VERSION=1.5.1
 CERTMANAGER_VERSION=0.14.0
 KEPTN_VERSION=0.7.0
 KEPTN_DT_SERVICE_VERSION=0.8.0
 KEPTN_DT_SLI_SERVICE_VERSION=0.5.0
-KEPTN_EXAMPLES_BRANCH=0.7.0
+KEPTN_EXAMPLES_BRANCH="release-0.7.0"
 TEASER_IMAGE="shinojosa/nginxacm:0.7"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.18/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
-KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box"
+KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box.git"
 
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
@@ -485,7 +486,7 @@ keptndemoDeployCartsloadgenerator() {
 resourcesClone() {
   if [ "$resources_clone" = true ]; then
     printInfoSection "Clone Keptn-in-a-Box Resources in $KEPTN_IN_A_BOX_DIR"
-    bashas "git clone $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR"
+    bashas "git clone --branch $KIAB_RELEASE $KEPTN_IN_A_BOX_REPO $KEPTN_IN_A_BOX_DIR --single-branch"
   fi
 }
 
@@ -699,8 +700,8 @@ printInstalltime() {
 
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Jenkins-Server Access"
-    printInfo "Username: admin"
-    printInfo "Password: password"
+    printInfo "Username: keptn"
+    printInfo "Password: keptn"
   fi 
 
   if [ "$create_workshop_user" = true ]; then
