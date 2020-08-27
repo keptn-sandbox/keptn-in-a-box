@@ -4,6 +4,8 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     #cert-manager.io/cluster-issuer: "letsencrypt"
+    # We allow HTTP and HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
   name: jenkins-ingress
   namespace: jenkins
 spec:
