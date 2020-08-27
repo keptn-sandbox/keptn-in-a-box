@@ -59,7 +59,7 @@ node {
                     // Sends the request to the URL + Path and also send some x-dynatrace-test HTTP Headers: 
                     // TSN=Test Step Name, LSN=Load Script Name, LTN=Load Test Name
                     // More info: https://www.dynatrace.com/support/help/setup-and-configuration/integrations/third-party-integrations/test-automation-frameworks/dynatrace-and-load-testing-tools-integration/
-                    def response = httpRequest customHeaders: [[maskValue: true, name: 'x-dynatrace-test', value: "TSN=${testStepName};LSN=SimpleTest;LTN=simpletest_${BUILD_NUMBER};"]], 
+                    def response = httpRequest customHeaders: [[maskValue: true, name: 'x-dynatrace-test', value: "TSN=${testStepName};LSN=Simple HTTP Test via Jenkins;LTN=simple_http_test_build_${BUILD_NUMBER}_${runTestUntil};"]], 
                         httpMode: 'GET', 
                         responseHandle: 'STRING', 
                         url: "${url}${urlPath}", 
