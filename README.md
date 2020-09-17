@@ -134,7 +134,7 @@ The minimum required for running the default modules is t2.large with 13 Gigs of
 git clone https://github.com/keptn-sandbox/keptn-in-a-box ; cd keptn-in-a-box
 ```
 
-> You can also specify a specific release like 'git clone --branch release-0.7.0 https://github.com/keptn-sandbox/keptn-in-a-box.git' the master branch will be pointing to the actual release.
+> You can also specify a specific release like 'git clone --branch release-0.7.1 https://github.com/keptn-sandbox/keptn-in-a-box.git' the master branch will be pointing to the actual release.
 > Actually you only need to copy and execute the **keptn-in-a-box.sh** file. It'll take care of the rest and load the resources from github.
 
 #### 3. Execute the file with sudo rights.
