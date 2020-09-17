@@ -54,10 +54,12 @@ DOMAIN=
 CERTMANAGER_EMAIL=
 
 # ==================================================
-#      ----- Functions Location -----                #
+#      ----- Functions Location -----              #
 # ==================================================
-FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/functions.sh"
-
+# - Keptn in a Box release
+KIAB_RELEASE="release-0.7.1"
+# - Functions file location
+FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/${KIAB_RELEASE}/functions.sh"
 
 ## ----  Write all output to the logfile ----
 if [ "$pipe_log" = true ] ; then
