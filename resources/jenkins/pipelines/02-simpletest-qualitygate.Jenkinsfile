@@ -19,9 +19,9 @@ node {
 
     stage('Initialize Keptn') {
         // keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/performance-testing-as-selfservice-tutorial/master/shipyard.yaml", 'keptn/shipyard.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/resources/jenkins/pipelines/keptn/dynatrace/dynatrace.conf.yaml", 'keptn/dynatrace/dynatrace.conf.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/resources/jenkins/pipelines/keptn/slo_${params.SLI}.yaml", 'keptn/slo.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/master/resources/jenkins/pipelines/keptn/dynatrace/sli_${params.SLI}.yaml", 'keptn/sli.yaml')
+        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.1/resources/jenkins/pipelines/keptn/dynatrace/dynatrace.conf.yaml", 'keptn/dynatrace/dynatrace.conf.yaml')
+        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.1/resources/jenkins/pipelines/keptn/slo_${params.SLI}.yaml", 'keptn/slo.yaml')
+        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.1/resources/jenkins/pipelines/keptn/dynatrace/sli_${params.SLI}.yaml", 'keptn/sli.yaml')
         archiveArtifacts artifacts:'keptn/**/*.*'
 
         // Initialize the Keptn Project - ensures the Keptn Project is created with the passed shipyard
@@ -59,7 +59,7 @@ node {
                     // Sends the request to the URL + Path and also send some x-dynatrace-test HTTP Headers: 
                     // TSN=Test Step Name, LSN=Load Script Name, LTN=Load Test Name
                     // More info: https://www.dynatrace.com/support/help/setup-and-configuration/integrations/third-party-integrations/test-automation-frameworks/dynatrace-and-load-testing-tools-integration/
-                    def response = httpRequest customHeaders: [[maskValue: true, name: 'x-dynatrace-test', value: "TSN=${testStepName};LSN=SimpleTest;LTN=simpletest_${BUILD_NUMBER};"]], 
+                    def response = httpRequest customHeaders: [[maskValue: true, name: 'x-dynatrace-test', value: "TSN=${testStepName};LSN=Simple HTTP Test via Jenkins;LTN=simple_http_test_build_${BUILD_NUMBER}_${runTestUntil};"]], 
                         httpMode: 'GET', 
                         responseHandle: 'STRING', 
                         url: "${url}${urlPath}", 
