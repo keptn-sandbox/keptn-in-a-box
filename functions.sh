@@ -734,8 +734,7 @@ printInstalltime() {
 
   if [ "$git_deploy" = true ]; then
     printInfoSection "Git-Server Access"
-    printInfo "Username: $GIT_USER"
-    printInfo "Password: $GIT_PASSWORD"
+    bashas "bash $KEPTN_IN_A_BOX_DIR/resources/gitea-vars.sh ${DOMAIN}"
     printInfo "ApiToken to be found on $KEPTN_IN_A_BOX_DIR/resources/gitea/keptn-token.json"
   fi 
 

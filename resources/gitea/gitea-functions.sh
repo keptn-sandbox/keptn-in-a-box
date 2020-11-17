@@ -52,15 +52,19 @@ createKeptnRepos() {
     echo "Creating repositories for Keptn projects "
     for project in `keptn get projects | awk '{ if (NR!=1) print $1}'`;
     do 
-        echo "Adding self-hosted git repository for project $project"
-        createGitRepo $project
-        updateKeptnRepo $project
+        createKeptnRepo $project
     done
 }
 
 updateKeptnRepo(){
     KEPTN_PROJECT=$1
     keptn update project $KEPTN_PROJECT --git-user=$GIT_USER --git-token=$API_TOKEN --git-remote-url=$GIT_SERVER/$GIT_USER/$KEPTN_PROJECT.git
+}
+
+createKeptnRepo(){
+    echo "Creating and migrating Keptn project to self-hosted git for $1"
+    createGitRepo $1
+    updateKeptnRepo $1
 }
 
 createGitRepo(){

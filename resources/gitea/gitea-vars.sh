@@ -18,9 +18,9 @@ GIT_SERVER="http://git.$DOMAIN"
 GIT_TOKEN="keptn-token"
 TOKEN_FILE=$GIT_TOKEN.json
 
-echo "username: $GIT_USER"
-echo "password: $GIT_PASSWORD"
-echo "git server: $GIT_SERVER" 
+echo "Username: $GIT_USER"
+echo "Password: $GIT_PASSWORD"
+echo "GIT-Server: $GIT_SERVER" 
 
 
 
