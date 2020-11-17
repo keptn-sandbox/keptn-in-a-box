@@ -894,6 +894,14 @@
           </div>
           <div>
             <ul>
+              <div style="font-weight: bold;"> 💾Git</div>
+              <li><a id="gitserver">🌐API </a></li>
+              <li><a id="gitrepos"> ⋔ Repositories</a></li>
+            </ul>
+            </ul>
+          </div>
+          <div>
+            <ul>
               <div style="font-weight: bold;">🚦CI/CD </div>
               <li><a id="jenkins">Jenkins </a></li>
               <li><a id="unleash">Unleash</a></li>
@@ -979,11 +987,12 @@
         addLink("kubernetes", "kubernetes." + hostname);
         addLink("keptnapi", "keptn." + hostname + "/api/swagger-ui/");
         addLink("bridge", "keptn." + hostname + "/bridge");
+        addLink("gitserver", "git." + hostname + "/api/swagger/");
+        addLink("gitrepos", "git." + hostname + "/explore/repos");
         addLink("cartsdev", "carts.sockshop-dev." + hostname);
         addLink("cartsstage", "carts.sockshop-staging." + hostname);
         addLink("cartsprod", "carts.sockshop-production." + hostname);
         addLink("unleash", "unleash.unleash-dev." + hostname);
-
 
       </script>
 
