@@ -215,7 +215,7 @@ master:
   installPlugins:
     - http_request:1.8.26
     - pipeline-utility-steps:2.6.1
-    - blueocean:1.23.1
+    - blueocean:1.24.3
     - kubernetes:1.26.4
     - configuration-as-code:1.42
     - job-dsl:1.77
