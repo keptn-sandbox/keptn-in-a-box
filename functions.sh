@@ -736,6 +736,8 @@ printInstalltime() {
     printInfoSection "Git-Server Access"
     bashas "bash $KEPTN_IN_A_BOX_DIR/resources/gitea-vars.sh ${DOMAIN}"
     printInfo "ApiToken to be found on $KEPTN_IN_A_BOX_DIR/resources/gitea/keptn-token.json"
+    printInfo "For migrating keptn projects to your self-hosted git repository afterwards just execute the following function:"
+    printInfo "cd $KEPTN_IN_A_BOX_DIR/resources/gitea/ && source ./gitea-functions.sh; createKeptnRepoManually {project-name}"
   fi 
 
   if [ "$create_workshop_user" = true ]; then
