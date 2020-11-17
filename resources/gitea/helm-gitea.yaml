@@ -27,12 +27,12 @@ service:
     annotations:
 
 ingress:
-  enabled: true
+  enabled: false
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - git.18-134-137-17.nip.io
+    - git.domain.placeholder
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -71,9 +71,9 @@ persistence:
 
 gitea:
   admin:
-    username: keptn
-    password: keptn#R0cks
-    email: "keptn@local.domain"
+    username: GIT_USER.placeholder
+    password: GIT_PASSWORD.placeholder
+    email: "GIT_USER.placeholder@local.domain"
 
   ldap:
     enabled: false

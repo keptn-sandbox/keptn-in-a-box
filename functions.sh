@@ -445,6 +445,8 @@ helmInstall() {
     bashas "helm repo add stable https://charts.helm.sh/stable"
     printInfo "Adding Jenkins repo for Helm"
     bashas "helm repo add jenkins https://charts.jenkins.io"
+    printInfo "Adding GiteaCharts for Helm"
+    bashas "helm repo add gitea-charts https://dl.gitea.io/charts/"
     printInfo "Updating Helm Repository"
     bashas "helm repo update"
   fi
