@@ -57,7 +57,7 @@ CERTMANAGER_EMAIL=
 #      ----- Functions Location -----              #
 # ==================================================
 # - Keptn in a Box release
-KIAB_RELEASE="release-0.7.1"
+KIAB_RELEASE="release-0.7.2"
 # - Functions file location
 FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/${KIAB_RELEASE}/functions.sh"
 

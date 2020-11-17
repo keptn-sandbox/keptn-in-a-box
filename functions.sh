@@ -6,26 +6,23 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.7.1"
+KIAB_RELEASE="release-0.7.2"
 ISTIO_VERSION=1.5.1
 CERTMANAGER_VERSION=0.14.0
 # https://github.com/keptn/keptn
-KEPTN_VERSION=0.7.1
+KEPTN_VERSION=0.7.2
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.9.0
+KEPTN_DT_SERVICE_VERSION=0.10.0
 # https://github.com/keptn-contrib/dynatrace-sli-service
-KEPTN_DT_SLI_SERVICE_VERSION=0.6.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.7.0
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="release-0.7.1"
-TEASER_IMAGE="shinojosa/nginxacm:0.7"
+KEPTN_EXAMPLES_BRANCH="release-0.7.3"
+TEASER_IMAGE="shinojosa/nginxacm:0.7.3"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.18/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box.git"
-
-KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
-KEPTN_EXAMPLES_DIR="~/examples"
 
 # - The user to run the commands from. Will be overwritten when executing this shell with sudo, this is just needed when spinning machines programatically and running the script with root without an interactive shell
 USER="ubuntu"
@@ -63,6 +60,8 @@ keptn_install_qualitygates=false
 keptn_examples_clone=false
 resources_clone=false
 
+git_deploy=false
+git_migrate=false
 
 dynatrace_savecredentials=false
 dynatrace_configure_monitoring=false
@@ -104,6 +103,9 @@ installationBundleDemo() {
   keptn_install=true
   keptn_examples_clone=true
   resources_clone=true
+
+  git_deploy=true
+  git_migrate=true
 
   dynatrace_savecredentials=true
   dynatrace_configure_monitoring=true
@@ -445,6 +447,8 @@ helmInstall() {
     bashas "helm repo add stable https://charts.helm.sh/stable"
     printInfo "Adding Jenkins repo for Helm"
     bashas "helm repo add jenkins https://charts.jenkins.io"
+    printInfo "Adding GiteaCharts for Helm"
+    bashas "helm repo add gitea-charts https://dl.gitea.io/charts/"
     printInfo "Updating Helm Repository"
     bashas "helm repo update"
   fi
@@ -569,6 +573,21 @@ jenkinsDeploy() {
     printInfoSection "Deploying Jenkins via Helm. This Jenkins is configured and managed 'as code'"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} jenkins"
+  fi
+}
+
+gitDeploy() {
+  if [ "$git_deploy" = true ]; then
+    printInfoSection "Deploying self-hosted GIT(ea) service via Helm."
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash deploy-gitea.sh ${DOMAIN}"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} gitea"
+  fi
+}
+
+gitMigrate() {
+  if [ "$git_migrate" = true ]; then
+    printInfoSection "Migrating Keptn projects to a self-hosted GIT(ea) service."
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash update-git-keptn.sh ${DOMAIN}"
   fi
 }
 
@@ -710,6 +729,14 @@ printInstalltime() {
     printInfo "Password: keptn"
   fi 
 
+  if [ "$git_deploy" = true ]; then
+    printInfoSection "Git-Server Access"
+    bashas "bash $KEPTN_IN_A_BOX_DIR/resources/gitea/gitea-vars.sh ${DOMAIN}"
+    printInfo "ApiToken to be found on $KEPTN_IN_A_BOX_DIR/resources/gitea/keptn-token.json"
+    printInfo "For migrating keptn projects to your self-hosted git repository afterwards just execute the following function:"
+    printInfo "cd $KEPTN_IN_A_BOX_DIR/resources/gitea/ && source ./gitea-functions.sh; createKeptnRepoManually {project-name}"
+  fi 
+
   if [ "$create_workshop_user" = true ]; then
     printInfoSection "Workshop User Access (SSH Access)"
     printInfo "ssh ${NEWUSER}@${DOMAIN}"
@@ -720,7 +747,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
   do 
     echo "$i = ${!i}"
   done
@@ -780,9 +807,12 @@ doInstallation() {
   
   jenkinsDeploy
 
+  gitDeploy
+
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
-  
+
+  gitMigrate
   createWorkshopUser
   certmanagerEnable
   printInstalltime
