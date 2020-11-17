@@ -63,6 +63,8 @@ keptn_install_qualitygates=false
 keptn_examples_clone=false
 resources_clone=false
 
+git_deploy=false
+git_migrate=false
 
 dynatrace_savecredentials=false
 dynatrace_configure_monitoring=false
@@ -104,6 +106,9 @@ installationBundleDemo() {
   keptn_install=true
   keptn_examples_clone=true
   resources_clone=true
+
+  git_deploy=true
+  git_migrate=true
 
   dynatrace_savecredentials=true
   dynatrace_configure_monitoring=true
@@ -574,6 +579,21 @@ jenkinsDeploy() {
   fi
 }
 
+gitDeploy() {
+  if [ "$git_deploy" = true ]; then
+    printInfoSection "Deploying self-hosted GIT(ea) service via Helm."
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash deploy-gitea.sh ${DOMAIN}"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} gitea"
+  fi
+}
+
+gitMigrate() {
+  if [ "$git_migrate" = true ]; then
+    printInfoSection "Migrating Keptn projects to a self-hosted GIT(ea) service."
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash update-git-keptn.sh ${DOMAIN}"
+  fi
+}
+
 dynatraceConfigureMonitoring() {
   if [ "$dynatrace_configure_monitoring" = true ]; then
     printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
@@ -722,7 +742,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
   do 
     echo "$i = ${!i}"
   done
@@ -782,9 +802,12 @@ doInstallation() {
   
   jenkinsDeploy
 
+  gitDeploy
+
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
-  
+
+  gitMigrate
   createWorkshopUser
   certmanagerEnable
   printInstalltime

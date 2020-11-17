@@ -52,6 +52,7 @@ createKeptnRepos() {
     echo "Creating repositories for Keptn projects "
     for project in `keptn get projects | awk '{ if (NR!=1) print $1}'`;
     do 
+        echo "Adding self-hosted git repository for project $project"
         createGitRepo $project
         updateKeptnRepo $project
     done
@@ -70,7 +71,6 @@ createGitRepo(){
     -d "{ \"auto_init\": false, \"default_branch\": \"master\", \"name\": \"$1\", \"private\": false}"
 }
 
-#deleteToken
 echo "gitea functions have been loaded"
 
 return
