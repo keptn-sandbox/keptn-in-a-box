@@ -1,5 +1,5 @@
 #!/bin/bash -x
 
 # clean up
-helm del --purge jenkins
+helm del jenkins
 kubectl delete ns jenkins
