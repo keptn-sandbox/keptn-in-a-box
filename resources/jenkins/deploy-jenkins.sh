@@ -6,9 +6,8 @@ if [ $# -eq 1 ]; then
     echo "Domain has been passed: $DOMAIN"
 else
     echo "No Domain has been passed, getting it from Keptn"
-    #TODO remove keptn-domain. (get the domain from somewhere else)
-    DOMAIN=$(kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain})
-    echo "Keptn Domain: $DOMAIN"
+    DOMAIN=$(kubectl get ing -n default homepage-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')
+    echo "KIAB Domain: $DOMAIN"
 fi
 
 echo "Create namespace jenkins"
