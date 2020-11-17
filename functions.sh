@@ -442,7 +442,9 @@ helmInstall() {
     printInfo "Adding alias for helm client"
     snap alias microk8s.helm3 helm
     printInfo "Adding Default repo for Helm"
-    bashas "helm repo add stable https://kubernetes-charts.storage.googleapis.com/"
+    bashas "helm repo add stable https://charts.helm.sh/stable"
+    printInfo "Adding Jenkins repo for Helm"
+    bashas "helm repo add jenkins https://charts.jenkins.io"
     printInfo "Updating Helm Repository"
     bashas "helm repo update"
   fi
