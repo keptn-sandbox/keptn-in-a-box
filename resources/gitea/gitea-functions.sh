@@ -61,6 +61,11 @@ updateKeptnRepo(){
     keptn update project $KEPTN_PROJECT --git-user=$GIT_USER --git-token=$API_TOKEN --git-remote-url=$GIT_SERVER/$GIT_USER/$KEPTN_PROJECT.git
 }
 
+createKeptnRepoManually(){
+    readApiTokenFromFile
+    createKeptnRepo $1
+}
+
 createKeptnRepo(){
     echo "Creating and migrating Keptn project to self-hosted git for $1"
     createGitRepo $1
