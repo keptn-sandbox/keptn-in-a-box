@@ -732,6 +732,13 @@ printInstalltime() {
     printInfo "Password: keptn"
   fi 
 
+  if [ "$git_deploy" = true ]; then
+    printInfoSection "Git-Server Access"
+    printInfo "Username: $GIT_USER"
+    printInfo "Password: $GIT_PASSWORD"
+    printInfo "ApiToken to be found on $KEPTN_IN_A_BOX_DIR/resources/gitea/keptn-token.json"
+  fi 
+
   if [ "$create_workshop_user" = true ]; then
     printInfoSection "Workshop User Access (SSH Access)"
     printInfo "ssh ${NEWUSER}@${DOMAIN}"
