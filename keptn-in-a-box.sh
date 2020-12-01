@@ -57,9 +57,9 @@ CERTMANAGER_EMAIL=
 #      ----- Functions Location -----              #
 # ==================================================
 # - Keptn in a Box release
-KIAB_RELEASE="release-0.7.3"
+KIAB_RELEASE="release-0.7.3.1"
 # - Functions file location
-FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/${KIAB_RELEASE}/functions.sh"
+FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/dthotday-performance/keptn-in-a-box/${KIAB_RELEASE}/functions.sh"
 
 ## ----  Write all output to the logfile ----
 if [ "$pipe_log" = true ] ; then
@@ -114,7 +114,7 @@ source $FUNCTIONS_FILE
 # installationBundleKeptnOnly
 
 # - Comment out if selecting another bundle
-installationBundleDemo
+#installationBundleDemo
 
 # - Comment out if only want to install the QualityGates functionality
 #installationBundleKeptnQualityGates
@@ -123,7 +123,7 @@ installationBundleDemo
 # installationBundleWorkshop
 
 # - Uncomment below for installing all features
-#installationBundleAll
+installationBundleAll
 
 # - Uncomment below for installing a PerformanceAsAService Box
 #installationBundlePerformanceAsAService
@@ -137,7 +137,7 @@ installationBundleDemo
 # -- or install cert manager 
 #certmanager_install=true
 #certmanager_enable=true
-#create_workshop_user=true
+create_workshop_user=true
 
 # ==================================================
 #  ----- Call the Installation Function -----      #
