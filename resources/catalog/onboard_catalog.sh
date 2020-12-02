@@ -7,7 +7,7 @@ if [[ -d "catalog" ]]; then
     # Onboarding - prepare  Keptn
     keptn onboard service catalog-service --project=catalog --chart=./catalog
     keptn onboard service customer-service --project=catalog --chart=./customer
-    keptn onboard service front-end-service --project=catalog --chart=./frontend
+    keptn onboard service front-end --project=catalog --chart=./frontend
     keptn onboard service order-service --project=catalog --chart=./order
     
     #keptn add-resource --project=catalog --stage=dev --service=carts --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
