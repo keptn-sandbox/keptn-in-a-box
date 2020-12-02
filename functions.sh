@@ -81,6 +81,7 @@ keptndeploy_homepage=false
 keptndemo_cartsload=false
 keptndemo_unleash=false
 keptndemo_cartsonboard=false
+keptndemo_catalogonboard=false
 expose_kubernetes_api=false
 expose_kubernetes_dashboard=false
 patch_kubernetes_dashboard=false
@@ -123,6 +124,7 @@ installationBundleDemo() {
   keptndemo_cartsload=true
   keptndemo_unleash=true
   keptndemo_cartsonboard=true
+  keptndemo_catalogonboard=true
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
   patch_kubernetes_dashboard=true
@@ -697,6 +699,19 @@ keptndemoCartsonboard() {
   fi
 }
 
+keptndemoCatalogonboard() {
+  if [ "$keptndemo_catalogonboard" = true ]; then
+    printInfoSection "Keptn onboarding Catalog"
+    #TODO Parameterize Catalog Version.
+    bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/ && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/onboard_catalog.sh && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/onboard_catalog_qualitygates.sh"
+    bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/ && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/deploy_catalog_0.sh"
+
+    printInfoSection "Keptn Exposing the Onboarded Carts Application"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} catalog"
+
+  fi
+}
+
 createWorkshopUser() {
   if [ "$create_workshop_user" = true ]; then
     printInfoSection "Creating Workshop User from user($USER) into($NEWUSER)"
@@ -761,7 +776,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,keptndemo_catalogonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
   do 
     echo "$i = ${!i}"
   done
@@ -828,6 +843,8 @@ doInstallation() {
 
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
+  
+  keptndemoCatalogonboard
 
   gitMigrate
   createWorkshopUser
