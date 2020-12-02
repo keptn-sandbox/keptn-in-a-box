@@ -10,12 +10,8 @@ if [[ -d "catalog" ]]; then
     keptn onboard service front-end --project=catalog --chart=./frontend
     keptn onboard service order-service --project=catalog --chart=./order
     
-    #keptn add-resource --project=catalog --stage=dev --service=carts --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    #keptn add-resource --project=catalog --stage=staging --service=carts --resource=jmeter/load.jmx --resourceUri=jmeter/load.jmx
-
-    # Onboarding - prepare  Keptn
-    #keptn onboard service carts-db --project=sockshop --chart=./carts-db --deployment-strategy=direct
-
+    keptn add-resource --project=catalog --stage=dev --service=front-end --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    keptn add-resource --project=catalog --stage=staging --service=front-end --resource=jmeter/load.jmx --resourceUri=jmeter/load.jmx
 
 else 
     echo "The helmcharts for catalog are not present"
