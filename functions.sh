@@ -255,7 +255,7 @@ validateSudo() {
 
 waitForAllPods() {
   RETRY=0
-  RETRY_MAX=24
+  RETRY_MAX=35
   # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
   CMD="bashas \"kubectl get pods -A 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
   printInfo "Checking and wait for all pods to run."
