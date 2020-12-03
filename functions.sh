@@ -124,7 +124,7 @@ installationBundleDemo() {
   keptndemo_cartsload=false
   keptndemo_unleash=true
   keptndemo_cartsonboard=false
-  keptndemo_catalogonboard=true
+  keptndemo_catalogonboard=false
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
   patch_kubernetes_dashboard=true
