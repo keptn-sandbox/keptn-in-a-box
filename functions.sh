@@ -273,7 +273,8 @@ waitForAllPods() {
   if [[ $RETRY == $RETRY_MAX ]]; then
     printError "Pods in namespace ${NAMESPACE} are not running. Exiting installation..."
     bashas "kubectl get pods --field-selector=status.phase!=Running -A"
-    exit 1
+	break
+#    exit 1
   fi
 }
 
