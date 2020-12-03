@@ -5,7 +5,7 @@
 keptn send event new-artifact --project=keptnorders --service=catalog --image=docker.io/robjahn/keptn-orders-catalog-service --tag=1
 
 # Trigger the deployment
-#keptn send event new-artifact --project=keptnorders --service=order --image=docker.io/dtdemos/dt-orders-order-services --tag=1
+#keptn send event new-artifact --project=keptnorders --service=order --image=docker.io/dtdemos/dt-orders-order-service --tag=1
 keptn send event new-artifact --project=keptnorders --service=order --image=docker.io/robjahn/keptn-orders-order-service --tag=1
 
 # Trigger the deployment
