@@ -123,7 +123,7 @@ installationBundleDemo() {
   keptndeploy_homepage=true
   keptndemo_cartsload=true
   keptndemo_unleash=true
-  keptndemo_cartsonboard=true
+  keptndemo_cartsonboard=false
   keptndemo_catalogonboard=true
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
