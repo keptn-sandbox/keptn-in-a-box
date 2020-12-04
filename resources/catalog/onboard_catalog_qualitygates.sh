@@ -10,7 +10,10 @@ if [[ -d "catalog" ]]; then
     keptn configure monitoring dynatrace --project=keptnorders
 
     echo "Setting up QualityGate to Staging"
-    keptn add-resource --project=keptnorders --stage=staging --service=order-service --resource=slo-quality-gates.yaml --resourceUri=slo.yaml
+    keptn add-resource --project=keptnorders --stage=staging --service=order --resource=slo-quality-gates.yaml --resourceUri=slo.yaml
+    keptn add-resource --project=keptnorders --stage=staging --service=catalog --resource=slo-quality-gates.yaml --resourceUri=slo.yaml
+    keptn add-resource --project=keptnorders --stage=staging --service=customer --resource=slo-quality-gates.yaml --resourceUri=slo.yaml
+    keptn add-resource --project=keptnorders --stage=staging --service=frontend --resource=slo-quality-gates.yaml --resourceUri=slo.yaml
 
 else 
     echo "The helmcharts for catalog are not present"
