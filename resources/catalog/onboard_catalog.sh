@@ -25,25 +25,25 @@ if [[ -d "catalog" ]]; then
     kubectl apply -f dynatrace-sli-config-keptnorders.yaml
 
 ##
-    keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
-    keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
 
-    keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
-    keptn add-resource --project=keptnorders --service=customer --stage=production --resource=customer/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=customer --stage=production --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=customer --stage=production --resource=customer/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=customer --stage=production --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
 
-    keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/jmeter/load.jmx --resourceUri=jmeter/load.jmx
-    keptn add-resource --project=keptnorders --service=catalog --stage=production --resource=catalog/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=catalog --stage=production --resource=catalog/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=catalog --stage=production --resource=catalog/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=catalog --stage=production --resource=catalog/jmeter/load.jmx --resourceUri=jmeter/load.jmx
 
-    keptn add-resource --project=keptnorders --service=order --stage=staging --resource=order/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=order --stage=staging --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx
-    keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=order --stage=staging --resource=order/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=order --stage=staging --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    #keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     
 else 
     echo "The helmcharts for catalog are not present"
