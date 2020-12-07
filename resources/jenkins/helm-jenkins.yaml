@@ -299,9 +299,9 @@ master:
                     scm {
                       git {
                         remote {
-                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
+                          url('https://github.com/dthotday-performance/keptn-in-a-box.git')
                         }
-                        branch('*/release-0.7.3')
+                        branch('*/release-0.7.3.1')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/01-qualitygate-evaluation.Jenkinsfile'
@@ -318,9 +318,9 @@ master:
                     scm {
                       git {
                         remote {
-                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git') 
+                          url('https://github.com/dthotday-performance/keptn-in-a-box.git') 
                         }
-                        branch('*/release-0.7.3')
+                        branch('*/release-0.7.3.1')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/02-simpletest-qualitygate.Jenkinsfile'
@@ -337,16 +337,35 @@ master:
                     scm {
                       git {
                         remote {
-                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
+                          url('https://github.com/dthotday-performance/keptn-in-a-box.git')
                         }
-                        branch('*/release-0.7.3')
+                        branch('*/release-0.7.3.1')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/03-performancetest-qualitygate.Jenkinsfile'
                     lightweight()
                   }
                 }
-              }       
+              }  
+      pipeline-keptn-delivery:  | 
+        jobs:
+          - script: >
+              pipelineJob('04-keptndelivery.Jenkinsfile') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/dthotday-performance/keptn-in-a-box.git')
+                        }
+                        branch('*/release-0.7.3.1')
+                      }
+                    }
+                    scriptPath 'resources/jenkins/pipelines/04-keptndelivery.Jenkinsfile'
+                    lightweight()
+                  }
+                }
+              }               
   # Optionally specify additional init-containers
   customInitContainers: []
   # - name: custom-init
