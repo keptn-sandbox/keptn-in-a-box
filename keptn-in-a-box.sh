@@ -137,7 +137,7 @@ installationBundleAll
 # -- or install cert manager 
 #certmanager_install=true
 #certmanager_enable=true
-create_workshop_user=true
+#create_workshop_user=true
 
 # ==================================================
 #  ----- Call the Installation Function -----      #
