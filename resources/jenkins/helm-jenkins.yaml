@@ -217,7 +217,7 @@ master:
     - pipeline-utility-steps:2.6.1
     - blueocean:1.24.3
     - kubernetes:1.26.4
-    - configuration-as-code:1.42
+    - configuration-as-code:1.46
     - job-dsl:1.77
     - workflow-job:2.40
     - workflow-aggregator:2.6
@@ -346,7 +346,26 @@ master:
                     lightweight()
                   }
                 }
-              }       
+              }  
+      pipeline-deploy-catalog:  | 
+        jobs:
+          - script: >
+              pipelineJob('04-deploy-catalog') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/dthotday-performance/overview.git')
+                        }
+                        branch('*/master')
+                      }
+                    }
+                    scriptPath 'keptndelivery.Jenkinsfile'
+                    lightweight()
+                  }
+                }
+              }                        
   # Optionally specify additional init-containers
   customInitContainers: []
   # - name: custom-init
