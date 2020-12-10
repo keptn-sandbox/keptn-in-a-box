@@ -26,6 +26,7 @@ KEPTN_EXAMPLES_DIR="~/examples"
 #KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box.git"
 KEPTN_IN_A_BOX_REPO="https://github.com/dthotday-performance/keptn-in-a-box.git"
 KEPTN_CATALOG_DIR="~/overview"
+JMETER_SERVICE_BRANCH="feature/2552/jmeterextensionskeptn072"
 
 # - The user to run the commands from. Will be overwritten when executing this shell with sudo, this is just needed when spinning machines programatically and running the script with root without an interactive shell
 USER="ubuntu"
@@ -86,7 +87,7 @@ expose_kubernetes_api=false
 expose_kubernetes_dashboard=false
 patch_kubernetes_dashboard=false
 create_workshop_user=false
-
+jmeterService=false
 # ======================================================================
 #             ------- Installation Bundles  --------                   #
 #  Each bundle has a set of modules (or functions) that will be        #
@@ -131,6 +132,7 @@ installationBundleDemo() {
   keptn_bridge_disable_login=true
   # By default no WorkshopUser will be created
   create_workshop_user=false
+  jmeterService=true
 }
 
 installationBundleWorkshop() {
@@ -576,6 +578,14 @@ keptnInstall() {
   fi
 }
 
+jmeterService() {
+  if [ "$jmeter_install" = true ]; then
+  printInfoSection "Installing and configuring Dynatrace jmeter service $DT_TENANT"
+  bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn"
+  fi
+
+}
+
 keptnDeployHomepage() {
   if [ "$keptndeploy_homepage" = true ]; then
     printInfoSection "Deploying the Autonomous Cloud (dynamic) Teaser with Pipeline overview $TEASER_IMAGE"
@@ -777,7 +787,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,keptndemo_catalogonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,keptndemo_catalogonboard,jmeter_install,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
   do 
     echo "$i = ${!i}"
   done
@@ -846,6 +856,8 @@ doInstallation() {
   keptndemoDeployCartsloadgenerator
   
   keptndemoCatalogonboard
+
+  jmeterService
 
   gitMigrate
   createWorkshopUser
