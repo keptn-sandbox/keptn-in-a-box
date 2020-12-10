@@ -45,8 +45,9 @@ APITOKEN=
 # Set your custom domain e.g for an internal machine like 192.168.0.1.nip.io
 # So Keptn and all other services are routed and exposed properly via the Ingress Gateway
 # if no DOMAIN is setted, the public IP of the machine will be converted to a magic nip.io domain 
-# ---- Define your Domain ----   
-DOMAIN=
+# ---- Define your Domain ----
+DOMAIN="`curl http://checkip.amazonaws.com`.nip.io"
+#DOMAIN=
 
 # ---- The Email Account for the Certmanager ClusterIssuer with Let's encrypt ---- 
 # ---- By not providing an Email and letting certificates get generated will end up in 
