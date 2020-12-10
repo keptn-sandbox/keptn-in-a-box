@@ -87,7 +87,7 @@ expose_kubernetes_api=false
 expose_kubernetes_dashboard=false
 patch_kubernetes_dashboard=false
 create_workshop_user=false
-jmeterService=false
+jmeter_install=false
 # ======================================================================
 #             ------- Installation Bundles  --------                   #
 #  Each bundle has a set of modules (or functions) that will be        #
@@ -132,7 +132,7 @@ installationBundleDemo() {
   keptn_bridge_disable_login=true
   # By default no WorkshopUser will be created
   create_workshop_user=false
-  jmeterService=true
+  jmeter_install=true
 }
 
 installationBundleWorkshop() {
