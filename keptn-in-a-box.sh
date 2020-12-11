@@ -53,6 +53,7 @@ NEWPWD="secr3t"
 # ---- Define Dynatrace Environment ---- 
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
 TENANT="https://${TENANTID}.live.dynatrace.com"
+#TENANT="https://${TENANTID}.sprint.dynatracelabs.com"
 #PAASTOKEN=
 #APITOKEN=
 echo "tenant: $TENANT";
@@ -63,7 +64,7 @@ echo "tenant: $TENANT";
 # ---- Define your Domain ----
 DOMAIN="`curl http://checkip.amazonaws.com`.nip.io"
 #DOMAIN=
-exit 0
+
 # ---- The Email Account for the Certmanager ClusterIssuer with Let's encrypt ---- 
 # ---- By not providing an Email and letting certificates get generated will end up in 
 # face Email accounts Enabling certificates with lets encrypt and not changing for your email will end up in cert rate limits for: nip.io: see https://letsencrypt.org/docs/rate-limits/ 
