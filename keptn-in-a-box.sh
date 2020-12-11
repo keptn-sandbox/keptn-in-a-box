@@ -19,7 +19,7 @@
 # An installationBundle contains a set of multiple ins-   #
 # tallation functions.                                    #
 # =========================================================
-while getopts u:a:f: flag
+while getopts t:p:a:e: flag
 do
     case "${flag}" in
         t) TENANT=${OPTARG};;
@@ -28,6 +28,12 @@ do
         e) CERTMANAGER_EMAIL=${OPTARG};;
     esac
 done
+
+echo "tenant: $TENANT";
+echo "PAAS Toekn: $TENANT";
+echo "API Token: $APITOKEN";
+echo "Cert Email: $CERTMANAGER_EMAIL";
+
 # ==================================================
 #      ----- Variables Definitions -----           #
 # ==================================================
