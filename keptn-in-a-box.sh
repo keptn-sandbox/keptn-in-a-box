@@ -19,7 +19,15 @@
 # An installationBundle contains a set of multiple ins-   #
 # tallation functions.                                    #
 # =========================================================
-
+while getopts u:a:f: flag
+do
+    case "${flag}" in
+        t) TENANT=${OPTARG};;
+        p) PAASTOKEN=${OPTARG};;
+        a) APITOKEN=${OPTARG};;
+        e) CERTMANAGER_EMAIL=${OPTARG};;
+    esac
+done
 # ==================================================
 #      ----- Variables Definitions -----           #
 # ==================================================
@@ -38,9 +46,9 @@ NEWPWD="secr3t"
 
 # ---- Define Dynatrace Environment ---- 
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
-TENANT=
-PAASTOKEN=
-APITOKEN=
+#TENANT=
+#PAASTOKEN=
+#APITOKEN=
 
 # Set your custom domain e.g for an internal machine like 192.168.0.1.nip.io
 # So Keptn and all other services are routed and exposed properly via the Ingress Gateway
@@ -52,7 +60,7 @@ DOMAIN="`curl http://checkip.amazonaws.com`.nip.io"
 # ---- The Email Account for the Certmanager ClusterIssuer with Let's encrypt ---- 
 # ---- By not providing an Email and letting certificates get generated will end up in 
 # face Email accounts Enabling certificates with lets encrypt and not changing for your email will end up in cert rate limits for: nip.io: see https://letsencrypt.org/docs/rate-limits/ 
-CERTMANAGER_EMAIL=
+#CERTMANAGER_EMAIL=
 
 # ==================================================
 #      ----- Functions Location -----              #
