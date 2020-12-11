@@ -22,15 +22,15 @@
 while getopts t:p:a:e: flag
 do
     case "${flag}" in
-        t) TENANT=${OPTARG};;
+        t) TENANTID=${OPTARG};;
         p) PAASTOKEN=${OPTARG};;
         a) APITOKEN=${OPTARG};;
         e) CERTMANAGER_EMAIL=${OPTARG};;
     esac
 done
 
-echo "tenant: $TENANT";
-echo "PAAS Toekn: $TENANT";
+echo "tenantID: $TENANTID";
+echo "PAAS Token: $PAASTOKEN";
 echo "API Token: $APITOKEN";
 echo "Cert Email: $CERTMANAGER_EMAIL";
 
@@ -52,9 +52,10 @@ NEWPWD="secr3t"
 
 # ---- Define Dynatrace Environment ---- 
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
-#TENANT=
+TENANT="https://${TENANTID}.live.dynatrace.com"
 #PAASTOKEN=
 #APITOKEN=
+echo "tenant: $TENANT";
 
 # Set your custom domain e.g for an internal machine like 192.168.0.1.nip.io
 # So Keptn and all other services are routed and exposed properly via the Ingress Gateway
@@ -62,7 +63,7 @@ NEWPWD="secr3t"
 # ---- Define your Domain ----
 DOMAIN="`curl http://checkip.amazonaws.com`.nip.io"
 #DOMAIN=
-
+exit 0
 # ---- The Email Account for the Certmanager ClusterIssuer with Let's encrypt ---- 
 # ---- By not providing an Email and letting certificates get generated will end up in 
 # face Email accounts Enabling certificates with lets encrypt and not changing for your email will end up in cert rate limits for: nip.io: see https://letsencrypt.org/docs/rate-limits/ 
