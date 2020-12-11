@@ -23,8 +23,6 @@ sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
     -e 's~KEPTN_API_TOKEN.placeholder~'"$KEPTN_API_TOKEN"'~' \
     -e 's~KEPTN_ENDPOINT.placeholder~'"$KEPTN_ENDPOINT"'~' \
     -e 's~KEPTN_BRIDGE.placeholder~'"$KEPTN_BRIDGE"'~' \
-    -e 's~DT_API_TOKEN.placeholder~'"$DT_API_TOKEN"'~' \
-    -e 's~DT_TENANT.placeholder~'"$DT_TENANT"'~' \
     helm-jenkins.yaml > gen/helm-jenkins.yaml
 
 echo "Installing Jenkins via Helm"
