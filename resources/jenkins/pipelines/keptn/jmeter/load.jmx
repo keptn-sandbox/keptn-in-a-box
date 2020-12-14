@@ -9,7 +9,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="SERVER_URL" elementType="Argument">
             <stringProp name="Argument.name">SERVER_URL</stringProp>
-            <stringProp name="Argument.value">${__P(SERVER_URL,frontend.keptnorders-staging.3.216.132.92.nip.io)}</stringProp>
+            <stringProp name="Argument.value">${__P(SERVER_URL,frontend.keptnorders-staging.54.237.173.135.nip.io)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="DefaultThinkTime" elementType="Argument">
