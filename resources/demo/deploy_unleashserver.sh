@@ -9,6 +9,7 @@ if [[ -d "unleash" ]]; then
     keptn send event new-artifact --project=unleash --service=unleash-db --image=postgres:10.4
     keptn send event new-artifact --project=unleash --service=unleash --image=docker.io/keptnexamples/unleash:1.0.0
 
+    keptn update project unleash --git-user="GIT_USER" --git-token="GIT_TOKEN" --git-remote-url="GIT_REMOTE_URL"
     # Configure Keptn
     kubectl -n keptn create secret generic unleash --from-literal="UNLEASH_SERVER_URL=http://unleash.unleash-dev/api" --from-literal="UNLEASH_USER=keptn" --from-literal="UNLEASH_TOKEN=keptn"
 

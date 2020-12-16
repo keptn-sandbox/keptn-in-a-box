@@ -14,7 +14,7 @@ KEPTN_VERSION=0.7.3
 # https://github.com/keptn-contrib/dynatrace-service
 KEPTN_DT_SERVICE_VERSION=0.10.0
 # https://github.com/keptn-contrib/dynatrace-sli-service
-KEPTN_DT_SLI_SERVICE_VERSION=0.7.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.7.1
 # https://github.com/keptn/examples
 KEPTN_EXAMPLES_BRANCH="release-0.7.3"
 KEPTN_CATALOG_BRANCH="master"
@@ -560,7 +560,7 @@ keptnInstall() {
       waitForAllPods
       
       printInfoSection "Configuring Istio for Keptn"
-      bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
+      bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run=client | kubectl replace -f -"
       
       printInfo "Restart Keptn Helm Service"
       bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
