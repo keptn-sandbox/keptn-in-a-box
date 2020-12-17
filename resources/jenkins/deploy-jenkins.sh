@@ -1,4 +1,6 @@
 #!/bin/bash
+source ../dynatrace/utils.sh
+
 
 if [ $# -eq 1 ]; then
     # Read JSON and set it in the CREDS variable 
@@ -18,6 +20,9 @@ echo "Replace Values for Ingress and Jenkins URL"
 KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
 KEPTN_ENDPOINT="http://keptn.$DOMAIN/api"
 KEPTN_BRIDGE="http://keptn.$DOMAIN/bridge"
+
+readCredsFromFile
+printVariables
 
 sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
     -e 's~KEPTN_API_TOKEN.placeholder~'"$KEPTN_API_TOKEN"'~' \
