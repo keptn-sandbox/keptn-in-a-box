@@ -282,7 +282,7 @@ master:
              - key: DT_TENANT
                value: DT_TENANT.placeholder 
              - key: DT_API_TOKEN
-               value: DT_API_TOKEN.placeholder                                                          
+               value: DT_API_TOKEN.placeholder
       keptn-library:  |
        unclassified: 
          globalLibraries:
