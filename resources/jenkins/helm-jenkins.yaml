@@ -278,7 +278,11 @@ master:
              - key: KEPTN_BRIDGE
                value: KEPTN_BRIDGE.placeholder
              - key: KEPTN_ENDPOINT
-               value: KEPTN_ENDPOINT.placeholder                            
+               value: KEPTN_ENDPOINT.placeholder 
+             - key: DT_TENANT
+               value: DT_TENANT.placeholder 
+             - key: DT_API_TOKEN
+               value: DT_API_TOKEN.placeholder                                                          
       keptn-library:  |
        unclassified: 
          globalLibraries:
