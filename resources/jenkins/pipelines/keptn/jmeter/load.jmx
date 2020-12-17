@@ -62,6 +62,7 @@
             <stringProp name="Argument.value">${__P(ThinkTime,250)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+            <stringProp name="Argument.value">ibg73613.live.dynatrace.com</stringProp>
         </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>

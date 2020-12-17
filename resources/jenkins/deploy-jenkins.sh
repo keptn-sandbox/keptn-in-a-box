@@ -25,6 +25,10 @@ KEPTN_BRIDGE="http://keptn.$DOMAIN/bridge"
 readCredsFromFile
 printVariables
 
+DT_TENANT=$DT_TENANT
+DT_API_TOKEN=$DT_API_TOKEN
+DT_PAAS_TOKEN=$DT_PAAS_TOKEN
+
 sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
     -e 's~KEPTN_API_TOKEN.placeholder~'"$KEPTN_API_TOKEN"'~' \
     -e 's~KEPTN_ENDPOINT.placeholder~'"$KEPTN_ENDPOINT"'~' \
