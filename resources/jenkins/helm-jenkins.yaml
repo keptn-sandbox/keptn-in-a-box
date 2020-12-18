@@ -223,6 +223,7 @@ master:
     - workflow-aggregator:2.6
     - rebuild:1.31
     - jdk-tool:1.4
+    - performance:3.18
   #  - command-launcher:1.4
   #  - credentials-binding:1.21
   #  - git:4.2.2

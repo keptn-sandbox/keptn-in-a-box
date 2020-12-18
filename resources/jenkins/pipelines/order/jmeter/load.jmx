@@ -9,7 +9,7 @@
         <collectionProp name="Arguments.arguments">
           <elementProp name="SERVER_URL" elementType="Argument">
             <stringProp name="Argument.name">SERVER_URL</stringProp>
-            <stringProp name="Argument.value">${__P(SERVER_URL,frontend.keptnorders-staging184.73.131.150.nip.io)}</stringProp>
+            <stringProp name="Argument.value">${__P(SERVER_URL,frontend.keptnorders-staging.184.73.131.150.nip.io)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="DefaultThinkTime" elementType="Argument">
@@ -304,7 +304,7 @@ sampler.getHeaderManager().add(new org.apache.jmeter.protocol.http.control.Heade
           <stringProp name="ConstantTimer.delay">{__P(ThinkTime,${DefaultThinkTime})}</stringProp>
         </ConstantTimer>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="false">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="dynatraceApiToken" elementType="Argument">
