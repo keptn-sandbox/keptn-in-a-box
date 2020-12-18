@@ -294,10 +294,29 @@ master:
                  scm:
                    git:
                      remote: "http://github.com/keptn-sandbox/keptn-jenkins-library.git"
+      pipeline-deploy-order:  | 
+        jobs:
+          - script: >
+              pipelineJob('01-deploy-order-application') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('https://github.com/dthotday-performance/overview.git')
+                        }
+                        branch('*/master')
+                      }
+                    }
+                    scriptPath 'keptndelivery.Jenkinsfile'
+                    lightweight()
+                  }
+                }
+              }
       pipeline-qualitygates:  | 
         jobs:
           - script: >
-              pipelineJob('01-qualitygate-evaluation') {
+              pipelineJob('02-qualitygate-evaluation') {
                 definition {
                   cpsScm {
                     scm {
@@ -316,7 +335,7 @@ master:
       pipeline-qualitygates-test:  | 
         jobs:
           - script: >
-              pipelineJob('02-simpletest-qualitygate') {
+              pipelineJob('03-simpletest-qualitygate') {
                 definition {
                   cpsScm {
                     scm {
@@ -335,7 +354,7 @@ master:
       pipeline-qualitygates-performance:  | 
         jobs:
           - script: >
-              pipelineJob('03-performancetest-qualitygate') {
+              pipelineJob('04-performancetest-qualitygate') {
                 definition {
                   cpsScm {
                     scm {
@@ -350,11 +369,11 @@ master:
                     lightweight()
                   }
                 }
-              }  
-      pipeline-deploy-catalog:  | 
+              }
+      pipeline-performance-order:  | 
         jobs:
           - script: >
-              pipelineJob('04-deploy-catalog') {
+              pipelineJob('05-jmeter-test-order-application') {
                 definition {
                   cpsScm {
                     scm {
@@ -365,11 +384,11 @@ master:
                         branch('*/master')
                       }
                     }
-                    scriptPath 'keptndelivery.Jenkinsfile'
+                    scriptPath 'orderapp.Jenkinsfile'
                     lightweight()
                   }
                 }
-              }                        
+              }
   # Optionally specify additional init-containers
   customInitContainers: []
   # - name: custom-init
