@@ -380,12 +380,12 @@ master:
                     scm {
                       git {
                         remote {
-                          url('https://github.com/dthotday-performance/overview.git')
+                          url('https://github.com/dthotday-performance/keptn-in-a-box.git')
                         }
-                        branch('*/master')
+                        branch('*/release-0.7.3.1')
                       }
                     }
-                    scriptPath 'orderapp.Jenkinsfile'
+                    scriptPath 'oresources/jenkins/pipelines/04-performancetest-qualitygate-mint.Jenkinsfile'
                     lightweight()
                   }
                 }
