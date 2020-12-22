@@ -64,7 +64,7 @@
           </elementProp>
           <elementProp name="DT_TENANT" elementType="Argument">
             <stringProp name="Argument.name">DT_TENANT</stringProp>
-            <stringProp name="Argument.value">${__P(DT_TENANT,.live.dynatrace.com)}</stringProp>
+            <stringProp name="Argument.value">${__P(DT_TENANT,)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="DT_API_TOKEN" elementType="Argument">
