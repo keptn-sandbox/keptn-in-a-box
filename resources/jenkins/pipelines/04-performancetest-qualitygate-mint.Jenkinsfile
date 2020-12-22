@@ -33,6 +33,7 @@ node {
         keptn.keptnAddResources('keptnorders/sli.yaml','dynatrace/sli.yaml')
         keptn.keptnAddResources('keptnorders/slo.yaml','slo.yaml')
         keptn.keptnAddResources('keptnorders/jmeter/load.jmx','jmeter/load.jmx')
+        keptn.keptnAddResources('keptnorders/jmeter/basiccheck.jmx','jmeter/basiccheck.jmx')
         keptn.keptnAddResources('keptnorders/jmeter/jmeter.conf.yaml','jmeter/jmeter.conf.yaml')
     }
     stage('Trigger Performance Test') {
