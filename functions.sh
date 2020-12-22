@@ -720,8 +720,11 @@ keptndemoCatalogonboard() {
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/ && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/onboard_catalog.sh && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/onboard_catalog_qualitygates.sh"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/ && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/deploy_catalog_0.sh"
 
-    printInfoSection "Keptn Exposing the Onboarded Carts Application"
+    printInfoSection "Keptn Exposing the Onboarded orders Application"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptnorders"
+    
+    printInfoSection "create calculated metrics"
+    bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash createTestStepCalculatedMetrics.sh CONTEXTLESS evalservice"
 
   fi
 }

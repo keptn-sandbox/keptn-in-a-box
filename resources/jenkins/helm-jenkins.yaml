@@ -385,7 +385,7 @@ master:
                         branch('*/release-0.7.3.1')
                       }
                     }
-                    scriptPath 'oresources/jenkins/pipelines/04-performancetest-qualitygate-mint.Jenkinsfile'
+                    scriptPath 'resources/jenkins/pipelines/04-performancetest-qualitygate-mint.Jenkinsfile'
                     lightweight()
                   }
                 }

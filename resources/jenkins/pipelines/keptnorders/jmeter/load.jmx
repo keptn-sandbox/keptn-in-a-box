@@ -64,7 +64,7 @@
           </elementProp>
           <elementProp name="DT_TENANT" elementType="Argument">
             <stringProp name="Argument.name">DT_TENANT</stringProp>
-            <stringProp name="Argument.value">${__P(DT_TENANT,)}</stringProp>
+            <stringProp name="Argument.value">${__P(DT_TENANT,.live.dynatrace.com)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="DT_API_TOKEN" elementType="Argument">
@@ -304,7 +304,7 @@ sampler.getHeaderManager().add(new org.apache.jmeter.protocol.http.control.Heade
           <stringProp name="ConstantTimer.delay">{__P(ThinkTime,${DefaultThinkTime})}</stringProp>
         </ConstantTimer>
         <hashTree/>
-        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="false">
+        <BackendListener guiclass="BackendListenerGui" testclass="BackendListener" testname="Backend Listener" enabled="true">
           <elementProp name="arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" enabled="true">
             <collectionProp name="Arguments.arguments">
               <elementProp name="dynatraceApiToken" elementType="Argument">
