@@ -723,6 +723,9 @@ keptndemoCatalogonboard() {
     printInfoSection "Keptn Exposing the Onboarded orders Application"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptnorders"
     
+    printInfoSection "set env variables"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash setenv.sh"
+    
     printInfoSection "create calculated metrics"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash createTestStepCalculatedMetrics.sh CONTEXTLESS evalservice"
 
