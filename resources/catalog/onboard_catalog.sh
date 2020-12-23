@@ -9,7 +9,6 @@ if [[ -d "catalog" ]]; then
     keptn onboard service catalog --project=keptnorders --chart=./catalog
     keptn onboard service customer --project=keptnorders --chart=./customer
     keptn onboard service frontend --project=keptnorders --chart=./frontend
-  
     
 else 
     echo "The helmcharts for catalog are not present"
