@@ -29,11 +29,6 @@ do
     esac
 done
 
-echo "tenantID: $TENANTID";
-echo "PAAS Token: $PAASTOKEN";
-echo "API Token: $APITOKEN";
-echo "Cert Email: $CERTMANAGER_EMAIL";
-
 # ==================================================
 #      ----- Variables Definitions -----           #
 # ==================================================
