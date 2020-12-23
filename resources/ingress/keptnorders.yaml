@@ -23,7 +23,7 @@ spec:
     http:
       paths:
       - backend:
-          serviceName: front-end
+          serviceName: frontend
           servicePort: 80
         path: /     
   tls:
