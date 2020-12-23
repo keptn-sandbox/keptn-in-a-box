@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # We allow HTTP and HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # Instructs the controller to send TLS connections directly
+    #to the backend instead of letting NGINX decrypt the communication
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    # In some scenarios the exposed URL in the backend service differs
+    # from the specified path in the Ingress rule. Without a
+    # rewrite any request will return 404
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    #cert-manager.io/cluster-issuer: "letsencrypt"
+  name: keptnorders-ingress
+  namespace: istio-system
+spec:
+  rules:
+  # On base domain we have NGINX running.
+  # Deploy Keptn Teaser
+  - host: frontend.keptnorders-staging.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: front-end
+          servicePort: 80
+        path: /
+  - host: frontend.keptnorders-production.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: front-end
+          servicePort: 80
+        path: /        
+  tls:
+  - hosts:
+    - frontend.keptnorders-staging.domain.placeholder
+    - frontend.keptnorders-production.domain.placeholder
+    #secretName: frontend-tls
