@@ -25,16 +25,8 @@ spec:
       - backend:
           serviceName: front-end
           servicePort: 80
-        path: /
-  - host: frontend.keptnorders-production.domain.placeholder
-    http:
-      paths:
-      - backend:
-          serviceName: front-end
-          servicePort: 80
-        path: /        
+        path: /     
   tls:
   - hosts:
     - frontend.keptnorders-staging.domain.placeholder
-    - frontend.keptnorders-production.domain.placeholder
     #secretName: frontend-tls
