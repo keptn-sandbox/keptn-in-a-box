@@ -19,14 +19,14 @@ spec:
   rules:
   # On base domain we have NGINX running.
   # Deploy Keptn Teaser
-  - host: frontend.keptnorders.domain.placeholder
+  - host: frontend.keptnorders-production.domain.placeholder
     http:
       paths:
       - backend:
-          serviceName: front-end
+          serviceName: frontend
           servicePort: 80
         path: /     
   tls:
   - hosts:
-    - frontend.keptnorders.domain.placeholder
+    - frontend.keptnorders-production.domain.placeholder
     #secretName: frontend-tls
