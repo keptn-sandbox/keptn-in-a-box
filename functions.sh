@@ -737,7 +737,7 @@ keptndemoCatalogonboard() {
 
 loadKeptnDashboard() {
   if [ "$keptndashboard_load" = true ]; then
-    printInfoSection "Keptn loading Dashboard" 
+    printInfoSection "Keptn loading Dashboard"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/dashboards && bash load1.sh"
   fi
 }
