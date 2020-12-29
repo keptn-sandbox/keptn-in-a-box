@@ -25,8 +25,16 @@ spec:
       - backend:
           serviceName: istio-ingressgateway
           servicePort: 80
-        path: /     
+        path: /  
+  - host: frontend.keptnorders-staging.domain.placeholder
+    http:
+      paths:
+      - backend:
+          serviceName: istio-ingressgateway
+          servicePort: 80
+        path: /             
   tls:
   - hosts:
     - frontend.keptnorders-production.domain.placeholder
+    - frontend.keptnorders-staging.domain.placeholder
     #secretName: frontend-tls
