@@ -14,12 +14,12 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
     #cert-manager.io/cluster-issuer: "letsencrypt"
   name: keptnorders-ingress
-  namespace: keptnorders-staging
+  namespace: istio-system
 spec:
   rules:
   # On base domain we have NGINX running.
   # Deploy Keptn Teaser
-  - host: frontend.keptnorders-staging.domain.placeholder
+  - host: frontend.keptnorders.domain.placeholder
     http:
       paths:
       - backend:
@@ -28,5 +28,5 @@ spec:
         path: /     
   tls:
   - hosts:
-    - frontend.keptnorders-staging.domain.placeholder
+    - frontend.keptnorders.domain.placeholder
     #secretName: frontend-tls
