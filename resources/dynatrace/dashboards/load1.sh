@@ -82,11 +82,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 }],
                 "resultMetadata": {}
             },
-            "filtersPerEntityType": {
-                "CLOUD_APPLICATION_NAMESPACE": {
-                    "CLOUD_APPLICATION_NAMESPACE_KUBERNETES_CLUSTER": ["KUBERNETES_CLUSTER-E979EDBBD55A2450٭3.'${DOMAIN}'"]
-                }
-            }
+            "filtersPerEntityType": {}
         }
     }, {
         "name": "",
@@ -519,7 +515,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "height": 38
         },
         "tileFilter": {},
-        "markdown": "\uD83D\uDCBB SSH access: ubuntu@3.81.67.241.nip.io \uD83D\uDD11=..."
+        "markdown": "\uD83D\uDCBB SSH access: ubuntu@'${DOMAIN}' \uD83D\uDD11=..."
     }, {
         "name": "Markdown",
         "tileType": "MARKDOWN",
@@ -656,11 +652,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 }],
                 "resultMetadata": {}
             },
-            "filtersPerEntityType": {
-                "CLOUD_APPLICATION": {
-                    "CLOUD_APPLICATION_KUBERNETES_CLUSTER": ["KUBERNETES_CLUSTER-E979EDBBD55A2450٭3.'${DOMAIN}'"]
-                }
-            }
+            "filtersPerEntityType": {}
         }
     }, {
         "name": "",
@@ -670,7 +662,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "top": 760,
             "left": 912,
             "width": 304,
-            "height": 152
+            "height": 228
         },
         "tileFilter": {},
         "filterConfig": {
@@ -692,11 +684,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 }],
                 "resultMetadata": {}
             },
-            "filtersPerEntityType": {
-                "CLOUD_APPLICATION": {
-                    "CLOUD_APPLICATION_KUBERNETES_CLUSTER": ["KUBERNETES_CLUSTER-E979EDBBD55A2450٭3.'${DOMAIN}'"]
-                }
-            }
+            "filtersPerEntityType": {}
         }
     }, {
         "name": "Custom chart",
@@ -738,11 +726,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                     }
                 }
             },
-            "filtersPerEntityType": {
-                "CLOUD_APPLICATION": {
-                    "CLOUD_APPLICATION_KUBERNETES_CLUSTER": ["KUBERNETES_CLUSTER-E979EDBBD55A2450٭3.'${DOMAIN}'"]
-                }
-            }
+            "filtersPerEntityType": {}
         }
     }, {
         "name": "Markdown",
