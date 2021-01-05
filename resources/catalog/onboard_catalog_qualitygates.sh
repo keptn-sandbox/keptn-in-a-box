@@ -6,7 +6,7 @@ if [[ -d "catalog" ]]; then
     # The context for this script needs to be in examples/onboarding-carts
     echo "Adding the SLI for the Project to all Stages"
     keptn add-resource --project=keptnorders --resource=dynatrace-sli-config-keptnorders.yaml --resourceUri=dynatrace/sli.yaml
-    
+      
     kubectl apply -f dynatrace-sli-config-keptnorders.yaml
     
     keptn configure monitoring dynatrace --project=keptnorders
