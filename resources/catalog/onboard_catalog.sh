@@ -12,10 +12,12 @@ if [[ -d "catalog" ]]; then
     keptn onboard service customer --project=keptnorders --chart=./customer
     keptn onboard service frontend --project=keptnorders --chart=./frontend
     # add jmeter resources for staging
-    echo "load jmeter scripts"
+    echo "load for project"
+    keptn add-resource --project=keptnorders --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    echo "load service jmeter scripts"
     keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
-    #keptn add-resource --project=keptnorders --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    #keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     #keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/jmeter/load.jmx --resourceUri=jmeter/load.jmx    
@@ -31,7 +33,7 @@ if [[ -d "catalog" ]]; then
     #keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     #keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     # add jmeter config for staging
-    #keptn add-resource --project=keptnorders --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
+    #keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     #keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     #keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     #keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
