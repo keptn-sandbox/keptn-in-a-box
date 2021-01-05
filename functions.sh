@@ -585,9 +585,9 @@ jmeterService() {
   if [ "$jmeter_install" = true ]; then
   printInfoSection "Installing and configuring Dynatrace jmeter service $DT_TENANT"
   #bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn"
-  bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptncontrib/jmeter-extended-service:0.2.0 --record"
+  #bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptncontrib/jmeter-extended-service:0.2.0 --record"
   #bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptn/jmeter-service:0.7.3-patch1 --record"
-  #bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/master/jmeter-extended-service/tree/master/deploy/service.yaml -n keptn"
+  bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/release-0.7.3-patch1/jmeter-service/deploy/service.yaml -n keptn"
   fi
 
 }
