@@ -67,7 +67,7 @@ master:
   # Used for label app.kubernetes.io/component
   componentName: "jenkins-master"
   image: "jenkins/jenkins"
-  tag: "2.273"
+  tag: "lts"
   imagePullPolicy: "Always"
   imagePullSecretName:
   # Optionally configure lifetime for master-container
@@ -213,10 +213,10 @@ master:
 
   # List of plugins to be install during Jenkins master start
   installPlugins:
-    - http_request:1.8.27
+    - http_request:1.8.26
     - pipeline-utility-steps:2.6.1
     - blueocean:1.24.3
-    - kubernetes:1.28.4
+    - kubernetes:1.26.6
     - configuration-as-code:1.46
     - job-dsl:1.77
     - workflow-job:2.40
@@ -226,7 +226,7 @@ master:
   #  - performance:3.18
   #  - command-launcher:1.4
   #  - credentials-binding:1.21
-  #  - git:4.2.2
+    - git:4.5.1
 
   # Enable to always override the installed plugins with the values of 'master.installPlugins' on upgrade or redeployment.
   # overwritePlugins: true
