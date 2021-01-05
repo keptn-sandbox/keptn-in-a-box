@@ -47,8 +47,8 @@ NEWPWD="secr3t"
 
 # ---- Define Dynatrace Environment ---- 
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
-TENANT="https://${TENANTID}.live.dynatrace.com"
-#TENANT="https://${TENANTID}.sprint.dynatracelabs.com"
+#TENANT="https://${TENANTID}.live.dynatrace.com"
+TENANT="https://${TENANTID}.sprint.dynatracelabs.com"
 #PAASTOKEN=
 #APITOKEN=
 echo "tenant: $TENANT";
