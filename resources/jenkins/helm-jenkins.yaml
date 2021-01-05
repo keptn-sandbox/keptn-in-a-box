@@ -213,17 +213,17 @@ master:
 
   # List of plugins to be install during Jenkins master start
   installPlugins:
-    - http_request:1.8.26
+    - http_request:1.8.27
     - pipeline-utility-steps:2.6.1
     - blueocean:1.24.3
-    - kubernetes:1.26.4
+    - kubernetes:1.28.4
     - configuration-as-code:1.46
     - job-dsl:1.77
     - workflow-job:2.40
     - workflow-aggregator:2.6
     - rebuild:1.31
     - jdk-tool:1.4
-    - performance:3.18
+  #  - performance:3.18
   #  - command-launcher:1.4
   #  - credentials-binding:1.21
   #  - git:4.2.2
@@ -285,7 +285,7 @@ master:
              - key: DT_API_TOKEN
                value: DT_API_TOKEN.placeholder
       keptn-library:  |
-       unclassified: 
+       unclassified:
          globalLibraries:
            libraries:
            - defaultVersion: "master"
@@ -403,7 +403,7 @@ master:
       # jcasc changes will cause a reboot and will only be applied at the subsequent start-up.  Auto-reload uses the
       # http://<jenkins_url>/reload-configuration-as-code endpoint to reapply config when changes to the configScripts are detected.
       enabled: false
-      image: kiwigrid/k8s-sidecar:0.1.132
+      image: kiwigrid/k8s-sidecar:latest
       imagePullPolicy: IfNotPresent
       resources: {}
         #   limits:
