@@ -47,8 +47,11 @@ NEWPWD="secr3t"
 
 # ---- Define Dynatrace Environment ---- 
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
+# must include your quailified domain name
 #TENANT="https://${TENANTID}.live.dynatrace.com"
-TENANT="https://${TENANTID}.sprint.dynatracelabs.com"
+#TENANT="https://${TENANTID}.sprint.dynatracelabs.com"
+TENANT="https://${TENANTID}"
+
 #PAASTOKEN=
 #APITOKEN=
 echo "tenant: $TENANT";
