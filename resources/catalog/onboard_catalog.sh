@@ -47,6 +47,7 @@ if [[ -d "catalog" ]]; then
     
     
     # add jmeter config for staging
+    echo "load jmeter.conf.yaml"
     keptn add-resource --project=keptnorders --service=order --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
