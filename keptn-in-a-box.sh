@@ -26,12 +26,14 @@ echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
 read -p "Dynatrace Tenant ID (xxxxx.sprint.dynatracelabs.com): " DTENVC
 read -p "Dynatrace API Token: " DTAPIC
 read -p "Dynatrace PaaS Token: " DTPAAST
-read -p "User Email (ex=student2393Perform2021@trial.dynatracelabs.com): " DTUID 
+read -p "User Email (student2393Perform2021@trial.dynatracelabs.com): " DTUID 
 echo ""
 
-if [[ $DTENV = '' ]]
-then 
-    DTENV=$DTENVC
+if [ -z "$DTENVC" ]
+then
+      exit 1
+else
+      DTENV=$DTENVC
 fi
 
 echo ""
