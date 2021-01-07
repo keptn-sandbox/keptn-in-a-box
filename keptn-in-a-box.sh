@@ -34,6 +34,7 @@ then
       exit 1
 else
       DTENV=$DTENVC
+      DTAPI=$DTAPIC
 fi
 
 echo ""
