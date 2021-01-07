@@ -28,6 +28,7 @@ KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/dthotday-performance/keptn-in-a-box.git"
 KEPTN_CATALOG_DIR="~/overview"
 JMETER_SERVICE_BRANCH="feature/2552/jmeterextensionskeptn072"
+ALT_JMETER_SERVICE_BRANCH="release-0.7.3-patch1"
 
 # - The user to run the commands from. Will be overwritten when executing this shell with sudo, this is just needed when spinning machines programatically and running the script with root without an interactive shell
 USER="ubuntu"
@@ -585,9 +586,9 @@ jmeterService() {
   if [ "$jmeter_install" = true ]; then
   printInfoSection "Installing and configuring Dynatrace jmeter service $DT_TENANT"
   #bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn"
-  #bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptncontrib/jmeter-extended-service:0.2.0 --record"
+  bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptncontrib/jmeter-extended-service:0.2.0 --record"
   #bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptn/jmeter-service:0.7.3-patch1 --record"
-  bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/release-0.7.3-patch1/jmeter-service/deploy/service.yaml -n keptn"
+  #bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${ALT_JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn"
   fi
 
 }
