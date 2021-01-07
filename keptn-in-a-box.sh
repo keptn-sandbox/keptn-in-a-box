@@ -19,15 +19,52 @@
 # An installationBundle contains a set of multiple ins-   #
 # tallation functions.                                    #
 # =========================================================
-while getopts t:p:a:e: flag
-do
-    case "${flag}" in
-        t) TENANTID=${OPTARG};;
-        p) PAASTOKEN=${OPTARG};;
-        a) APITOKEN=${OPTARG};;
-        e) CERTMANAGER_EMAIL=${OPTARG};;
-    esac
-done
+YLW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
+read -p "Dynatrace Tenant ID (Full) (default=$DTENV): " DTENVC
+read -p "Dynatrace API Token (default=$DTAPI): " DTAPIC
+read -p "Dynatrace PaaS Token (default=$DTAPI): " DTPAAST
+read -p "User Email (default=student2393Perform2021@trial.dynatracelabs.com): " DTUID 
+echo ""
+
+if [[ $DTENV = '' ]]
+then 
+    DTENV=$DTENVC
+fi
+
+if [[ $DTAPI = '' ]]
+then 
+    DTAPI=$DTAPIC
+fi
+
+echo ""
+echo -e "${YLW}Please confirm all are correct: ${NC}"
+echo "Dynatrace Tenant: $DTENV"
+echo "Dynatrace API Token: $DTAPI"
+echo "Dynatrace PaaS Token: $DTPAAST"
+echo "User Name: $DTUID"
+read -p "Is this all correct? (y/n) : " -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+        TENANTID=$DTAPI
+        PAASTOKEN=$DTPAAST
+        APITOKEN=$DTAPI
+        CERTMANAGER_EMAIL=$DTUID
+fi
+
+# while getopts t:p:a:e: flag
+# do
+#     case "${flag}" in
+#         t) TENANTID=${OPTARG};;
+#         p) PAASTOKEN=${OPTARG};;
+#         a) APITOKEN=${OPTARG};;
+#         e) CERTMANAGER_EMAIL=${OPTARG};;
+#     esac
+# done
 
 # ==================================================
 #      ----- Variables Definitions -----           #
