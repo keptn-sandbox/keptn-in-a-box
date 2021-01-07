@@ -19,6 +19,9 @@ if [[ -d "catalog" ]]; then
     #keptn add-resource --project=keptnorders --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     #keptn add-resource --project=keptnorders --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     echo "load service level jmeter scripts-staging"
+    keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    
     keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     
@@ -28,11 +31,11 @@ if [[ -d "catalog" ]]; then
     keptn add-resource --project=keptnorders --service=order --stage=staging --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=order --stage=staging --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx    
     
-    keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
-    
     # add jmeter resources for production
     echo "load service level jmeter scripts-production"
+    keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
+    
     keptn add-resource --project=keptnorders --service=customer --stage=production --resource=customer/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=customer --stage=production --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     
@@ -42,10 +45,6 @@ if [[ -d "catalog" ]]; then
     keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=order --stage=production --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     
-    keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
-    keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
-    
-    
     # add jmeter config for staging
     echo "load jmeter.conf.yaml"
     keptn add-resource --project=keptnorders --service=order --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
@@ -53,10 +52,10 @@ if [[ -d "catalog" ]]; then
     keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
     # add jmeter config for production
-    #keptn add-resource --project=keptnorders --service=order --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
-    #keptn add-resource --project=keptnorders --service=customer --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
-    #keptn add-resource --project=keptnorders --service=catalog --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
-    #keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml    
+    keptn add-resource --project=keptnorders --service=order --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
+    keptn add-resource --project=keptnorders --service=customer --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
+    keptn add-resource --project=keptnorders --service=catalog --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml
+    keptn add-resource --project=keptnorders --service=frontend --stage=production --resource=jmeter/jmeter.conf.yaml --resourceUri=jmeter/jmeter.conf.yaml    
 else 
     echo "The helmcharts for catalog are not present"
 fi 
