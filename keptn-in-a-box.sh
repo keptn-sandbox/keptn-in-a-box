@@ -23,20 +23,15 @@ YLW='\033[1;33m'
 NC='\033[0m'
 
 echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
-read -p "Dynatrace Tenant ID (Full) (default=$DTENV): " DTENVC
-read -p "Dynatrace API Token (default=$DTAPI): " DTAPIC
-read -p "Dynatrace PaaS Token (default=$DTAPI): " DTPAAST
-read -p "User Email (default=student2393Perform2021@trial.dynatracelabs.com): " DTUID 
+read -p "Dynatrace Tenant ID (xxxxx.sprint.dynatracelabs.com): " DTENVC
+read -p "Dynatrace API Token: " DTAPIC
+read -p "Dynatrace PaaS Token: " DTPAAST
+read -p "User Email (ex=student2393Perform2021@trial.dynatracelabs.com): " DTUID 
 echo ""
 
 if [[ $DTENV = '' ]]
 then 
     DTENV=$DTENVC
-fi
-
-if [[ $DTAPI = '' ]]
-then 
-    DTAPI=$DTAPIC
 fi
 
 echo ""
@@ -50,10 +45,10 @@ echo ""
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-        TENANTID=$DTAPI
-        PAASTOKEN=$DTPAAST
-        APITOKEN=$DTAPI
-        CERTMANAGER_EMAIL=$DTUID
+   TENANTID=$DTENV
+   APITOKEN=$DTAPI
+   PAASTOKEN=$DTPAAST
+   CERTMANAGER_EMAIL=$DTUID
 fi
 
 # while getopts t:p:a:e: flag
