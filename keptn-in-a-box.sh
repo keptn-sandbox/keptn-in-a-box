@@ -113,7 +113,10 @@ FUNCTIONS_FILE_REPO="https://raw.githubusercontent.com/dthotday-performance/kept
 
 ## ----  Write all output to the logfile ----
 if [ "$pipe_log" = true ] ; then
+  echo "your environment is being built. This will take several minutes...."
+  echo "DO NOT exit or quit this session..."
   echo "Piping all output to logfile $LOGFILE"
+  echo "open a new ssh session to view the logfile in real time...."
   echo "Type 'less +F $LOGFILE' for viewing the output of installation on realtime"
   echo ""
   # Saves file descriptors so they can be restored to whatever they were before redirection or used 
