@@ -22,13 +22,13 @@ if [[ -d "catalog" ]]; then
     keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=frontend --stage=staging --resource=frontend/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     
-    keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=customer --stage=staging --resource=customer/jmeter/load.jmx --resourceUri=jmeter/load.jmx
     
-    keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=catalog --stage=staging --resource=catalog/jmeter/load.jmx --resourceUri=jmeter/load.jmx    
     
-    keptn add-resource --project=keptnorders --service=order --stage=staging --resource=jmeter/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
+    keptn add-resource --project=keptnorders --service=order --stage=staging --resource=order/basiccheck.jmx --resourceUri=jmeter/basiccheck.jmx
     keptn add-resource --project=keptnorders --service=order --stage=staging --resource=order/jmeter/load.jmx --resourceUri=jmeter/load.jmx    
     
     # add jmeter resources for production
