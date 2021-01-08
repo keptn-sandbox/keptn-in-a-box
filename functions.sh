@@ -30,7 +30,8 @@ KEPTN_CATALOG_DIR="~/overview"
 JMETER_SERVICE_BRANCH="feature/2552/jmeterextensionskeptn072"
 ALT_JMETER_SERVICE_BRANCH="release-0.7.3-patch1"
 
-# - The user to run the commands from. Will be overwritten when executing this shell with sudo, this is just needed when spinning machines programatically and running the script with root without an interactive shell
+# - The user to run the commands from. Will be overwritten when executing this shell with sudo, 
+# this is just needed when spinning machines programatically and running the script with root without an interactive shell
 USER="ubuntu"
 
 # Comfortable function for setting the sudo user.
