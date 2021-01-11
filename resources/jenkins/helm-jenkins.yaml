@@ -226,7 +226,7 @@ master:
   #  - performance:3.18
   #  - command-launcher:1.4
   #  - credentials-binding:1.21
-    #- git:4.5.1
+  #  - git:4.5.1
 
   # Enable to always override the installed plugins with the values of 'master.installPlugins' on upgrade or redeployment.
   # overwritePlugins: true
