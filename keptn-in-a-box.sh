@@ -119,7 +119,7 @@ if [ "$pipe_log" = true ] ; then
   echo "DO NOT exit or quit this session..."
   echo "Piping all output to logfile $LOGFILE"
   echo "open a new ssh session to view the logfile in real time...."
-  echo "Type 'less +F $LOGFILE' for viewing the output of installation on realtime"
+  echo "Type 'less +F $LOGFILE' for viewing the output of installation in realtime"
   echo ""
   # Saves file descriptors so they can be restored to whatever they were before redirection or used 
   # themselves to output to whatever they were before the following redirect.
