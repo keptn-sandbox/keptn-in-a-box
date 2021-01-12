@@ -52,6 +52,8 @@ then
    APITOKEN=$DTAPI
    PAASTOKEN=$DTPAAST
    CERTMANAGER_EMAIL=$DTUID
+else 
+	exit 1   
 fi
 
 # while getopts t:p:a:e: flag
@@ -63,7 +65,7 @@ fi
 #         e) CERTMANAGER_EMAIL=${OPTARG};;
 #     esac
 # done
-
+(
 # ==================================================
 #      ----- Variables Definitions -----           #
 # ==================================================
@@ -196,3 +198,4 @@ installationBundleAll
 #  ----- Call the Installation Function -----      #
 # ==================================================
 doInstallation
+) &
