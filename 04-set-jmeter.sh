@@ -1,6 +1,8 @@
 #!/bin/bash
 # use to change the jmeter service.
 
+ALT_JMETER_SERVICE_BRANCH="release-0.7.3-patch1"
+
 sudo kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${ALT_JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn --record
 
 sleep 10
