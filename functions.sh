@@ -742,10 +742,14 @@ keptndemoCatalogonboard() {
 
 loadKeptnDashboard() {
   if [ "$keptndashboard_load" = true ]; then
-    printInfoSection "Keptn loading Dashboard"
+    printInfoSection "Keptn loading Dashboards"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/dashboards && bash load1.sh ${DOMAIN} ${CERTMANAGER_EMAIL}"
+    sleep 2
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/dashboards && bash load2.sh ${DOMAIN} ${CERTMANAGER_EMAIL}"
+    sleep 2
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/dashboards && bash load3.sh ${DOMAIN} ${CERTMANAGER_EMAIL}"
+    sleep 2
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace/dashboards && bash load4.sh ${DOMAIN} ${CERTMANAGER_EMAIL}"
   fi
 }
 
