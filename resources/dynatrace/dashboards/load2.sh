@@ -18,11 +18,6 @@ OWNER=$2
 curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?Api-Token='${DT_API_TOKEN}'' \
 --header 'Content-Type: application/json; charset=utf-8' \
 --data-raw '{
-    "metadata": {
-        "configurationVersions": [3],
-        "clusterVersion": "1.208.68.20201221-130707"
-    },
-    "id": "e7d0d54d-5ba1-4733-8a9c-7d0aa6a42ff5",
     "dashboardMetadata": {
         "name": "\uD83D\uDCCA Performance Test Dashboard",
         "shared": false,

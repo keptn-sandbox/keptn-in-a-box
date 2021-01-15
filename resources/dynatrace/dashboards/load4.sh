@@ -18,11 +18,6 @@ OWNER=$2
 curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?Api-Token='${DT_API_TOKEN}'' \
 --header 'Content-Type: application/json; charset=utf-8' \
 --data-raw '{
-    "metadata": {
-        "configurationVersions": [3],
-        "clusterVersion": "1.208.68.20201221-130707"
-    },
-    "id": "5f7297ad-e42a-43ed-ae93-7bf0e57b9911",
     "dashboardMetadata": {
         "name": "\uD83E\uDDEC Software intelligence - Release better software faster - sample ",
         "shared": true,
