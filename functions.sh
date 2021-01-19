@@ -736,7 +736,7 @@ keptndemoCatalogonboard() {
     
     printInfoSection "create request attributes for calculated metrics"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createRequestAttributes.sh"
-
+	sleep 30
     printInfoSection "create calculated metrics"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createTestStepCalculatedMetrics.sh CONTEXTLESS keptn_project keptnorders"
 
