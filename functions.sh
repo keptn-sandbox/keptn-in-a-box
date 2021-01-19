@@ -735,7 +735,7 @@ keptndemoCatalogonboard() {
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash setenv.sh"
     
     printInfoSection "create calculated metrics"
-    bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash createTestStepCalculatedMetrics.sh CONTEXTLESS evalservice"
+    bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createTestStepCalculatedMetrics.sh CONTEXTLESS keptn_project keptnorders"
 
   fi
 }
