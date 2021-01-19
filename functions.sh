@@ -87,6 +87,7 @@ keptndemo_unleash=false
 keptndemo_cartsonboard=false
 keptndemo_catalogonboard=false
 keptndashboard_load=false
+createMetrics=false
 expose_kubernetes_api=false
 expose_kubernetes_dashboard=false
 patch_kubernetes_dashboard=false
@@ -129,8 +130,11 @@ installationBundleDemo() {
   keptndemo_cartsload=false
   keptndemo_unleash=true
   keptndemo_cartsonboard=false
+  # use for order application
   keptndemo_catalogonboard=true
   keptndashboard_load=true
+  createMetrics=true
+  
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
   patch_kubernetes_dashboard=true
@@ -734,6 +738,11 @@ keptndemoCatalogonboard() {
     printInfoSection "set env variables"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash setenv.sh"
     
+  fi
+}
+
+metricCreation() {
+  if [ "$createMetrics" = true ]; then
     printInfoSection "create request attributes for calculated metrics"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createRequestAttributes.sh"
 	sleep 30
@@ -742,6 +751,7 @@ keptndemoCatalogonboard() {
 
   fi
 }
+
 
 loadKeptnDashboard() {
   if [ "$keptndashboard_load" = true ]; then
@@ -822,7 +832,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,keptndemo_catalogonboard,jmeter_install,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user,keptndashboard_load}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,keptndemo_catalogonboard,jmeter_install,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user,keptndashboard_load,createMetrics}; 
   do 
     echo "$i = ${!i}"
   done
@@ -895,6 +905,8 @@ doInstallation() {
   jmeterService
 
   loadKeptnDashboard
+  
+  metricCreation
 
   gitMigrate
   createWorkshopUser
