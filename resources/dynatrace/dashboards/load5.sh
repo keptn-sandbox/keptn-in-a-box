@@ -26,7 +26,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "linkShared": true,
             "published": false
         },
-        "dashboardFilter": {
+         "dashboardFilter": {
             "timeframe": "-30m",
             "managementZone": {
                 "id": "8449138348211438023",
@@ -566,13 +566,13 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TIMESERIES",
                 "series": [{
-                    "metric": "calc:service.rt_teststepname_orders_staging",
+                    "metric": "calc:service.teststepresponsetime",
                     "aggregation": "AVG",
                     "type": "AREA",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
@@ -603,13 +603,13 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TIMESERIES",
                 "series": [{
-                    "metric": "calc:service.er_teststepname_orders_staging",
-                    "aggregation": "SUM",
+                    "metric": "calc:service.teststepfailurerate",
+                    "aggregation": "OF_INTEREST_RATIO",
                     "type": "LINE",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
@@ -651,18 +651,18 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TOP_LIST",
                 "series": [{
-                    "metric": "calc:service.rt_teststepname_orders_staging",
+                    "metric": "calc:service.teststepresponsetime",
                     "aggregation": "MAX",
                     "type": "LINE",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
-                    "sortAscending": true,
-                    "sortColumn": false,
+                    "sortAscending": false,
+                    "sortColumn": true,
                     "aggregationRate": "TOTAL"
                 }],
                 "resultMetadata": {}
@@ -688,18 +688,18 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TOP_LIST",
                 "series": [{
-                    "metric": "calc:service.rt_teststepname_orders_staging",
+                    "metric": "calc:service.teststepresponsetime",
                     "aggregation": "COUNT",
                     "type": "LINE",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
-                    "sortAscending": true,
-                    "sortColumn": false,
+                    "sortAscending": false,
+                    "sortColumn": true,
                     "aggregationRate": "TOTAL"
                 }],
                 "resultMetadata": {}
@@ -725,18 +725,18 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TOP_LIST",
                 "series": [{
-                    "metric": "calc:service.rt_teststepname_orders_staging",
+                    "metric": "calc:service.teststepresponsetime",
                     "aggregation": "AVG",
                     "type": "LINE",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
-                    "sortAscending": true,
-                    "sortColumn": false,
+                    "sortAscending": false,
+                    "sortColumn": true,
                     "aggregationRate": "TOTAL"
                 }],
                 "resultMetadata": {}
@@ -762,18 +762,18 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TOP_LIST",
                 "series": [{
-                    "metric": "calc:service.rt_teststepname_orders_staging",
+                    "metric": "calc:service.teststepresponsetime",
                     "aggregation": "MIN",
                     "type": "LINE",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
-                    "sortAscending": true,
-                    "sortColumn": false,
+                    "sortAscending": false,
+                    "sortColumn": true,
                     "aggregationRate": "TOTAL"
                 }],
                 "resultMetadata": {}
@@ -815,7 +815,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "height": 38
         },
         "tileFilter": {},
-        "markdown": "- [Transactions](ui/diagnostictools/mda?metric=RESPONSE_TIME&dimension=%7BRequestAttribute:TestStepName%7D&aggregation=AVERAGE&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false&servicefilter=0%1E15%11d6800739-f8fb-4359-99dd-29c6eb12ce04)"
+        "markdown": "- [Transactions](ui/diagnostictools/mda?metric=RESPONSE_TIME&dimension=%7BRequestAttribute:TSN%7D&aggregation=AVERAGE&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false)"
     }, {
         "name": "Markdown",
         "tileType": "MARKDOWN",
@@ -827,7 +827,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "height": 38
         },
         "tileFilter": {},
-        "markdown": "- [Slow > 5s](ui/diagnostictools/mda?metric=RESPONSE_TIME&dimension=%7BRequestAttribute:TestStepName%7D&aggregation=MAX&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false&servicefilter=0%1E0%115000000%144611686018427387%1015%11d6800739-f8fb-4359-99dd-29c6eb12ce04)"
+        "markdown": "- [Slow > 5s](ui/diagnostictools/mda?metric=RESPONSE_TIME&dimension=%7BRequestAttribute:TSN%7D&aggregation=MAX&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false&servicefilter=0%1E0%115000000%144611686018427387)"
     }, {
         "name": "Markdown",
         "tileType": "MARKDOWN",
@@ -839,7 +839,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "height": 38
         },
         "tileFilter": {},
-        "markdown": "- [Errors](ui/diagnostictools/mda?metric=FAILED_REQUEST_COUNT&dimension=%7BRequestAttribute:TestStepName%7D&aggregation=COUNT&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false&servicefilter=0%1E15%11d6800739-f8fb-4359-99dd-29c6eb12ce04%103%110)"
+        "markdown": "- [Errors](ui/diagnostictools/mda?metric=FAILED_REQUEST_COUNT&dimension=%7BRequestAttribute:TSN%7D&aggregation=COUNT&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false&servicefilter=0%1E3%110)"
     }, {
         "name": "Markdown",
         "tileType": "MARKDOWN",
@@ -851,7 +851,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "height": 38
         },
         "tileFilter": {},
-        "markdown": "- [Exceptions](ui/diagnostictools/mda?metric=EXCEPTION_COUNT&dimension=%7BRequestAttribute:TestStepName%7D&aggregation=SUM&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false&servicefilter=0%1E15%11d6800739-f8fb-4359-99dd-29c6eb12ce04%1029%110)\n\n"
+        "markdown": "- [Exceptions](ui/diagnostictools/mda?metric=EXCEPTION_COUNT&dimension=%7BRequestAttribute:TSN%7D&aggregation=SUM&percentile=80&chart=LINE&sservicefilter=0%1E15%112a0b9950-718f-42af-9f2a-b777dc37709c&mergeServices=false&servicefilter=0%1E29%110%14Any%20exception)\n\n"
     }, {
         "name": "Markdown",
         "tileType": "MARKDOWN",
@@ -863,7 +863,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "height": 38
         },
         "tileFilter": {},
-        "markdown": "- [Database Time](ui/diagnostictools/mda?mdaId=topdb&metric=DATABASE_CHILD_CALL_TIME&dimension=%7BRequestAttribute:TestStepName%7D&mergeServices=false&aggregation=MAX&percentile=80&chart=COLUMN&servicefilter=0%1E15%11d6800739-f8fb-4359-99dd-29c6eb12ce04)"
+        "markdown": "- [Database Time](ui/diagnostictools/mda?mdaId=topdb&metric=DATABASE_CHILD_CALL_TIME&dimension=%7BRequestAttribute:TSN%7D&mergeServices=false&aggregation=MAX&percentile=80&chart=COLUMN)"
     }, {
         "name": "Markdown",
         "tileType": "MARKDOWN",
@@ -1159,13 +1159,13 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TIMESERIES",
                 "series": [{
-                    "metric": "calc:service.rt_teststepname_orders_staging",
-                    "aggregation": "COUNT",
+                    "metric": "calc:service.teststepresponsetime",
+                    "aggregation": "SUM",
                     "type": "BAR",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
@@ -1196,18 +1196,18 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
                 "legendShown": true,
                 "type": "TOP_LIST",
                 "series": [{
-                    "metric": "calc:service.er_teststepname_orders_staging",
-                    "aggregation": "SUM",
+                    "metric": "calc:service.teststepfailurerate",
+                    "aggregation": "OF_INTEREST_RATIO",
                     "type": "LINE",
                     "entityType": "SERVICE",
                     "dimensions": [{
                         "id": "1",
-                        "name": "Dimension",
+                        "name": "TestStep",
                         "values": [],
                         "entityDimension": false
                     }],
-                    "sortAscending": true,
-                    "sortColumn": false,
+                    "sortAscending": false,
+                    "sortColumn": true,
                     "aggregationRate": "TOTAL"
                 }],
                 "resultMetadata": {}
@@ -1225,7 +1225,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "height": 38
         },
         "tileFilter": {},
-        "markdown": "- [Database Queries](ui/diagnostictools/mda?mdaId=topdb&metric=DATABASE_CHILD_CALL_COUNT&dimension=%7BRequestAttribute:TestStepName%7D&mergeServices=false&aggregation=AVERAGE&percentile=80&chart=COLUMN&servicefilter=0%1E15%11d6800739-f8fb-4359-99dd-29c6eb12ce04%1037%111%144611686018427387)"
+        "markdown": "- [Database Queries](ui/diagnostictools/mda?mdaId=topdb&metric=DATABASE_CHILD_CALL_COUNT&dimension=%7BRequestAttribute:TSN%7D&mergeServices=false&aggregation=AVERAGE&percentile=80&chart=COLUMN&servicefilter=0%1E37%111%144611686018427387)"
     }, {
         "name": "Markdown",
         "tileType": "MARKDOWN",

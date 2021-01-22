@@ -26,7 +26,7 @@ curl --location --request POST 'https://'${DT_TENANT}'/api/config/v1/dashboards?
             "linkShared": true,
             "published": false
         },
-        "dashboardFilter": {
+       "dashboardFilter": {
             "timeframe": "-30m",
             "managementZone": {
                 "id": "8449138348211438023",
