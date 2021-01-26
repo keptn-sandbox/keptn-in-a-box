@@ -795,8 +795,8 @@ printInstalltime() {
   printInfoSection "Keptn & Kubernetes Exposed Ingress Endpoints"
   printInfo "Below you'll find the adresses and the credentials to the exposed services."
   printInfo "We wish you a lot of fun in your Autonomous Cloud journey!"
-  echo ""
-  bashas "kubectl get ing -A"
+#  echo ""
+#  bashas "kubectl get ing -A"
 
   if [ "$keptn_bridge_disable_login" = false ]; then
     printInfoSection "Keptn Bridge Access"
@@ -829,6 +829,7 @@ printInstalltime() {
     printInfo "ssh ${NEWUSER}@${DOMAIN}"
     printInfo "Password: ${NEWPWD}"
   fi 
+
   echo ""
   bashas "kubectl get ing -A"
 }
