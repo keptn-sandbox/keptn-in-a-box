@@ -13,6 +13,8 @@ sudo ./uninstall.sh
 cd ~
 sudo rm -rf *
 cd ~
+rm -rf .keptn
+rm -rf .kube
 curl -O $KIAB_FILE_REPO
 chmod +x keptn-in-a-box.sh
 echo "Reset Complete..."
