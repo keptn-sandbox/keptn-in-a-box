@@ -748,7 +748,9 @@ metricCreation() {
 	sleep 30
     printInfoSection "create calculated metrics"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createTestStepCalculatedMetrics.sh CONTEXTLESS keptn_project keptnorders"
-
+	sleep 10
+	printInfoSection "create process group nameing rule"
+    bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createProcessGroupName.sh"
   fi
 }
 
