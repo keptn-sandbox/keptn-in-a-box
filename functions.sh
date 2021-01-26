@@ -164,7 +164,7 @@ installationBundleAll() {
   # plus all others
   certmanager_install=true
   certmanager_enable=true
-  create_workshop_user=true
+  create_workshop_user=false
   keptn_bridge_disable_login=true
 
   jenkins_deploy=true
@@ -827,7 +827,8 @@ printInstalltime() {
     printInfo "ssh ${NEWUSER}@${DOMAIN}"
     printInfo "Password: ${NEWPWD}"
   fi 
-  
+  echo ""
+  bashas "kubectl get ing -A"
 }
 
 printFlags() {
