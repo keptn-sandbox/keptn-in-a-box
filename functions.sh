@@ -274,6 +274,7 @@ waitForAllPods() {
     pods_not_ok=$(eval "$CMD")
     if [[ "$pods_not_ok" == '0' ]]; then
       printInfo "All pods are running."
+      break
     fi
     RETRY=$(($RETRY + 1))
     printInfo "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $pods_not_ok PoDs to finish or be in state Running ..."
