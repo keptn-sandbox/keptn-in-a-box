@@ -729,9 +729,9 @@ keptndemoCatalogonboard() {
     printInfoSection "Keptn onboarding Catalog"
     #TODO Parameterize Catalog Version.
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/ && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/onboard_catalog.sh && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/onboard_catalog_qualitygates.sh"
-    sleep 30
+    sleep 5
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/ && bash $KEPTN_IN_A_BOX_DIR/resources/catalog/deploy_catalog_0.sh"
-    sleep 30
+    sleep 5
     #printInfoSection "Keptn Exposing the Onboarded orders Application"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} keptnorders"
     
@@ -745,10 +745,10 @@ metricCreation() {
   if [ "$createMetrics" = true ]; then
     printInfoSection "create request attributes for calculated metrics"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createRequestAttributes.sh"
-	sleep 30
+	sleep 5
     printInfoSection "create calculated metrics"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createTestStepCalculatedMetrics.sh CONTEXTLESS keptn_project keptnorders"
-	sleep 10
+	sleep 5
 	printInfoSection "create process group nameing rule"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createProcessGroupName.sh"
   fi
