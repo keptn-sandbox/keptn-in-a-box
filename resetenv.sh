@@ -15,6 +15,8 @@ sudo rm -rf *
 cd ~
 rm -rf .keptn
 rm -rf .kube
+rm /tmp/install.log
+
 curl -O $KIAB_FILE_REPO
 chmod +x keptn-in-a-box.sh
 echo "Reset Complete..."
