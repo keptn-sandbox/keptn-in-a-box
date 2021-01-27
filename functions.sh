@@ -751,6 +751,9 @@ metricCreation() {
 	sleep 5
 	printInfoSection "create process group nameing rule"
     bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createProcessGroupName.sh"
+	sleep 5
+	printInfoSection "create process group nameing rule"
+    bashas "cd $KEPTN_CATALOG_DIR/keptn-onboarding/scripts && bash $KEPTN_CATALOG_DIR/keptn-onboarding/scripts/createServiceName.sh"    
   fi
 }
 
