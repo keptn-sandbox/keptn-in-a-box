@@ -12,11 +12,11 @@ sudo snap remove microk8s --purge
 cd /opt/dynatrace/oneagent/agent
 sudo ./uninstall.sh
 
-cd /var/lib
-sudo rm -rf dynatrace
-
 cd /opt/dynatrace/gateway
 sudo ./uninstall.sh
+
+cd /var/lib
+sudo rm -rf dynatrace
 
 cd /opt
 sudo rm -rf dynatrace
