@@ -37,5 +37,8 @@ sed -e 's~DOMAIN.placeholder~'"$DOMAIN"'~' \
     -e 's~DT_API_TOKEN.placeholder~'"$DT_API_TOKEN"'~' \
     helm-jenkins.yaml > gen/helm-jenkins.yaml
 
+echo "Ensure Helm Jenkins repo is present"
+helm repo add jenkins https://charts.jenkins.io
+
 echo "Installing Jenkins via Helm"
 helm install jenkins jenkins/jenkins -f gen/helm-jenkins.yaml --version 2.19.0
