@@ -136,7 +136,7 @@ installationBundleDemo() {
   keptndemo_cartsonboard=false
   # use for order application
   keptndemo_catalogonboard=true
-  keptndashboard_load=true
+  keptndashboard_load=false
   createMetrics=true
   
   expose_kubernetes_api=true
