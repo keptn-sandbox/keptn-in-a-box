@@ -549,7 +549,9 @@ dynatraceSaveCredentials() {
 hostAliasPod() {
   if [ "$hostalias" = true ]; then
     printInfoSection "Deploying HostAlias Pod"
-    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash kubectl apply -f hostaliases-pod.yaml"
+    curl -o hostaliases-pod.yaml https://github.com/dthotday-performance/keptn-in-a-box/blob/${KIAB_RELEASE}/resources/ingress/hostaliases-pod.yaml
+    bashas "sudo kubectl apply -f hostaliases-pod.yaml"
+    #bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash kubectl apply -f hostaliases-pod.yaml"
     #bashas "kubectl apply -f https://raw.githubusercontent.com/dthotday-performance/keptn-in-a-box.git/${KIAB_RELEASE}/resources/ingress/hostaliases-pod.yaml
   fi
   waitForAllPods
@@ -890,6 +892,9 @@ doInstallation() {
   microk8sEnableBasic
   microk8sEnableDashboard
   microk8sEnableRegistry
+  
+  hostAliasPod
+  
   dynatraceActiveGateInstall
   istioInstall
   helmInstall
@@ -898,8 +903,6 @@ doInstallation() {
   keptnExamplesClone
   
   keptnCatalogClone
-  
-  hostAliasPod
   
   dynatraceSaveCredentials
 
