@@ -10,6 +10,13 @@ spec:
   - bridge.keptn
   gateways:
   - public-gateway.istio-system
+  hostAliases:
+   - ip: 192.168.3.91
+     hostnames:
+       - kiab.pcjeffint.com
+   - ip: 192.168.3.91
+     hostnames:
+       - git.kiab.pcjeffint.com  
   http:
     - route:
       - destination:
