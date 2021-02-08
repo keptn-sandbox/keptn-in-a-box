@@ -67,6 +67,8 @@ keptn_install_qualitygates=false
 keptn_examples_clone=false
 resources_clone=false
 
+hostalias=false
+
 keptn_catalog_clone=false
 
 git_deploy=false
@@ -115,6 +117,8 @@ installationBundleDemo() {
   keptn_install=true
   keptn_examples_clone=true
   resources_clone=true
+  
+  hostalias=true
   
   keptn_catalog_clone=true
 
@@ -542,6 +546,15 @@ dynatraceSaveCredentials() {
   fi
 }
 
+hostAlias() {
+  if [ "$hostalias" = true ]; then
+    printInfoSection "Deploying HostAlias Pod"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash kubectl apply -f hostaliases-pod.yaml"
+  fi
+  waitForAllPods
+}
+
+
 keptnInstallClient() {
   printInfoSection "Download Keptn $KEPTN_VERSION"
   wget -q -O keptn.tar "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/${KEPTN_VERSION}_keptn-linux.tar"
@@ -839,7 +852,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,keptndemo_catalogonboard,jmeter_install,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user,keptndashboard_load,createMetrics}; 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,hostalias,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,keptn_catalog_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,keptndemo_catalogonboard,jmeter_install,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user,keptndashboard_load,createMetrics}; 
   do 
     echo "$i = ${!i}"
   done
@@ -884,6 +897,8 @@ doInstallation() {
   keptnExamplesClone
   
   keptnCatalogClone
+  
+  hostAlias
   
   dynatraceSaveCredentials
 
