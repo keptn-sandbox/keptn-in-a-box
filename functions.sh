@@ -118,7 +118,7 @@ installationBundleDemo() {
   keptn_examples_clone=true
   resources_clone=true
   
-  hostalias=true
+  hostalias=false
   
   keptn_catalog_clone=true
 
