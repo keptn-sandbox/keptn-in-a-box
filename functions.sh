@@ -553,8 +553,8 @@ hostAliasPod() {
     bashas "sudo kubectl apply -f hostaliases-pod.yaml"
     #bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash kubectl apply -f hostaliases-pod.yaml"
     #bashas "kubectl apply -f https://raw.githubusercontent.com/dthotday-performance/keptn-in-a-box.git/${KIAB_RELEASE}/resources/ingress/hostaliases-pod.yaml
-  fi
   waitForAllPods
+  fi
 }
 
 
