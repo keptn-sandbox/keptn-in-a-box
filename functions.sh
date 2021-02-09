@@ -403,7 +403,6 @@ microk8sInstall() {
     homedirectory=$(eval echo ~$USER)
     bashas "mkdir $homedirectory/.kube"
     bashas "microk8s.config > $homedirectory/.kube/config"
-
   fi
 }
 
@@ -557,7 +556,6 @@ hostAliasPod() {
   fi
 }
 
-
 keptnInstallClient() {
   printInfoSection "Download Keptn $KEPTN_VERSION"
   wget -q -O keptn.tar "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/${KEPTN_VERSION}_keptn-linux.tar"
@@ -590,7 +588,6 @@ keptnInstall() {
       printInfo "Restart Keptn Helm Service"
       bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
     fi
-
     printInfoSection "Routing for the Keptn Services via NGINX Ingress"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
     waitForAllPods
@@ -608,12 +605,11 @@ jmeterService() {
   printInfoSection "Installing and configuring Dynatrace jmeter service $DT_TENANT"
   # Original to KIAB
   #bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn"
-  # use with newer version of Keptn
-  bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptncontrib/jmeter-extended-service:0.2.0 --record"
+  # use with newer version of Keptn - Stable
+  #bashas "kubectl -n keptn set image deployment/jmeter-service jmeter-service=keptncontrib/jmeter-extended-service:0.2.0 --record"
   ## User for jmeter mint
-  #bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${ALT_JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn --record"
+  bashas "kubectl apply -f https://raw.githubusercontent.com/keptn/keptn/${ALT_JMETER_SERVICE_BRANCH}/jmeter-service/deploy/service.yaml -n keptn --record"
   fi
-
 }
 
 keptnDeployHomepage() {
@@ -685,7 +681,6 @@ keptnBridgeDisableLogin() {
   fi
 }
 
-
 keptndemoUnleash() {
   if [ "$keptndemo_unleash" = true ]; then
     printInfoSection "Deploy Unleash-Server"
@@ -736,7 +731,6 @@ keptndemoCartsonboard() {
 
     printInfoSection "Keptn Exposing the Onboarded Carts Application"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} sockshop"
-
   fi
 }
 
@@ -753,7 +747,6 @@ keptndemoCatalogonboard() {
     
     printInfoSection "set env variables"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash setenv.sh"
-    
   fi
 }
 
