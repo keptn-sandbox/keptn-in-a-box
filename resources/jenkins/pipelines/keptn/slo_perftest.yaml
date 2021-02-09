@@ -16,7 +16,7 @@
       - sli: throughput_svc
         pass:
           - criteria:
-            - "> 2000" # at least 1000 Calls for a basic test to pass.
+            - "> 1000" # at least 1000 Calls for a basic test to pass.
       - sli: error_count
         weight: 2
         pass:
