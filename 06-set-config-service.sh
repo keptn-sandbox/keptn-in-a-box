@@ -8,4 +8,4 @@ sudo kubectl apply -f https://raw.githubusercontent.com/dthotday-performance/kep
 
 sleep 10
 
-sudo kubectl get pods --all-namespaces | grep jmeter
+sudo kubectl get pods --all-namespaces | grep configuration-service
