@@ -520,6 +520,9 @@ master:
    - ip: 192.168.3.91
      hostnames:
        - keptn.kiab.pcjeffint.com
+   - ip: 192.168.3.91
+     hostnames:
+       - frontend.keptnorders-staging.kiab.pcjeffint.com       
 
   # Expose Prometheus metrics
   prometheus:
