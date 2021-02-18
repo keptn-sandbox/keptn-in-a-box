@@ -22,11 +22,11 @@
 YLW='\033[1;33m'
 NC='\033[0m'
 
-DT_TENANT_SET=`printenv DT_TENANTID`
+DT_TENANT_SET=${DT_TENANTID}
 
 
 echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
-read -p "Dynatrace Tenant ID ($DT_TENANT_SET): " DTENVC
+read -p "Dynatrace Tenant ID (${DT_TENANT_SET}): " DTENVC
 read -p "Dynatrace API Token: " DTAPIC
 read -p "Dynatrace PaaS Token: " DTPAAST
 read -p "User Email (student2393Perform2021@trial.dynatracelabs.com): " DTUID 
