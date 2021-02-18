@@ -23,15 +23,20 @@ YLW='\033[1;33m'
 NC='\033[0m'
 
 printenv DT_TENANTID
+printenv DT_APITOKEN
+printenv DT_PAASTOKEN
+printenv DT_CERTMANAGER_EMAIL
 
 DTENVC=${DT_TENANTID}
-
+DTAPIC=${DT_APITOKEN}
+DTPAAST=${DT_PAASTOKEN}
+DTUID=${DT_CERTMANAGER_EMAIL}
 
 echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
 read -p "Dynatrace Tenant ID ("$DTENVC"): " DTENVC
-read -p "Dynatrace API Token: " DTAPIC
-read -p "Dynatrace PaaS Token: " DTPAAST
-read -p "User Email (student2393Perform2021@trial.dynatracelabs.com): " DTUID 
+read -p "Dynatrace API Token: ("$DTAPIC")" DTAPIC
+read -p "Dynatrace PaaS Token: ("$DTAPIC")" DTPAAST
+read -p "User Email ("$DTUID"): " DTUID 
 echo ""
 
 if [ -z "$DTENVC" ]
