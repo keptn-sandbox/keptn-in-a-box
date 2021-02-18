@@ -34,8 +34,9 @@ DTUID=${DT_CERTMANAGER_EMAIL}
 
 echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
 read -p "Dynatrace Tenant ID ("$DTENVC"): " DTENVC
-read -p "Dynatrace API Token: ("$DTAPIC")" DTAPIC
-read -p "Dynatrace PaaS Token: ("$DTPAAST")" DTPAAST
+'DTENVC=$"{DTENVC:=$DTENVC}"'
+read -p "Dynatrace API Token: ("$DTAPIC"): " DTAPIC
+read -p "Dynatrace PaaS Token: ("$DTPAAST"): " DTPAAST
 read -p "User Email ("$DTUID"): " DTUID 
 echo ""
 
