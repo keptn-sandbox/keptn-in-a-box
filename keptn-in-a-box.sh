@@ -26,7 +26,7 @@ DT_TENANT_SET=${DT_TENANTID}
 
 
 echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
-read -p "Dynatrace Tenant ID (${DT_TENANT_SET}): " DTENVC
+read -p "Dynatrace Tenant ID ("${DT_TENANT_SET}"): " DTENVC
 read -p "Dynatrace API Token: " DTAPIC
 read -p "Dynatrace PaaS Token: " DTPAAST
 read -p "User Email (student2393Perform2021@trial.dynatracelabs.com): " DTUID 
