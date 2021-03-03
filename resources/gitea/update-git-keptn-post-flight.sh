@@ -23,4 +23,5 @@ source ./gitea-functions.sh $DOMAIN
 readApiTokenFromFile
 
 # create a repo for each keptn project and migrate it.
-createKeptnRepos
+updateKeptnRepos
+#createKeptnRepos
