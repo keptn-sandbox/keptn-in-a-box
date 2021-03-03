@@ -17,7 +17,7 @@ source ./gitea-functions.sh $DOMAIN
 getApiTokens
 
 # create an Api Token
-#createApiToken
+createApiToken
 
 # read the Token and keep the hash in memory
 readApiTokenFromFile
