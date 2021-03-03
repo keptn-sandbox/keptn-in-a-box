@@ -14,7 +14,7 @@ fi
 source ./gitea-functions.sh $DOMAIN
 
 # get Tokens for the User
-#getApiTokens
+getApiTokens
 
 # create an Api Token
 #createApiToken
