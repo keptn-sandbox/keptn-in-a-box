@@ -12,7 +12,7 @@ sudo kubectl apply -f https://raw.githubusercontent.com/dthotday-performance/kep
 # sudo kubectl apply -f https://raw.githubusercontent.com/dthotday-performance/keptn/feature/2552/jmeterextensionskeptn072/jmeter-service/deploy/service.yaml -n keptn --record
 
 # use for host aliases
-#sudo kubectl apply -f https://raw.githubusercontent.com/dthotday-performance/keptn/${ALT_JMETER_SERVICE_BRANCH}/bridge/deploy/bridge.yaml -n keptn --record
+sudo kubectl apply -f https://raw.githubusercontent.com/dthotday-performance/keptn/${ALT_JMETER_SERVICE_BRANCH}/bridge/deploy/bridge.yaml -n keptn --record
 
 sleep 10
 
