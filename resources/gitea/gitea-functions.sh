@@ -56,13 +56,18 @@ createKeptnRepos() {
     done
 }
 
-updateKeptnRepo(){
+updateKeptnRepos(){
     echo "updating repositories for Keptn projects "
     for project in `keptn get projects | awk '{ if (NR!=1) print $1}'`;
     do 
     KEPTN_PROJECT=$project
     keptn update project $KEPTN_PROJECT --git-user=$GIT_USER --git-token=$API_TOKEN --git-remote-url=$GIT_SERVER/$GIT_USER/$KEPTN_PROJECT.git
     done
+}
+
+updateKeptnRepo(){
+    KEPTN_PROJECT=$1
+    keptn update project $KEPTN_PROJECT --git-user=$GIT_USER --git-token=$API_TOKEN --git-remote-url=$GIT_SERVER/$GIT_USER/$KEPTN_PROJECT.git
 }
 
 createKeptnRepoManually(){
