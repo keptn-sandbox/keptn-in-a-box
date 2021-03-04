@@ -13,8 +13,8 @@
             "active": true
         },
         {
-            "label": "All namespaces for Dev purposes",
-            "fieldSelector": "involvedObject.namespace!=yestoallnamespaces",
+            "label": "All Namespaces",
+            "fieldSelector": "involvedObject.kind!=Node",
             "active": true
         }
     ],
