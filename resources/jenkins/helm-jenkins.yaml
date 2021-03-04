@@ -217,7 +217,7 @@ master:
     - pipeline-utility-steps:2.6.1
     - blueocean:1.24.3
     - kubernetes:1.26.4
-    - configuration-as-code:1.46
+    - configuration-as-code:1.47
     - job-dsl:1.77
     - workflow-job:2.40
     - workflow-aggregator:2.6
