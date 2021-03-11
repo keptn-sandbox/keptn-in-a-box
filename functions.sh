@@ -6,20 +6,21 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.7.3"
-ISTIO_VERSION=1.5.1
+KIAB_RELEASE="release-0.8.0"
+# Latest Istio is 1.9.1
+ISTIO_VERSION=1.9.1
 CERTMANAGER_VERSION=0.14.0
-# https://github.com/keptn/keptn
-KEPTN_VERSION=0.7.3
+# https://github.com/keawsptn/keptn
+KEPTN_VERSION=0.8.0
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.10.0
+KEPTN_DT_SERVICE_VERSION=0.11.0
 # https://github.com/keptn-contrib/dynatrace-sli-service
-KEPTN_DT_SLI_SERVICE_VERSION=0.7.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.8.0
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="release-0.7.3"
+KEPTN_EXAMPLES_BRANCH="release-0.8.0"
 TEASER_IMAGE="shinojosa/nginxacm:0.7.3"
 KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
-MICROK8S_CHANNEL="1.18/stable"
+MICROK8S_CHANNEL="1.19/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box.git"
@@ -180,7 +181,7 @@ installationBundleKeptnOnly() {
 
 installationBundleKeptnQualityGates() {
   installationBundleKeptnOnly
-  
+
   # We dont need istio nor helm
   istio_install=false
   helm_install=false
@@ -423,7 +424,7 @@ dynatraceActiveGateInstall() {
   fi
 }
 
-#TODO Upgrade to 1.6.2 to pair with the Keptn tests. Add a Gateway as in the keptn docu. 
+#TODO Upgrade to 1.6.2 to pair with the Keptn tests. Add a Gateway as in the keptn docu.
 # We install  Istio manually since Microk8s 1.18 classic comes with 1.3.4 and 1.5.1 is leightweit
 istioInstall() {
   if [ "$istio_install" = true ]; then
@@ -539,10 +540,10 @@ keptnInstall() {
       printInfoSection "Install Keptn with Continuous Delivery UseCase"
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
-      
+
       printInfoSection "Configuring Istio for Keptn"
       bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
-      
+
       printInfo "Restart Keptn Helm Service"
       bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
     fi
@@ -550,7 +551,7 @@ keptnInstall() {
     printInfoSection "Routing for the Keptn Services via NGINX Ingress"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
     waitForAllPods
-    #We sleep for 5 seconds to give time the Ingress to be ready 
+    #We sleep for 5 seconds to give time the Ingress to be ready
     sleep 5
     printInfoSection "Authenticate Keptn CLI"
     KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
@@ -590,7 +591,7 @@ gitMigrate() {
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash update-git-keptn.sh ${DOMAIN}"
   fi
 }
-
+#TODO CHANGE INSTALL TO POD
 dynatraceConfigureMonitoring() {
   if [ "$dynatrace_configure_monitoring" = true ]; then
     printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
@@ -602,11 +603,11 @@ dynatraceConfigureMonitoring() {
     printInfo "Deploying the OneAgent Operator"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && echo 'y' | bash deploy_operator.sh"
     printInfo "Deploying the Dynatrace Service in Keptn"
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/service.yaml -n keptn" 
+    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/service.yaml -n keptn"
 
     printInfo "Setting up Dynatrace SLI provider in Keptn"
     bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/$KEPTN_DT_SLI_SERVICE_VERSION/deploy/service.yaml -n keptn"
-    
+
     waitForAllPods
     bashas "keptn configure monitoring dynatrace"
     waitForAllPods
@@ -628,7 +629,6 @@ keptnBridgeDisableLogin() {
   fi
 }
 
-
 keptndemoUnleash() {
   if [ "$keptndemo_unleash" = true ]; then
     printInfoSection "Deploy Unleash-Server"
@@ -640,6 +640,7 @@ keptndemoUnleash() {
   fi
 }
 
+#TODO CHANGE INSTALL TO POD
 dynatraceConfigureWorkloads() {
   if [ "$dynatrace_configure_workloads" = true ]; then
     printInfoSection "Configuring Dynatrace Workloads for the Cluster (via Dynatrace and K8 API)"
@@ -727,7 +728,7 @@ printInstalltime() {
     printInfoSection "Jenkins-Server Access"
     printInfo "Username: keptn"
     printInfo "Password: keptn"
-  fi 
+  fi
 
   if [ "$git_deploy" = true ]; then
     printInfoSection "Git-Server Access"
@@ -735,22 +736,26 @@ printInstalltime() {
     printInfo "ApiToken to be found on $KEPTN_IN_A_BOX_DIR/resources/gitea/keptn-token.json"
     printInfo "For migrating keptn projects to your self-hosted git repository afterwards just execute the following function:"
     printInfo "cd $KEPTN_IN_A_BOX_DIR/resources/gitea/ && source ./gitea-functions.sh; createKeptnRepoManually {project-name}"
-  fi 
+  fi
 
   if [ "$create_workshop_user" = true ]; then
     printInfoSection "Workshop User Access (SSH Access)"
     printInfo "ssh ${NEWUSER}@${DOMAIN}"
     printInfo "Password: ${NEWPWD}"
-  fi 
-  
+  fi
+
 }
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; 
-  do 
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
     echo "$i = ${!i}"
   done
+}
+
+removeMicrok8s() {
+  printInfoSection "Nuke microk8s"
+  snap remove microk8s --purge
 }
 
 # ======================================================================
@@ -767,7 +772,7 @@ doInstallation() {
   SECONDS=0
 
   printFlags
-  
+
   echo ""
   validateSudo
   setBashas
@@ -804,7 +809,7 @@ doInstallation() {
   dynatraceConfigureWorkloads
   keptnBridgeEap
   keptnBridgeDisableLogin
-  
+
   jenkinsDeploy
 
   gitDeploy
