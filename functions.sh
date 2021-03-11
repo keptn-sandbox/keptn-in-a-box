@@ -7,8 +7,8 @@
 #      ----- Components Versions -----             #
 # ==================================================
 KIAB_RELEASE="release-0.8.0"
-# Latest Istio is 1.9.1
-ISTIO_VERSION=1.9.1
+# Latest Istio is 1.5.1
+ISTIO_VERSION=1.5.1
 CERTMANAGER_VERSION=0.14.0
 # https://github.com/keawsptn/keptn
 KEPTN_VERSION=0.8.0
@@ -340,6 +340,7 @@ setupProAliases() {
 }
 
 setupMagicDomainPublicIp() {
+  #TODO save in a ConfigMap
   printInfoSection "Setting up the Domain"
   if [ -n "${DOMAIN}" ]; then
     printInfo "The following domain is defined: $DOMAIN"
@@ -379,7 +380,6 @@ microk8sInstall() {
     homedirectory=$(eval echo ~$USER)
     bashas "mkdir $homedirectory/.kube"
     bashas "microk8s.config > $homedirectory/.kube/config"
-
   fi
 }
 
@@ -425,7 +425,7 @@ dynatraceActiveGateInstall() {
 }
 
 #TODO Upgrade to 1.6.2 to pair with the Keptn tests. Add a Gateway as in the keptn docu.
-# We install  Istio manually since Microk8s 1.18 classic comes with 1.3.4 and 1.5.1 is leightweit
+# We install  Istio manually since Microk8s 1.19 classi  1.5.1 is leightweit
 istioInstall() {
   if [ "$istio_install" = true ]; then
     printInfoSection "Install istio $ISTIO_VERSION into /opt and add it to user/local/bin"
@@ -517,12 +517,13 @@ dynatraceSaveCredentials() {
 
 keptnInstallClient() {
   printInfoSection "Download Keptn $KEPTN_VERSION"
-  wget -q -O keptn.tar "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/${KEPTN_VERSION}_keptn-linux.tar"
-  tar -xvf keptn.tar
+  wget -q -O keptn.tar.gz "https://github.com/keptn/keptn/releases/download/${KEPTN_VERSION}/keptn-${KEPTN_VERSION}-linux-amd64.tar.gz"
+  tar -xvf keptn.tar.gz
+  mv keptn-${KEPTN_VERSION}-linux-amd64 keptn
   chmod +x keptn
   mv keptn /usr/local/bin/keptn
-  printInfo "Remove keptn.tar"
-  rm keptn.tar
+  printInfo "Remove keptn.tar.gz"
+  rm keptn.tar.gz
 }
 
 keptnInstall() {
@@ -531,7 +532,7 @@ keptnInstall() {
     keptnInstallClient
 
     if [ "$keptn_install_qualitygates" = true ]; then
-      printInfoSection "Install Keptn with Continuous Delivery UseCase (no Istio configurtion)"
+      printInfoSection "Install Keptn with Continuous Delivery UseCase (no Istio configuration)"
       #TODO Improve with no flag?
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
