@@ -428,6 +428,15 @@ dynatraceActiveGateInstall() {
 # We install  Istio manually since Microk8s 1.19 classi  1.5.1 is leightweit
 istioInstall() {
   if [ "$istio_install" = true ]; then
+    printInfoSection "Install istio via Microk8s addOn"
+    bashas 'microk8s.enable istio'
+    waitForAllPods
+  fi
+}
+
+# Deprecated.
+istioInstallManually() {
+  if [ "$istio_install" = true ]; then
     printInfoSection "Install istio $ISTIO_VERSION into /opt and add it to user/local/bin"
     curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
     mv istio-$ISTIO_VERSION /opt/istio-$ISTIO_VERSION
