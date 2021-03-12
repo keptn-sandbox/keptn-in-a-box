@@ -7,8 +7,9 @@
 #      ----- Components Versions -----             #
 # ==================================================
 KIAB_RELEASE="release-0.8.0"
-# Latest Istio is 1.5.1
-ISTIO_VERSION=1.5.1
+# Latest Istio is 1.8.2
+ISTIO_VERSION=1.9.1
+
 CERTMANAGER_VERSION=0.14.0
 # https://github.com/keawsptn/keptn
 KEPTN_VERSION=0.8.0
@@ -424,25 +425,16 @@ dynatraceActiveGateInstall() {
   fi
 }
 
-#TODO Upgrade to 1.6.2 to pair with the Keptn tests. Add a Gateway as in the keptn docu.
-# We install  Istio manually since Microk8s 1.19 classi  1.5.1 is leightweit
+# We install via istioctl, we control the istio version and its components. It's also the recommended way for istio.
+# Via microk8 addon it enables lots of other stuff
 istioInstall() {
-  if [ "$istio_install" = true ]; then
-    printInfoSection "Install istio via Microk8s addOn"
-    bashas 'microk8s.enable istio'
-    waitForAllPods
-  fi
-}
-
-# Deprecated.
-istioInstallManually() {
   if [ "$istio_install" = true ]; then
     printInfoSection "Install istio $ISTIO_VERSION into /opt and add it to user/local/bin"
     curl -L https://istio.io/downloadIstio | ISTIO_VERSION=$ISTIO_VERSION sh -
     mv istio-$ISTIO_VERSION /opt/istio-$ISTIO_VERSION
     chmod +x -R /opt/istio-$ISTIO_VERSION/
     ln -s /opt/istio-$ISTIO_VERSION/bin/istioctl /usr/local/bin/istioctl
-    bashas "echo 'y' | istioctl manifest apply --force"
+    bashas "echo 'y' | istioctl install"
     waitForAllPods
   fi
 }
