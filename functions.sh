@@ -67,8 +67,6 @@ git_migrate=false
 
 dynatrace_savecredentials=false
 dynatrace_configure_monitoring=false
-dynatrace_activegate_install=false
-dynatrace_configure_workloads=false
 
 jenkins_deploy=false
 
@@ -111,8 +109,6 @@ installationBundleDemo() {
 
   dynatrace_savecredentials=true
   dynatrace_configure_monitoring=true
-  dynatrace_activegate_install=true
-  dynatrace_configure_workloads=true
 
   keptndeploy_homepage=true
   keptndemo_cartsload=true
@@ -307,8 +303,6 @@ dynatracePrintValidateCredentials() {
     printInfoSection "Dynatrace Variables not set, Dynatrace wont be installed"
     dynatrace_savecredentials=false
     dynatrace_configure_monitoring=false
-    dynatrace_activegate_install=false
-    dynatrace_configure_workloads=false
   fi
 }
 
@@ -412,16 +406,6 @@ microk8sEnableRegistry() {
     printInfoSection "Enable own Docker Registry"
     bashas 'microk8s.enable registry'
     waitForAllPods
-  fi
-}
-
-dynatraceActiveGateInstall() {
-  if [ "$dynatrace_activegate_install" = true ]; then
-    printInfoSection "Installation of Active Gate"
-    wget -nv -O activegate.sh "https://$DT_TENANT/api/v1/deployment/installer/gateway/unix/latest?Api-Token=$DT_PAAS_TOKEN&arch=x86&flavor=default"
-    sh activegate.sh
-    printInfo "removing ActiveGate installer."
-    rm activegate.sh
   fi
 }
 
@@ -534,8 +518,8 @@ keptnInstall() {
 
     if [ "$keptn_install_qualitygates" = true ]; then
       printInfoSection "Install Keptn with Continuous Delivery UseCase (no Istio configuration)"
-      #TODO Improve with no flag?
-      bashas "echo 'y' | keptn install --use-case=continuous-delivery"
+
+      bashas "echo 'y' | keptn install"
       waitForAllPods
     else
       ## -- Keptn Installation --
@@ -571,6 +555,7 @@ keptnDeployHomepage() {
   fi
 }
 
+#TODO Fix plugin in 0.8.0 not working
 jenkinsDeploy() {
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Deploying Jenkins via Helm. This Jenkins is configured and managed 'as code'"
@@ -593,17 +578,18 @@ gitMigrate() {
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash update-git-keptn.sh ${DOMAIN}"
   fi
 }
-#TODO CHANGE INSTALL TO POD
+
 dynatraceConfigureMonitoring() {
   if [ "$dynatrace_configure_monitoring" = true ]; then
-    printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster (via Keptn) for $DT_TENANT"
-    printInfo "Saving Credentials in dynatrace secret in keptn ns"
+    printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster for $DT_TENANT"
 
-    # TODO Why store bridge and other keptn infos in the secret??
-    bashas "kubectl -n keptn create secret generic dynatrace --from-literal=\"DT_TENANT=$DT_TENANT\" --from-literal=\"DT_API_TOKEN=$DT_API_TOKEN\"  --from-literal=\"KEPTN_API_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/api\" --from-literal=\"KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)\" --from-literal=\"KEPTN_BRIDGE_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath={.spec.rules[0].host})/bridge\""
-    # Deploy Operator as Help pages
-    printInfo "Deploying the OneAgent Operator"
+    printInfo "Saving Credentials in dynatrace secret in keptn ns"
+    kubectl -n keptn create secret generic dynatrace --from-literal="DT_TENANT=$DT_TENANT" --from-literal="DT_API_TOKEN=$DT_API_TOKEN" --from-literal="DT_PAAS_TOKEN=$DT_PAAS_TOKEN" --from-literal="KEPTN_API_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath='{.spec.rules[0].host}')/api" --from-literal="KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath='{.data.keptn-api-token}' | base64 --decode)" --from-literal="KEPTN_BRIDGE_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath='{.spec.rules[0].host}')/bridge"
+
+    # Deploy Operator as Help pages with containerized AG
+    printInfo "Deploying the OneAgent Operator and containerized AG monitoring all events and Cluster Health"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && echo 'y' | bash deploy_operator.sh"
+
     printInfo "Deploying the Dynatrace Service in Keptn"
     bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/service.yaml -n keptn"
 
@@ -639,14 +625,6 @@ keptndemoUnleash() {
     printInfoSection "Expose Unleash-Server"
     #TODO Add Unleash Remediation via bash/curl/yaml
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
-  fi
-}
-
-#TODO CHANGE INSTALL TO POD
-dynatraceConfigureWorkloads() {
-  if [ "$dynatrace_configure_workloads" = true ]; then
-    printInfoSection "Configuring Dynatrace Workloads for the Cluster (via Dynatrace and K8 API)"
-    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && bash configure-workloads.sh"
   fi
 }
 
@@ -745,12 +723,11 @@ printInstalltime() {
     printInfo "ssh ${NEWUSER}@${DOMAIN}"
     printInfo "Password: ${NEWPWD}"
   fi
-
 }
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,dynatrace_activegate_install,dynatrace_configure_workloads,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
     echo "$i = ${!i}"
   done
 }
@@ -806,9 +783,11 @@ doInstallation() {
 
   keptnInstall
   keptnDeployHomepage
+  
+  #TODO Deploy Unleash
   keptndemoUnleash
+  #TODO Operator
   dynatraceConfigureMonitoring
-  dynatraceConfigureWorkloads
   keptnBridgeEap
   keptnBridgeDisableLogin
 

@@ -10,7 +10,7 @@ if [[ -d "carts" ]]; then
     keptn add-resource --project=sockshop --stage=staging --service=carts --resource=jmeter/load.jmx --resourceUri=jmeter/load.jmx
 
     # Onboarding - prepare  Keptn
-    keptn onboard service carts-db --project=sockshop --chart=./carts-db --deployment-strategy=direct
+    keptn onboard service carts-db --project=sockshop --chart=./carts-db 
 
 
 else 

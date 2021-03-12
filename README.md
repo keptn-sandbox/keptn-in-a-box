@@ -167,8 +167,8 @@ The default installation is **installationBundlesDefault** which sets the contro
   resources_route_istio_ingress=true
   dynatrace_savecredentials=true
   dynatrace_configure_monitoring=true
-  dynatrace_activegate_install=true
-  dynatrace_configure_workloads=true
+
+
   keptn_bridge_eap=true
   keptndemo_teaser_pipeline=true
   keptndemo_cartsload=true
