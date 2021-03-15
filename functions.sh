@@ -247,7 +247,7 @@ waitForAllPods() {
   if [[ $# -eq 1 ]]; then
     namespace_filter="-n $1"
   else
-    namespace_filter="-A"
+    namespace_filter="--all-namespaces"
   fi
   RETRY=0
   RETRY_MAX=24
@@ -604,7 +604,7 @@ gitDeploy() {
   if [ "$git_deploy" = true ]; then
     printInfoSection "Deploying self-hosted GIT(ea) service via Helm."
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash deploy-gitea.sh ${DOMAIN}"
-    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN}"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} gitea"
   fi
 }
 
