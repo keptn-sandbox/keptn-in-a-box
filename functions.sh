@@ -273,29 +273,30 @@ enableVerbose() {
   fi
 }
 
-# Function to return the Available Usage of the Disk space in K Blocks (1024)
-getUsedDiskSpace(){
-  USAGE=$(df  / | tail -1 | awk '{print $3}')
-  echo $USAGE
-  return USAGE
-}
+
 
 printFileSystemUsage(){
-  printInfo "File System usage"
+  printInfoSection "File System usage"
   bashas 'df -h /'
 }
 
 printSystemInfo(){
   printInfoSection "Print System Information"
-  printInfo "CPU Architecture"
+  printInfoSection "CPU Architecture"
   bashas 'lscpu'
-  printInfo "Memory Information"
+  printInfoSection "Memory Information"
   bashas 'lsmem'
   printFileSystemUsage
 }
 
+# Function to convert 1K Blocks in IEC Formating (.e.g. 1M)
 getDiskUsageInIec(){
   echo $(($1 * 1024)) | numfmt --to=iec
+}
+
+# Function to return the Available Usage of the Disk space in K Blocks (1024)
+getUsedDiskSpace(){
+  echo $(df  / | tail -1 | awk '{print $3}')
 }
 
 # ======================================================================
