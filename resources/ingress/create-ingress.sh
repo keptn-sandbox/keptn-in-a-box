@@ -5,9 +5,15 @@ if [ $# -eq 2 ]; then
     DOMAIN=$1
     yaml=$2
     echo "Creating Ingress $yaml.yaml for $DOMAIN"
+elif  [ $# -eq 1 ]; then
+    yaml=$1
+    echo "No Domain has been passed, getting it from the ConfigMap"
+    DOMAIN=$(kubectl get configmap domain -n default -ojsonpath={.data.domain})
+    echo "Domain: $DOMAIN"
+    echo "Creating Ingress $yaml.yaml for $DOMAIN"
 else
     echo "usage expose.sh DOMAIN yamlfilename"
-    #TODO Improve with kubectl get cm -n keptn keptn-domain -ojsonpath={.data.app_domain}
+    echo "usage expose.sh yamlfilename"
     exit
 fi
 

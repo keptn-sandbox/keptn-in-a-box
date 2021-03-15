@@ -169,7 +169,6 @@ The default installation is **installationBundlesDefault** which sets the contro
   dynatrace_configure_monitoring=true
 
 
-  keptn_bridge_eap=true
   keptndemo_teaser_pipeline=true
   keptndemo_cartsload=true
   keptndemo_unleash=true

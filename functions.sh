@@ -364,7 +364,6 @@ setupProAliases() {
 }
 
 setupMagicDomainPublicIp() {
-  #TODO 0.8.0 FIX-DOMAIN save in a ConfigMap
   printInfoSection "Setting up the Domain"
   if [ -n "${DOMAIN}" ]; then
     printInfo "The following domain is defined: $DOMAIN"
@@ -376,6 +375,8 @@ setupMagicDomainPublicIp() {
     export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io"
     printInfo "Magic Domain: $DOMAIN"
   fi
+  # Now we save the DOMAIN in a ConfigMap
+  bashas "kubectl create configmap -n default domain --from-literal=domain=${DOMAIN}"
 }
 
 microk8sInstall() {

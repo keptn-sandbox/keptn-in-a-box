@@ -6,8 +6,8 @@ if [ $# -eq 1 ]; then
     DOMAIN=$1
     echo "Domain has been passed: $DOMAIN"
 else
-    echo "No Domain has been passed, getting it from the Home-Ingress"
-    DOMAIN=$(kubectl get ing -n default homepage-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')
+    echo "No Domain has been passed, getting it from the ConfigMap"
+    DOMAIN=$(kubectl get configmap domain -n default -ojsonpath={.data.domain})
     echo "Domain: $DOMAIN"
 fi
 
