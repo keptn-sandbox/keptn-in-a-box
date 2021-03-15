@@ -526,12 +526,13 @@ keptnInstall() {
       printInfoSection "Install Keptn with Continuous Delivery UseCase"
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
+      
+      #TODO is this even needed?
+      #printInfoSection "Configuring Istio for Keptn"
+      #bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
 
-      printInfoSection "Configuring Istio for Keptn"
-      bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
-
-      printInfo "Restart Keptn Helm Service"
-      bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
+      #printInfo "Restart Keptn Helm Service"
+      #bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
     fi
 
     printInfoSection "Routing for the Keptn Services via NGINX Ingress"
