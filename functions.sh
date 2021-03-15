@@ -273,6 +273,31 @@ enableVerbose() {
   fi
 }
 
+# Function to return the Available Usage of the Disk space in K Blocks (1024)
+getUsedDiskSpace(){
+  USAGE=$(df  / | tail -1 | awk '{print $3}')
+  echo $USAGE
+  return USAGE
+}
+
+printFileSystemUsage(){
+  printInfo "File System usage"
+  bashas 'df -h /'
+}
+
+printSystemInfo(){
+  printInfoSection "Print System Information"
+  printInfo "CPU Architecture"
+  bashas 'lscpu'
+  printInfo "Memory Information"
+  bashas 'lsmem'
+  printFileSystemUsage
+}
+
+getDiskUsageInIec(){
+  echo $(($1 * 1024)) | numfmt --to=iec
+}
+
 # ======================================================================
 #          ----- Installation Functions -------                        #
 # The functions for installing the different modules and capabilities. #
@@ -687,6 +712,11 @@ printInstalltime() {
   DURATION=$SECONDS
   printInfoSection "Installation complete :)"
   printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds"
+  printFileSystemUsage
+  DISK_USED=$(($DISK_INIT - $DISK_FINAL))
+  printInfo "Disk used size 1K Blocks: $DISK_USED"
+  printInfo "Disk used size in IEC Format: $(getDiskUsageInIec $DISK_USED)"
+
   printInfoSection "Keptn & Kubernetes Exposed Ingress Endpoints"
   printInfo "Below you'll find the adresses and the credentials to the exposed services."
   printInfo "We wish you a lot of fun in your Autonomous Cloud journey!"
@@ -734,7 +764,7 @@ printFlags() {
 }
 
 removeMicrok8s() {
-  printInfoSection "Nuke microk8s"
+  printInfoSection "Removing microk8s"
   snap remove microk8s --purge
 }
 
@@ -748,6 +778,9 @@ doInstallation() {
   printInfoSection "Init Installation at  $(date) by user $(whoami)"
   printInfo "Setting up Microk8s (SingleNode K8s Dev Cluster) with Keptn"
   echo ""
+  printSystemInfo
+  # Record Disk Usage
+  DISK_INIT=$(getUsedDiskSpace)
   # Record time of installation
   SECONDS=0
 
@@ -802,6 +835,8 @@ doInstallation() {
   gitMigrate
   createWorkshopUser
   certmanagerEnable
+
+  DISK_FINAL=$(getUsedDiskSpace)
   printInstalltime
 }
 
