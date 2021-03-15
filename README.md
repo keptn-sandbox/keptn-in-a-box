@@ -84,7 +84,7 @@ For a step by step understanding of how Keptn-in-a-Box works and how to use it, 
   ├── ingress               Files and logic for mapping, exposing the endpoints and services. Creation of Certificates.  
   ├── jenkins               Deployment and configuration for Jenkins managed as code.
   ├── misc                  Miscelaneous (patch kubernetes dashboard)
-  └── virtualservices       YAML files for virtualservices 
+  └── istio                 YAML files for istio configuration 
 ```
 
 ## 💾 Sizing

@@ -553,12 +553,15 @@ keptnInstall() {
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
       
-      #TODO is this even needed?
-      #printInfoSection "Configuring Istio for Keptn"
-      #bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=ingressgateway.istio-system -oyaml --dry-run | kubectl replace -f -"
+      # Adding configuration for the IngressGW
+      printInfoSection "Creating Public Gateway for Istio"
+      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && kubectl apply -f public-gateway.yaml"
 
-      #printInfo "Restart Keptn Helm Service"
-      #bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
+      printInfoSection "Configuring Istio for Keptn"
+      bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=public-gateway.istio-system -oyaml --dry-run | kubectl replace -f -"
+
+      printInfo "Restart Keptn Helm Service"
+      bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
     fi
 
     printInfoSection "Routing for the Keptn Services via NGINX Ingress"
@@ -681,7 +684,7 @@ patchKubernetesDashboard() {
 keptndemoCartsonboard() {
   if [ "$keptndemo_cartsonboard" = true ]; then
     printInfoSection "Keptn onboarding Carts"
-    #TODO Parameterize Carts Version.
+    
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts.sh && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts_qualitygates.sh"
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_carts_0.sh"
 
