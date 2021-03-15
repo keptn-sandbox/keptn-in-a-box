@@ -141,11 +141,11 @@ git clone https://github.com/keptn-sandbox/keptn-in-a-box ; cd keptn-in-a-box
 ```bash
 sudo bash -c './keptn-in-a-box.sh &'
 ```
-And that was it! Yes that easy!  Now if you notice is that there is an & in the command. This command will run installation in a bash shell as sudo, will prompt you for the password and will send the job to the background. You will not see any output since stdout and stderr are piped to a logfile which is located by default in **/tmp/install.log** 
+And that was it! Yes that easy!  Now if you notice is that there is an & in the command. This command will run installation in a bash shell as sudo, will prompt you for the password and will send the job to the background. You will not see any output since stdout and stderr are piped to a logfile which is located by default in **/tmp/kiab-install.log** 
 
 For inspecting the installation on realtime type:
 ```bash
-less +F /tmp/install.log
+less +F /tmp/kiab-install.log
 ```
 
 #####  The installed modules
@@ -344,7 +344,7 @@ At the begining of the  `functions.sh` file the installation modules are listed.
 To Inspect do 
 
 ```bash
-less +F /tmp/install.log
+less +F /tmp/kiab-install.log
 ```
 and to have a verbose output (of every executed command) set the following control flag `verbose_mode=true` 
 

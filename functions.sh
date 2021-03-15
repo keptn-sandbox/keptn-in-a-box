@@ -20,7 +20,6 @@ KEPTN_DT_SLI_SERVICE_VERSION=0.8.0
 # https://github.com/keptn/examples
 KEPTN_EXAMPLES_BRANCH="release-0.8.0"
 TEASER_IMAGE="shinojosa/nginxacm:0.7.3"
-KEPTN_BRIDGE_IMAGE="keptn/bridge2:20200326.0744"
 MICROK8S_CHANNEL="1.19/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
@@ -70,7 +69,6 @@ dynatrace_configure_monitoring=false
 
 jenkins_deploy=false
 
-keptn_bridge_eap=false
 keptn_bridge_disable_login=false
 keptndeploy_homepage=false
 keptndemo_cartsload=false
@@ -366,7 +364,7 @@ setupProAliases() {
 }
 
 setupMagicDomainPublicIp() {
-  #TODO save in a ConfigMap
+  #TODO 0.8.0 FIX-DOMAIN save in a ConfigMap
   printInfoSection "Setting up the Domain"
   if [ -n "${DOMAIN}" ]; then
     printInfo "The following domain is defined: $DOMAIN"
@@ -591,7 +589,7 @@ keptnDeployHomepage() {
   fi
 }
 
-#TODO Fix plugin in 0.8.0 not working
+#TODO 0.8.0 Jenkins plugin in 0.8.0 not working
 jenkinsDeploy() {
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Deploying Jenkins via Helm. This Jenkins is configured and managed 'as code'"
@@ -639,13 +637,6 @@ dynatraceConfigureMonitoring() {
   fi
 }
 
-keptnBridgeEap() {
-  if [ "$keptn_bridge_eap" = true ]; then
-    printInfoSection "Keptn Bridge update to EAP"
-    bashas "kubectl -n keptn set image deployment/bridge bridge=${KEPTN_BRIDGE_IMAGE} --record"
-  fi
-}
-
 keptnBridgeDisableLogin() {
   if [ "$keptn_bridge_disable_login" = true ]; then
     printInfoSection "Keptn Bridge disabling Login"
@@ -660,7 +651,7 @@ keptndemoUnleash() {
     bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh"
 
     printInfoSection "Expose Unleash-Server"
-    #TODO Add Unleash Remediation via bash/curl/yaml
+    #TODO 0.8.0 Add Unleash Remediation via bash/curl/yaml
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
   fi
 }
@@ -769,7 +760,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptn_bridge_eap,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
     echo "$i = ${!i}"
   done
 }
@@ -829,11 +820,11 @@ doInstallation() {
   keptnInstall
   keptnDeployHomepage
   
-  #TODO Deploy Unleash
+  #TODO 0.8.0 Deploy Unleash
   keptndemoUnleash
-  #TODO Operator
+
+  #TODO 0.8.0 Verify DT Deploy
   dynatraceConfigureMonitoring
-  keptnBridgeEap
   keptnBridgeDisableLogin
 
   jenkinsDeploy
