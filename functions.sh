@@ -253,7 +253,7 @@ waitForAllPods() {
   RETRY_MAX=24
   # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
   CMD="bashas \"kubectl get pods $namespace_filter 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
-  printInfo "Checking and wait for all pods to run."
+  printInfo "Checking and wait for all pods in \"$namespace_filter\" to run."
   while [[ $RETRY -lt $RETRY_MAX ]]; do
     pods_not_ok=$(eval "$CMD")
     if [[ "$pods_not_ok" == '0' ]]; then
@@ -278,7 +278,6 @@ enableVerbose() {
     set -x
   fi
 }
-
 
 
 printFileSystemUsage(){
@@ -612,6 +611,7 @@ gitDeploy() {
 gitMigrate() {
   if [ "$git_migrate" = true ]; then
     printInfoSection "Migrating Keptn projects to a self-hosted GIT(ea) service."
+    waitForAllPods git
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash update-git-keptn.sh ${DOMAIN}"
   fi
 }
