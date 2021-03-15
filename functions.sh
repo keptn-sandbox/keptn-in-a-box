@@ -243,10 +243,16 @@ validateSudo() {
 }
 
 waitForAllPods() {
+  # Function to filter by Namespace, default is ALL
+  if [[ $# -eq 1 ]]; then
+    namespace_filter="-n $1"
+  else
+    namespace_filter="-A"
+  fi
   RETRY=0
   RETRY_MAX=24
   # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
-  CMD="bashas \"kubectl get pods -A 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
+  CMD="bashas \"kubectl get pods $namespace_filter 2>&1 | grep -c -v -E '(Running|Completed|Terminating|STATUS)'\""
   printInfo "Checking and wait for all pods to run."
   while [[ $RETRY -lt $RETRY_MAX ]]; do
     pods_not_ok=$(eval "$CMD")
@@ -260,7 +266,7 @@ waitForAllPods() {
   done
 
   if [[ $RETRY == $RETRY_MAX ]]; then
-    printError "Pods in namespace ${NAMESPACE} are not running. Exiting installation..."
+    printError "Following pods are not still not running. Please check their events. Exiting installation..."
     bashas "kubectl get pods --field-selector=status.phase!=Running -A"
     exit 1
   fi
@@ -560,14 +566,15 @@ keptnInstall() {
       printInfoSection "Configuring Istio for Keptn"
       bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=public-gateway.istio-system -oyaml --dry-run | kubectl replace -f -"
 
-      printInfo "Restart Keptn Helm Service"
+      printInfo "Restart Keptn Helm Service for the istio service mesh"
       bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
     fi
 
     printInfoSection "Routing for the Keptn Services via NGINX Ingress"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
     waitForAllPods
-    #We sleep for 5 seconds to give time the Ingress to be ready
+
+    # We sleep for 5 seconds to give time the Ingress to be ready
     sleep 5
     printInfoSection "Authenticate Keptn CLI"
     KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
@@ -598,7 +605,7 @@ gitDeploy() {
   if [ "$git_deploy" = true ]; then
     printInfoSection "Deploying self-hosted GIT(ea) service via Helm."
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash deploy-gitea.sh ${DOMAIN}"
-    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} gitea"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN}"
   fi
 }
 
