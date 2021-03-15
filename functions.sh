@@ -714,7 +714,7 @@ printInstalltime() {
   printInfoSection "Installation complete :)"
   printInfo "It took $(($DURATION / 60)) minutes and $(($DURATION % 60)) seconds"
   printFileSystemUsage
-  DISK_USED=$(($DISK_INIT - $DISK_FINAL))
+  DISK_USED=$(($DISK_FINAL - $DISK_INIT))
   printInfo "Disk used size 1K Blocks: $DISK_USED"
   printInfo "Disk used size in IEC Format: $(getDiskUsageInIec $DISK_USED)"
 
