@@ -683,8 +683,15 @@ keptndemoUnleash() {
     bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_unleashserver.sh"
 
     printInfoSection "Expose Unleash-Server"
-    #TODO 0.8.0 Add Unleash Remediation via bash/curl/yaml
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
+
+    UNLEASH_SERVER="http://unleash.unleash-dev.$DOMAIN"
+    waitForServersAvailability  ${UNLEASH_SERVER}
+
+    printInfoSection "Enable Feature Flags for Unleash and Configure Keptn"
+    bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/unleash_add_featureflags.sh ${UNLEASH_SERVER}"
+    printInfoSection "No load generation will be created for running the experiment"
+    printInfoSection "You can trigger the experiment manually here: https://tutorials.keptn.sh/tutorials/keptn-full-tour-dynatrace-08/#25"
   fi
 }
 
@@ -855,7 +862,6 @@ doInstallation() {
   #TODO 0.8.0 Deploy Unleash
   keptndemoUnleash
 
-  #TODO 0.8.0 Verify DT Deploy
   dynatraceConfigureMonitoring
   keptnBridgeDisableLogin
 
