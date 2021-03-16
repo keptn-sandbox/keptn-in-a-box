@@ -91,7 +91,7 @@ installationBundleDemo() {
   microk8s_install=true
   setup_proaliases=true
 
-  enable_k8dashboard=true
+  enable_k8dashboard=false
   istio_install=true
   helm_install=true
 
@@ -113,8 +113,8 @@ installationBundleDemo() {
   keptndemo_unleash=true
   keptndemo_cartsonboard=true
   expose_kubernetes_api=true
-  expose_kubernetes_dashboard=true
-  patch_kubernetes_dashboard=true
+  expose_kubernetes_dashboard=false
+  patch_kubernetes_dashboard=false
   keptn_bridge_disable_login=true
   # By default no WorkshopUser will be created
   create_workshop_user=false
@@ -266,6 +266,35 @@ waitForAllPods() {
   if [[ $RETRY == $RETRY_MAX ]]; then
     printError "Following pods are not still not running. Please check their events. Exiting installation..."
     bashas "kubectl get pods --field-selector=status.phase!=Running -A"
+    exit 1
+  fi
+}
+
+waitForServersAvailability() {
+  # expand function to wait for git curl 200 / eval RC
+  if [[ $# -eq 1 ]]; then
+    URL="$1"
+  else
+    printError "You need to define a URL to check a server's availability e.g. http://server.com/ "
+    exit 1
+  fi
+  RETRY=0
+  RETRY_MAX=24
+  # Get all pods, count and invert the search for not running nor completed. Status is for deleting the last line of the output
+  CMD="curl --write-out '%{http_code}' --silent --output /dev/null $URL"
+  printInfo "Checking availability for URL  \"$URL\"."
+  while [[ $RETRY -lt $RETRY_MAX ]]; do
+    response=$(eval "$CMD")
+    if [[ "$response" == '200' ]]; then
+      printInfo "URL return 200."
+      break
+    fi
+    RETRY=$(($RETRY + 1))
+    printError "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $URL to be available... RC is $response"
+    sleep 10
+  done
+  if [[ $RETRY == $RETRY_MAX ]]; then
+    printError "URL $URL is still not available. Exiting..."
     exit 1
   fi
 }
@@ -611,6 +640,8 @@ gitMigrate() {
   if [ "$git_migrate" = true ]; then
     printInfoSection "Migrating Keptn projects to a self-hosted GIT(ea) service."
     waitForAllPods git
+    GIT_SERVER="http://git.$DOMAIN"
+    waitForServersAvailability  ${GIT_SERVER}
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash update-git-keptn.sh ${DOMAIN}"
   fi
 }
