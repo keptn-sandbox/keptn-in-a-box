@@ -73,6 +73,7 @@ keptn_bridge_disable_login=false
 keptndeploy_homepage=false
 keptndemo_cartsload=false
 keptndemo_unleash=false
+keptndemo_unleash_configure=false
 keptndemo_cartsonboard=false
 expose_kubernetes_api=false
 expose_kubernetes_dashboard=false
@@ -111,6 +112,7 @@ installationBundleDemo() {
   keptndeploy_homepage=true
   keptndemo_cartsload=true
   keptndemo_unleash=true
+  keptndemo_unleash_configure=true
   keptndemo_cartsonboard=true
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=false
@@ -306,13 +308,12 @@ enableVerbose() {
   fi
 }
 
-
-printFileSystemUsage(){
+printFileSystemUsage() {
   printInfoSection "File System usage"
   bashas 'df -h /'
 }
 
-printSystemInfo(){
+printSystemInfo() {
   printInfoSection "Print System Information"
   printInfoSection "CPU Architecture"
   bashas 'lscpu'
@@ -322,13 +323,13 @@ printSystemInfo(){
 }
 
 # Function to convert 1K Blocks in IEC Formating (.e.g. 1M)
-getDiskUsageInIec(){
+getDiskUsageInIec() {
   echo $(($1 * 1024)) | numfmt --to=iec
 }
 
 # Function to return the Available Usage of the Disk space in K Blocks (1024)
-getUsedDiskSpace(){
-  echo $(df  / | tail -1 | awk '{print $3}')
+getUsedDiskSpace() {
+  echo $(df / | tail -1 | awk '{print $3}')
 }
 
 # ======================================================================
@@ -585,7 +586,7 @@ keptnInstall() {
       printInfoSection "Install Keptn with Continuous Delivery UseCase"
       bashas "echo 'y' | keptn install --use-case=continuous-delivery"
       waitForAllPods
-      
+
       # Adding configuration for the IngressGW
       printInfoSection "Creating Public Gateway for Istio"
       bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && kubectl apply -f public-gateway.yaml"
@@ -641,7 +642,7 @@ gitMigrate() {
     printInfoSection "Migrating Keptn projects to a self-hosted GIT(ea) service."
     waitForAllPods git
     GIT_SERVER="http://git.$DOMAIN"
-    waitForServersAvailability  ${GIT_SERVER}
+    waitForServersAvailability ${GIT_SERVER}
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/gitea && bash update-git-keptn.sh ${DOMAIN}"
   fi
 }
@@ -686,9 +687,13 @@ keptndemoUnleash() {
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
 
     UNLEASH_SERVER="http://unleash.unleash-dev.$DOMAIN"
-    waitForServersAvailability  ${UNLEASH_SERVER}
+    waitForServersAvailability ${UNLEASH_SERVER}
+  fi
+}
 
-    printInfoSection "Enable Feature Flags for Unleash and Configure Keptn"
+keptndemoUnleashConfigure() {
+  if [ "$keptndemo_unleash_configure" = true ]; then
+    printInfoSection "Enable Feature Flags for Unleash and Configure Keptn for it"
     bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/unleash_add_featureflags.sh ${UNLEASH_SERVER}"
     printInfoSection "No load generation will be created for running the experiment"
     printInfoSection "You can trigger the experiment manually here: https://tutorials.keptn.sh/tutorials/keptn-full-tour-dynatrace-08/#25"
@@ -721,7 +726,7 @@ patchKubernetesDashboard() {
 keptndemoCartsonboard() {
   if [ "$keptndemo_cartsonboard" = true ]; then
     printInfoSection "Keptn onboarding Carts"
-    
+
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts.sh && bash $KEPTN_IN_A_BOX_DIR/resources/demo/onboard_carts_qualitygates.sh"
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ && bash $KEPTN_IN_A_BOX_DIR/resources/demo/deploy_carts_0.sh"
 
@@ -799,7 +804,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_unleash_configure,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
     echo "$i = ${!i}"
   done
 }
@@ -859,7 +864,6 @@ doInstallation() {
   keptnInstall
   keptnDeployHomepage
   
-  #TODO 0.8.0 Deploy Unleash
   keptndemoUnleash
 
   dynatraceConfigureMonitoring
@@ -871,6 +875,7 @@ doInstallation() {
 
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
+  keptndemoUnleashConfigure
 
   gitMigrate
   createWorkshopUser
