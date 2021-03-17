@@ -230,6 +230,10 @@ printInfoSection() {
   echo "[Keptn-In-A-Box|INFO] $(timestamp) |$thinline"
 }
 
+printWarn() {
+  echo "[Keptn-In-A-Box|WARN] $(timestamp) |x-x-> $1 <-x-x|"
+}
+
 printError() {
   echo "[Keptn-In-A-Box|ERROR] $(timestamp) |x-x-> $1 <-x-x|"
 }
@@ -261,7 +265,7 @@ waitForAllPods() {
       break
     fi
     RETRY=$(($RETRY + 1))
-    printInfo "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $pods_not_ok PoDs to finish or be in state Running ..."
+    printWarn "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $pods_not_ok PoDs to finish or be in state Running ..."
     sleep 10
   done
 
@@ -292,7 +296,7 @@ waitForServersAvailability() {
       break
     fi
     RETRY=$(($RETRY + 1))
-    printError "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $URL to be available... RC is $response"
+    printWarn "Retry: ${RETRY}/${RETRY_MAX} - Wait 10s for $URL to be available... RC is $response"
     sleep 10
   done
   if [[ $RETRY == $RETRY_MAX ]]; then
@@ -694,7 +698,7 @@ keptndemoUnleash() {
 keptndemoUnleashConfigure() {
   if [ "$keptndemo_unleash_configure" = true ]; then
     printInfoSection "Enable Feature Flags for Unleash and Configure Keptn for it"
-    bashas "cd $KEPTN_EXAMPLES_DIR/unleash-server/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/unleash_add_featureflags.sh ${UNLEASH_SERVER}"
+    bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/unleash_add_featureflags.sh ${UNLEASH_SERVER}"
     printInfoSection "No load generation will be created for running the experiment"
     printInfoSection "You can trigger the experiment manually here: https://tutorials.keptn.sh/tutorials/keptn-full-tour-dynatrace-08/#25"
   fi
