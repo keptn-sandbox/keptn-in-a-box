@@ -16,12 +16,12 @@ node {
     ])
 
     stage('Initialize Keptn') {
-        // keptn.downloadFile('https://raw.githubusercontent.com/keptn-sandbox/performance-testing-as-selfservice-tutorial/release-0.7.3/shipyard.yaml', 'keptn/shipyard.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.3/resources/jenkins/pipelines/keptn/dynatrace/dynatrace.conf.yaml", 'keptn/dynatrace/dynatrace.conf.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.3/resources/jenkins/pipelines/keptn/slo_${params.SLI}.yaml", 'keptn/slo.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.3/resources/jenkins/pipelines/keptn/dynatrace/sli_${params.SLI}.yaml", 'keptn/sli.yaml')
-        keptn.downloadFile('https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.3/resources/jenkins/pipelines/keptn/jmeter/load.jmx', 'keptn/jmeter/load.jmx')
-        keptn.downloadFile('https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.7.3/resources/jenkins/pipelines/keptn/jmeter/jmeter.conf.yaml', 'keptn/jmeter/jmeter.conf.yaml')
+        // keptn.downloadFile('https://raw.githubusercontent.com/keptn-sandbox/performance-testing-as-selfservice-tutorial/release-0.8.0/shipyard.yaml', 'keptn/shipyard.yaml')
+        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.8.0/resources/jenkins/pipelines/keptn/dynatrace/dynatrace.conf.yaml", 'keptn/dynatrace/dynatrace.conf.yaml')
+        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.8.0/resources/jenkins/pipelines/keptn/slo_${params.SLI}.yaml", 'keptn/slo.yaml')
+        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.8.0/resources/jenkins/pipelines/keptn/dynatrace/sli_${params.SLI}.yaml", 'keptn/sli.yaml')
+        keptn.downloadFile('https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.8.0/resources/jenkins/pipelines/keptn/jmeter/load.jmx', 'keptn/jmeter/load.jmx')
+        keptn.downloadFile('https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.8.0/resources/jenkins/pipelines/keptn/jmeter/jmeter.conf.yaml', 'keptn/jmeter/jmeter.conf.yaml')
         archiveArtifacts artifacts:'keptn/**/*.*'
 
         // Initialize the Keptn Project

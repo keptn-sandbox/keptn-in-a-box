@@ -124,7 +124,7 @@ installationBundleDemo() {
 
 installationBundleWorkshop() {
   installationBundleDemo
-  enable_registry=true
+  enable_registry=false
   create_workshop_user=true
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
@@ -620,7 +620,7 @@ keptnDeployHomepage() {
   fi
 }
 
-#TODO 0.8.0 Jenkins plugin in 0.8.0 not working
+#BUG Jenkins plugin in 0.8.0 not working
 jenkinsDeploy() {
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Deploying Jenkins via Helm. This Jenkins is configured and managed 'as code'"
@@ -800,6 +800,10 @@ printInstalltime() {
     printInfo "ssh ${NEWUSER}@${DOMAIN}"
     printInfo "Password: ${NEWPWD}"
   fi
+
+  printInfoSection "Keptn in a Box $KIAB_RELEASE installation finished."
+  printInfo "Good luck in your Autonomous Cloud Journey!!"
+  printInfo "If you faced an issue or just want to say hi, come by @ https://keptn.slack.com/"
 }
 
 printFlags() {
@@ -810,8 +814,12 @@ printFlags() {
 }
 
 removeMicrok8s() {
-  printInfoSection "Removing microk8s"
-  snap remove microk8s --purge
+  printInfoSection "Remove & Purge microk8s"
+  printInfo "snap remove microk8s --purge"
+  sudo snap remove microk8s --purge
+  printInfo "If you want a complete uninstall remove this directories:"
+  printInfo "rm -rf $KEPTN_IN_A_BOX_DIR"
+  printInfo "rm -rf $KEPTN_EXAMPLES_DIR"
 }
 
 # ======================================================================
@@ -848,7 +856,7 @@ doInstallation() {
   microk8sEnableBasic
   microk8sEnableDashboard
   microk8sEnableRegistry
-  dynatraceActiveGateInstall
+
   istioInstall
   helmInstall
   certmanagerInstall
@@ -863,7 +871,7 @@ doInstallation() {
 
   keptnInstall
   keptnDeployHomepage
-  
+
   keptndemoUnleash
 
   dynatraceConfigureMonitoring
