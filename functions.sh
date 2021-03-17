@@ -128,8 +128,10 @@ installationBundleWorkshop() {
   create_workshop_user=true
   expose_kubernetes_api=true
   expose_kubernetes_dashboard=true
+  enable_k8dashboard=true
   patch_kubernetes_dashboard=true
   keptn_bridge_disable_login=true
+
 
   selected_bundle="installationBundleWorkshop"
 }
@@ -746,13 +748,13 @@ createWorkshopUser() {
     homedirectory=$(eval echo ~$USER)
     printInfo "copy home directories and configurations"
     cp -R $homedirectory /home/$NEWUSER
-    printInfo "Create user"
+    printInfo "Create user $NEWUSER"
     useradd -s /bin/bash -d /home/$NEWUSER -m -G sudo -p $(openssl passwd -1 $NEWPWD) $NEWUSER
     printInfo "Change diretores rights -r"
     chown -R $NEWUSER:$NEWUSER /home/$NEWUSER
     usermod -a -G docker $NEWUSER
     usermod -a -G microk8s $NEWUSER
-    printInfo "Warning: allowing SSH passwordAuthentication into the sshd_config"
+    printWarn "Warning: allowing SSH passwordAuthentication into the sshd_config"
     sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     service sshd restart
   fi
