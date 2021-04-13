@@ -21,7 +21,7 @@ KEPTN_DT_SLI_SERVICE_VERSION=0.9.0
 # https://github.com/keptn/examples
 KEPTN_EXAMPLES_BRANCH="release-0.8.1"
 
-TEASER_IMAGE="shinojosa/nginxacm:0.7.3"
+TEASER_IMAGE="shinojosa/kiab:0.8"
 MICROK8S_CHANNEL="1.19/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
