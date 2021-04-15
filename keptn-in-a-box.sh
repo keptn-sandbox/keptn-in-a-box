@@ -21,7 +21,52 @@
 # Recommend to run the script like this:                  #
 #      sudo bash -c './keptn-in-a-box.sh &'               #
 # =========================================================
+YLW='\033[1;33m'
+NC='\033[0m'
 
+printenv DT_TENANTID
+printenv DT_APITOKEN
+printenv DT_PAASTOKEN
+printenv DT_CERTMANAGER_EMAIL
+
+echo -e "${YLW}Please enter the credentials as requested below: ${NC}"
+read -e -i "${DT_TENANTID}" -p "Dynatrace Tenant ID ["${DT_TENANTID}"]: " iDTENVC
+DTENVC="${iDTENVC:-${DT_TENANTID}}"
+read -e -i "${DT_APITOKEN}" -p "Dynatrace API Token: ["${DT_APITOKEN}"]: " iDTAPIC
+DTAPIC="${iDTAPIC:-${DT_APITOKEN}}"
+read -e -i "${DT_PAASTOKEN}" -p "Dynatrace PaaS Token: ["${DT_PAASTOKEN}"]: " iDTPAAST
+DTPAAST="${iDTPAAST:-${DT_PAASTOKEN}}"
+read -e -i "${DT_CERTMANAGER_EMAIL}" -p "User Email ["${DT_CERTMANAGER_EMAIL}"]: " iDTUID
+DTUID="${iDTUID:-${DT_CERTMANAGER_EMAIL}}"
+echo ""
+
+if [ -z "$DTENVC" ]
+then
+      exit 1
+else
+      DTENV=$DTENVC
+      DTAPI=$DTAPIC
+fi
+
+echo ""
+echo -e "${YLW}Please confirm all are correct: ${NC}"
+echo "Dynatrace Tenant: $DTENV"
+echo "Dynatrace API Token: $DTAPI"
+echo "Dynatrace PaaS Token: $DTPAAST"
+echo "User Name: $DTUID"
+read -p "Is this all correct? (y/n) : " -n 1 -r
+echo ""
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+   TENANTID=$DTENV
+   APITOKEN=$DTAPI
+   PAASTOKEN=$DTPAAST
+   CERTMANAGER_EMAIL=$DTUID
+else 
+	exit 1   
+fi
+(
 # ==================================================
 #      ----- Variables Definitions -----           #
 # ==================================================
@@ -40,20 +85,27 @@ NEWPWD="secr3t"
 
 # ---- Define Dynatrace Environment ----
 # Sample: https://{your-domain}/e/{your-environment-id} for managed or https://{your-environment-id}.live.dynatrace.com for SaaS
-TENANT=
-PAASTOKEN=
-APITOKEN=
+#TENANT="https://${TENANTID}.live.dynatrace.com"
+#TENANT="https://${TENANTID}.sprint.dynatracelabs.com"
+TENANT="https://${TENANTID}"
+#PAASTOKEN=
+#APITOKEN=
+echo "tenant: $TENANT";
 
 # Set your custom domain e.g for an internal machine like 192.168.0.1.nip.io
 # So Keptn and all other services are routed and exposed properly via the Ingress Gateway
 # if no DOMAIN is setted, the public IP of the machine will be converted to a magic nip.io domain
 # ---- Define your Domain ----
-DOMAIN=
+#DOMAIN=
+DOMAIN="`curl http://checkip.amazonaws.com`.nip.io"
+# Magic domain for home/local cluster
+#DOMAIN="192.168.3.91.nip.io"
+
 
 # ---- The Email Account for the Certmanager ClusterIssuer with Let's encrypt ----
 # ---- By not providing an Email and letting certificates get generated will end up in
 # face Email accounts Enabling certificates with lets encrypt and not changing for your email will end up in cert rate limits for: nip.io: see https://letsencrypt.org/docs/rate-limits/
-CERTMANAGER_EMAIL=
+#CERTMANAGER_EMAIL=
 
 # ==================================================
 #      ----- Functions Location -----              #
@@ -145,3 +197,4 @@ installationBundleDemo
 #  ----- Call the Installation Function -----      #
 # ==================================================
 doInstallation
+) &
