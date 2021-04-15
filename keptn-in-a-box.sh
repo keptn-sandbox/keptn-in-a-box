@@ -19,7 +19,7 @@
 # An installationBundle contains a set of multiple ins-   #
 # tallation functions.                                    #
 # Recommend to run the script like this:                  #
-#      sudo bash -c './keptn-in-a-box.sh &'               #
+#      sudo bash -c './keptn-in-a-box.sh'                 #
 # =========================================================
 YLW='\033[1;33m'
 NC='\033[0m'
