@@ -372,15 +372,18 @@ dynatracePrintValidateCredentials() {
 }
 
 dependenciesInstall() {
+  printInfoSection "Installing dependencies"
+  printInfo "Install snap"
+  apt install snapd -y
+  printInfo "Install git"
+  apt install git -y
+  printInfo "Install jq"
+  apt install jq -y
+}
+
+dockerInstall() {
   if [ "$docker_install" = true ]; then
-    printInfoSection "Installing dependencies"
-    printInfo "Install snap"
-    apt install snapd -y
-    printInfo "Install git"
-    apt install git -y
-    printInfo "Install jq"
-    apt install jq -y
-    printInfo "Install Docker"
+    printInfoSection "Installing Docker"
     apt install docker.io -y
     service docker start
     usermod -a -G docker $USER
@@ -861,6 +864,7 @@ doInstallation() {
   setupProAliases
 
   dependenciesInstall
+  dockerInstall
   microk8sInstall
   microk8sStart
   microk8sEnableBasic
