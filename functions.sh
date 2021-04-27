@@ -406,8 +406,8 @@ setupMagicDomainPublicIp() {
     export DOMAIN
   else
     printInfo "No DOMAIN is defined, converting the public IP in a magic nip.io domain"
-    PUBLIC_IP=$(curl -s ifconfig.me)
-    PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g')
+    # https://unix.stackexchange.com/a/81699/37512
+    PUBLIC_IP_AS_DOM=$(dig @resolver4.opendns.com myip.opendns.com +short -4 | sed 's~\.~-~g')
     export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io"
     printInfo "Magic Domain: $DOMAIN"
   fi
