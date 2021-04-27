@@ -371,10 +371,14 @@ dynatracePrintValidateCredentials() {
   fi
 }
 
-dockerInstall() {
+dependenciesInstall() {
   if [ "$docker_install" = true ]; then
-    printInfoSection "Installing Docker and J Query"
-    printInfo "Install J Query"
+    printInfoSection "Installing dependencies"
+    printInfo "Install snap"
+    apt install snapd -y
+    printInfo "Install git"
+    apt install git -y
+    printInfo "Install jq"
     apt install jq -y
     printInfo "Install Docker"
     apt install docker.io -y
@@ -856,7 +860,7 @@ doInstallation() {
   updateUbuntu
   setupProAliases
 
-  dockerInstall
+  dependenciesInstall
   microk8sInstall
   microk8sStart
   microk8sEnableBasic
