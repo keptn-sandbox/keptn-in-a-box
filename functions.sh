@@ -6,20 +6,20 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.8.1"
+KIAB_RELEASE="release-0.8.2"
 # Latest Istio is 1.8.2
 ISTIO_VERSION=1.9.1
 CERTMANAGER_VERSION=0.14.0
 
 
 # https://github.com/keptn/keptn
-KEPTN_VERSION=0.8.1
+KEPTN_VERSION=0.8.2
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.12.0
+KEPTN_DT_SERVICE_VERSION=0.13.1
 # https://github.com/keptn-contrib/dynatrace-sli-service
-KEPTN_DT_SLI_SERVICE_VERSION=0.9.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.10.2
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="release-0.8.1"
+KEPTN_EXAMPLES_BRANCH="release-0.8.2"
 
 TEASER_IMAGE="shinojosa/kiab:0.8"
 MICROK8S_CHANNEL="1.19/stable"
