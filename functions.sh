@@ -373,12 +373,19 @@ dynatracePrintValidateCredentials() {
   fi
 }
 
+dependenciesInstall() {
+  printInfoSection "Installing dependencies"
+  printInfo "Install snap"
+  apt install snapd -y
+  printInfo "Install git"
+  apt install git -y
+  printInfo "Install jq"
+  apt install jq -y
+}
+
 dockerInstall() {
   if [ "$docker_install" = true ]; then
-    printInfoSection "Installing Docker and J Query"
-    printInfo "Install J Query"
-    apt install jq -y
-    printInfo "Install Docker"
+    printInfoSection "Installing Docker"
     apt install docker.io -y
     service docker start
     usermod -a -G docker $USER
@@ -408,8 +415,8 @@ setupMagicDomainPublicIp() {
     export DOMAIN
   else
     printInfo "No DOMAIN is defined, converting the public IP in a magic nip.io domain"
-    PUBLIC_IP=$(curl -s ifconfig.me)
-    PUBLIC_IP_AS_DOM=$(echo $PUBLIC_IP | sed 's~\.~-~g')
+    # https://unix.stackexchange.com/a/81699/37512
+    PUBLIC_IP_AS_DOM=$(dig @resolver4.opendns.com myip.opendns.com +short -4 | sed 's~\.~-~g')
     export DOMAIN="${PUBLIC_IP_AS_DOM}.nip.io"
     printInfo "Magic Domain: $DOMAIN"
   fi
@@ -858,6 +865,7 @@ doInstallation() {
   updateUbuntu
   setupProAliases
 
+  dependenciesInstall
   dockerInstall
   microk8sInstall
   microk8sStart
