@@ -26,6 +26,8 @@ MICROK8S_CHANNEL="1.19/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box.git"
+DEVLOVE_ET_REPO="https://github.com/dynatrace-perfclinics/devlove-easytravel-pipelines.git"
+DEVLOVE_ET_DIR="~/devlove-easytravel-pipelines"
 
 # - The user to run the commands from. Will be overwritten when executing this shell with sudo, this is just needed when spinning machines programatically and running the script with root without an interactive shell
 USER="ubuntu"
@@ -70,6 +72,8 @@ dynatrace_savecredentials=false
 dynatrace_configure_monitoring=false
 
 jenkins_deploy=false
+
+devlove_easytravel=false
 
 keptn_bridge_disable_login=false
 keptndeploy_homepage=false
@@ -134,8 +138,48 @@ installationBundleWorkshop() {
   patch_kubernetes_dashboard=true
   keptn_bridge_disable_login=true
 
-
   selected_bundle="installationBundleWorkshop"
+}
+
+installationBundleDevLove() {
+  selected_bundle="installationBundleDevLove"
+  update_ubuntu=true
+  docker_install=true
+  microk8s_install=true
+  setup_proaliases=true
+
+  enable_k8dashboard=true
+  istio_install=true
+  helm_install=true
+
+  certmanager_install=false
+  certmanager_enable=false
+
+  keptn_install=true
+  keptn_examples_clone=true
+  resources_clone=true
+
+  git_deploy=true
+  git_migrate=true
+
+  dynatrace_savecredentials=true
+  dynatrace_configure_monitoring=true
+
+  keptndeploy_homepage=true
+
+  keptndemo_cartsload=false
+  keptndemo_unleash=false
+  keptndemo_unleash_configure=false
+  keptndemo_cartsonboard=false
+  
+  expose_kubernetes_api=true
+  expose_kubernetes_dashboard=true
+  patch_kubernetes_dashboard=true
+  keptn_bridge_disable_login=true
+  # By default no WorkshopUser will be created
+  create_workshop_user=true
+  devlove_easytravel=true
+
 }
 
 installationBundleAll() {
@@ -635,7 +679,6 @@ keptnDeployHomepage() {
   fi
 }
 
-#BUG Jenkins plugin in 0.8.0 not working
 jenkinsDeploy() {
   if [ "$jenkins_deploy" = true ]; then
     printInfoSection "Deploying Jenkins via Helm. This Jenkins is configured and managed 'as code'"
@@ -751,6 +794,20 @@ keptndemoCartsonboard() {
   fi
 }
 
+devloveEasytravel() {
+  if [ "$devlove_easytravel" = true ]; then
+    printInfoSection "Why Devs Love Dynatrace Resources & Jenkins Configuration"
+    # Clone Repo
+    bashas "git clone $DEVLOVE_ET_REPO $DEVLOVE_ET_DIR --single-branch"
+    # Deploy Jenkins
+    bashas "cd $DEVLOVE_ET_DIR/pipelines/jenkins && bash deploy_jenkins.sh ${DOMAIN}"
+    # Create Ingress
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} jenkins"
+    # Create Easytravel Project
+    bashas "cd $DEVLOVE_ET_DIR/keptn && bash keptn create project easytravel --shipyard shipyard.yaml"
+  fi
+}
+
 createWorkshopUser() {
   if [ "$create_workshop_user" = true ]; then
     printInfoSection "Creating Workshop User from user($USER) into($NEWUSER)"
@@ -802,6 +859,12 @@ printInstalltime() {
     printInfo "Password: keptn"
   fi
 
+  if [ "$devlove_easytravel" = true ]; then
+    printInfoSection "Jenkins-Server Access"
+    printInfo "Username: keptn"
+    printInfo "Password: keptn#R0cks"
+  fi
+
   if [ "$git_deploy" = true ]; then
     printInfoSection "Git-Server Access"
     bashas "bash $KEPTN_IN_A_BOX_DIR/resources/gitea/gitea-vars.sh ${DOMAIN}"
@@ -823,7 +886,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_unleash_configure,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user}; do
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_unleash_configure,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user,devlove_easytravel}; do
     echo "$i = ${!i}"
   done
 }
@@ -900,6 +963,8 @@ doInstallation() {
   keptndemoCartsonboard
   keptndemoDeployCartsloadgenerator
   keptndemoUnleashConfigure
+
+  devloveEasytravel
 
   gitMigrate
   createWorkshopUser
