@@ -118,6 +118,9 @@ source $FUNCTIONS_FILE
 # - Comment out if selecting another bundle
 installationBundleDemo
 
+# - Comment out if only want to install the Performance Clinic 'Why Devs love Dynatrace' Bundle
+#installationBundleDevLove
+
 # - Comment out if only want to install the QualityGates functionality
 #installationBundleKeptnQualityGates
 
