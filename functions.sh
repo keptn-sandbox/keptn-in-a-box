@@ -800,11 +800,11 @@ devloveEasytravel() {
     # Clone Repo
     bashas "git clone $DEVLOVE_ET_REPO $DEVLOVE_ET_DIR --single-branch"
     # Deploy Jenkins
-    bashas "cd $DEVLOVE_ET_DIR/pipelines/jenkins && bash deploy_jenkins.sh ${DOMAIN}"
+    bashas "cd $DEVLOVE_ET_DIR/pipelines/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
     # Create Ingress
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} jenkins"
     # Create Easytravel Project
-    bashas "cd $DEVLOVE_ET_DIR/keptn && bash keptn create project easytravel --shipyard shipyard.yaml"
+    bashas "cd $DEVLOVE_ET_DIR/keptn && keptn create project easytravel --shipyard shipyard.yaml"
   fi
 }
 
