@@ -800,6 +800,7 @@ devloveEasytravel() {
     # Clone Repo
     bashas "git clone $DEVLOVE_ET_REPO $DEVLOVE_ET_DIR --single-branch"
     # Deploy Jenkins
+    # TODO merge with Jenkins to have a single source.
     bashas "cd $DEVLOVE_ET_DIR/pipelines/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
     # Create Ingress
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} jenkins"
