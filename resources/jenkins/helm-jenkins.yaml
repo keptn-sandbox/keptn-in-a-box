@@ -306,7 +306,7 @@ master:
                         remote {
                           url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
-                        branch('*/release-0.8.2')
+                        branch('*/release-0.8.3')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/01-qualitygate-evaluation.Jenkinsfile'
@@ -325,7 +325,7 @@ master:
                         remote {
                           url('http://github.com/keptn-sandbox/keptn-in-a-box.git') 
                         }
-                        branch('*/release-0.8.2')
+                        branch('*/release-0.8.3')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/02-simpletest-qualitygate.Jenkinsfile'
@@ -344,7 +344,7 @@ master:
                         remote {
                           url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
-                        branch('*/release-0.8.2')
+                        branch('*/release-0.8.3')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/03-performancetest-qualitygate.Jenkinsfile'

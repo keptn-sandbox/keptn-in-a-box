@@ -133,7 +133,7 @@ The minimum required for running the default modules is t2.large with 13 Gigs of
 #### 2. Clone the repo and navigate to the directory
 
 ```bash
-curl -O https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.8.2/keptn-in-a-box.sh
+curl -O https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.8.3/keptn-in-a-box.sh
 chmod +x keptn-in-a-box.sh
 ```
 > You dont need to clone all the repo, only download the **keptn-in-a-box.sh** file. When executing it, it'll take care of the rest and load the resources from github.
