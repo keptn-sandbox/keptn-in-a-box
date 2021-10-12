@@ -11,6 +11,8 @@ KIAB_RELEASE="release-0.8.3"
 ISTIO_VERSION=1.9.1
 CERTMANAGER_VERSION=0.14.0
 
+# Versioning of Helm
+HELM_VERSION="3.5.0"
 
 # https://github.com/keptn/keptn
 KEPTN_VERSION=0.8.3
@@ -544,10 +546,10 @@ istioInstall() {
 
 helmInstall() {
   if [ "$helm_install" = true ]; then
-    printInfoSection "Installing HELM 3 & Client via Microk8s addon"
-    bashas 'microk8s.enable helm3'
-    printInfo "Adding alias for helm client"
-    snap alias microk8s.helm3 helm
+    printInfoSection "Installing HELM ${HELM_VERSION} & Client manually from binaries"
+    wget -q -O helm.tar.gz "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz"
+    tar -xvf helm.tar.gz
+    mv linux-amd64/helm /usr/local/bin/helm    
     printInfo "Adding Default repo for Helm"
     bashas "helm repo add stable https://charts.helm.sh/stable"
     printInfo "Adding Jenkins repo for Helm"
