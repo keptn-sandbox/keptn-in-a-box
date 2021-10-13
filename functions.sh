@@ -7,23 +7,24 @@
 #      ----- Components Versions -----             #
 # ==================================================
 KIAB_RELEASE="release-0.8.3"
-# Latest Istio is 1.8.2
-ISTIO_VERSION=1.9.1
+
+#https://cert-manager.io/docs/release-notes/
 CERTMANAGER_VERSION=0.14.0
-
-# Versioning of Helm
-HELM_VERSION="3.5.0"
-
+#https://istio.io/latest/news/releases/
+ISTIO_VERSION=1.9.1
+# https://github.com/helm/helm/releases
+HELM_VERSION=3.5.0
 # https://github.com/keptn/keptn
-KEPTN_VERSION=0.8.3
+KEPTN_VERSION=0.9.2
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.14.0
+KEPTN_DT_SERVICE_VERSION=0.17.0
 # https://github.com/keptn-contrib/dynatrace-sli-service
-KEPTN_DT_SLI_SERVICE_VERSION=0.11.0
+KEPTN_DT_SLI_SERVICE_VERSION=0.12.1
 # https://github.com/keptn/examples
 KEPTN_EXAMPLES_BRANCH="release-0.8.3"
-
 TEASER_IMAGE="shinojosa/kiab:0.8"
+# https://github.com/ubuntu/microk8s/releases
+# snap info microk8s
 MICROK8S_CHANNEL="1.19/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
