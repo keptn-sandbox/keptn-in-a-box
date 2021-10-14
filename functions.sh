@@ -6,7 +6,7 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.8.3"
+KIAB_RELEASE="release-0.9.2"
 
 #https://cert-manager.io/docs/release-notes/
 CERTMANAGER_VERSION=0.14.0
@@ -17,11 +17,14 @@ HELM_VERSION=3.5.0
 # https://github.com/keptn/keptn
 KEPTN_VERSION=0.9.2
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.17.0
+KEPTN_DT_SERVICE_VERSION=0.17.1
+
+# TODO SLI is not needed anymore?
 # https://github.com/keptn-contrib/dynatrace-sli-service
 KEPTN_DT_SLI_SERVICE_VERSION=0.12.1
+
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="release-0.8.3"
+KEPTN_EXAMPLES_BRANCH="release-0.9.0"
 TEASER_IMAGE="shinojosa/kiab:0.8"
 # https://github.com/ubuntu/microk8s/releases
 # snap info microk8s
