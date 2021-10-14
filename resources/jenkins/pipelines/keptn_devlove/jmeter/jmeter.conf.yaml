@@ -1,0 +1,39 @@
+---
+spec_version: '0.1.0'
+workloads:
+  - teststrategy: fullbooking_50_1000
+    vuser: 50
+    loopcount: 1000
+    thinktime: 250
+    acceptederrorrate: 1.0
+    script: jmeter/easytravel-classic-random-book.jmx
+  - teststrategy: fullbooking_10_200
+    vuser: 10
+    loopcount: 200
+    thinktime: 250
+    acceptederrorrate: 1.0
+    script: jmeter/easytravel-classic-random-book.jmx
+  - teststrategy: fullbooking_10_150
+    vuser: 10
+    loopcount: 150
+    thinktime: 250
+    acceptederrorrate: 1.0
+    script: jmeter/easytravel-classic-random-book.jmx
+  - teststrategy: fullbooking_10_100
+    vuser: 10
+    loopcount: 100
+    thinktime: 250
+    acceptederrorrate: 1.0
+    script: jmeter/easytravel-classic-random-book.jmx
+  - teststrategy: fullbooking_5_100
+    vuser: 5
+    loopcount: 100
+    thinktime: 250
+    acceptederrorrate: 1.0
+    script: jmeter/easytravel-classic-random-book.jmx
+  - teststrategy: fullbooking
+    vuser: 10
+    loopcount: 10
+    thinktime: 250
+    acceptederrorrate: 1.0
+    script: jmeter/easytravel-classic-random-book.jmx  

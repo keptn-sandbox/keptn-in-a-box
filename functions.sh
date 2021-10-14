@@ -801,15 +801,12 @@ keptndemoCartsonboard() {
 devloveEasytravel() {
   if [ "$devlove_easytravel" = true ]; then
     printInfoSection "Why Devs Love Dynatrace Resources & Jenkins Configuration"
-    # Clone Repo
-    bashas "git clone $DEVLOVE_ET_REPO $DEVLOVE_ET_DIR --single-branch"
-    # Deploy Jenkins
-    # TODO merge with Jenkins to have a single source.
-    bashas "cd $DEVLOVE_ET_DIR/pipelines/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
+
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
     # Create Ingress
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} jenkins"
     # Create Easytravel Project
-    bashas "cd $DEVLOVE_ET_DIR/keptn && keptn create project easytravel --shipyard shipyard.yaml"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/jenkins/pipelines/keptn_devlove/ && keptn create project easytravel --shipyard shipyard.yaml"
   fi
 }
 

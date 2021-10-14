@@ -306,7 +306,7 @@ master:
                         remote {
                           url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
-                        branch('*/release-0.8.3')
+                        branch('*/release-0.9.2')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/01-qualitygate-evaluation.Jenkinsfile'
@@ -325,7 +325,7 @@ master:
                         remote {
                           url('http://github.com/keptn-sandbox/keptn-in-a-box.git') 
                         }
-                        branch('*/release-0.8.3')
+                        branch('*/release-0.9.2')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/02-simpletest-qualitygate.Jenkinsfile'
@@ -344,14 +344,52 @@ master:
                         remote {
                           url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
-                        branch('*/release-0.8.3')
+                        branch('*/release-0.9.2')
                       }
                     }
                     scriptPath 'resources/jenkins/pipelines/03-performancetest-qualitygate.Jenkinsfile'
                     lightweight()
                   }
                 }
+              }    
+      pipeline-easytravel-scheduler:  | 
+        jobs:
+          - script: >
+              pipelineJob('easytravel-deployment-scheduler') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
+                        }
+                        branch('*/release-0.9.2')
+                      }
+                    }
+                    scriptPath 'resources/jenkins/pipelines/easytravel-scheduler.Jenkinsfile'
+                    lightweight()
+                  }
+                }
               }       
+      pipeline-easytravel-deployment:  | 
+        jobs:
+          - script: >
+              pipelineJob('easytravel-continuous-deployment') {
+                definition {
+                  cpsScm {
+                    scm {
+                      git {
+                        remote {
+                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git'')
+                        }
+                        branch('*/release-0.9.2')
+                      }
+                    }
+                    scriptPath 'resources/jenkins/pipelines/easytravel-performancetest-qualitygate.Jenkinsfile'
+                    lightweight()
+                  }
+                }
+              }   
   # Optionally specify additional init-containers
   customInitContainers: []
   # - name: custom-init
