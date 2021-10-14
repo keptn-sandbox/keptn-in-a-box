@@ -744,18 +744,21 @@ keptndemoUnleash() {
 
     printInfoSection "Expose Unleash-Server"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
-
-    UNLEASH_SERVER="http://unleash.unleash-dev.$DOMAIN"
-    waitForServersAvailability ${UNLEASH_SERVER}
   fi
 }
 
 keptndemoUnleashConfigure() {
   if [ "$keptndemo_unleash_configure" = true ]; then
+
+    UNLEASH_TOKEN=$(echo -n keptn:keptn | base64)
+    UNLEASH_SERVER="http://unleash.unleash-dev.$DOMAIN"
+    
+    waitForServersAvailability ${UNLEASH_SERVER}
+
     printInfoSection "Enable Feature Flags for Unleash and Configure Keptn for it"
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/unleash_add_featureflags.sh ${UNLEASH_SERVER}"
     printInfoSection "No load generation will be created for running the experiment"
-    printInfoSection "You can trigger the experiment manually here: https://tutorials.keptn.sh/tutorials/keptn-full-tour-dynatrace-08/#25"
+    printInfoSection "You can trigger the experiment manually here: https://tutorials.keptn.sh/tutorials/keptn-full-tour-dynatrace-09/#27"
   fi
 }
 
