@@ -351,7 +351,7 @@ master:
                     lightweight()
                   }
                 }
-              }    
+              }       
       pipeline-easytravel-scheduler:  | 
         jobs:
           - script: >
@@ -380,7 +380,7 @@ master:
                     scm {
                       git {
                         remote {
-                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git'')
+                          url('http://github.com/keptn-sandbox/keptn-in-a-box.git')
                         }
                         branch('*/release-0.9.2')
                       }
@@ -389,7 +389,7 @@ master:
                     lightweight()
                   }
                 }
-              }   
+              }       
   # Optionally specify additional init-containers
   customInitContainers: []
   # - name: custom-init
