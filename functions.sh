@@ -864,7 +864,7 @@ printInstalltime() {
   if [ "$devlove_easytravel" = true ]; then
     printInfoSection "Jenkins-Server Access"
     printInfo "Username: keptn"
-    printInfo "Password: keptn#R0cks"
+    printInfo "Password: keptn"
   fi
 
   if [ "$git_deploy" = true ]; then
