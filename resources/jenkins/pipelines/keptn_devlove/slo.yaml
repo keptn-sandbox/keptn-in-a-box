@@ -1,0 +1,170 @@
+---
+    spec_version: '0.1.0'
+    comparison:
+      compare_with: "several_results"
+      number_of_comparison_results: 3
+      include_result_with_score: "pass" # pass_or_warn
+      aggregate_function: avg
+    objectives:
+      - sli: rt_svc_p95
+        pass:        # pass if (relative change <= 10% AND absolute value is < 1500)
+          - criteria:
+        #     - "<=+10%" # relative values require a prefixed sign (plus or minus)
+        # Percentage comment out due metric validation regardless of build break
+              - "<1500"   # absolute values only require a logical operator, pass if 95th percentile lower than 1,5 sec
+        warning:     # if the response time is above 1,5s, the result should be a warning
+          - criteria:
+              - "<=2000"
+        weight: 2
+        key_sli: true
+      - sli: throughput_svc
+        pass:
+          - criteria:
+            - "> 5000" # at least 5000 Calls for a basic test to pass.
+        key_sli: true
+      - sli: error_count
+        weight: 2
+        pass:
+          - criteria:
+              - "<=3" # less than 3 failed transactions
+        warning:
+          - criteria:
+              - "<=5" # more than 5 failed transactions is failed
+        key_sli: true
+      - sli: kpi_et_ex
+        weight: 2
+        pass:
+          - criteria:
+              - "<=100" # less than 1% failurerate
+        warning:
+          - criteria:
+              - "<=200" # more than 2 failed transactions is failed
+        key_sli: true
+      - sli: rt_svc_p90
+        pass:
+          - criteria:
+              - "<=1500" # 
+        warning:
+          - criteria:
+              - "<=+50%"   
+      - sli: db_calls
+        pass:
+          - criteria:
+              - "<=+5%"
+        warning:
+          - criteria:
+              - ">+5%"
+      - sli: non_db_calls
+        pass:
+          - criteria:
+              - "<=+5%"
+        warning:
+          - criteria:
+              - ">+5%"
+      - sli: lock_time
+        pass:
+          - criteria:
+              - "<=+5%"
+        warning:
+          - criteria:
+              - ">+5%"
+      - sli: io_time
+        pass:
+          - criteria:
+              - "<=+5%"
+        warning:
+          - criteria:
+              - ">+5%"
+      - sli: cpu_time
+        pass:
+          - criteria:
+              - "<=+5%"
+        warning:
+          - criteria:
+              - ">+5%"
+      # The criteria of a pass and warning can also be splitted. This means that the two lists are combined with a logical OR.
+      # According to the next example, the pass criteria is met when either the measured absolute value is below 1 sec (or 1000000 microsec) or the increase of the relative value is lower/equals 10 percent.
+      - sli: kpi_rt_home
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+      - sli: kpi_rt_recommendations
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+      - sli: kpi_rt_login
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+      - sli: kpi_rt_search
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+      - sli: kpi_rt_journey
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=800000"
+        key_sli: true
+      - sli: kpi_rt_select_payment
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+      - sli: kpi_rt_check_creditcard
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+      - sli: kpi_rt_submit_payment
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+      - sli: kpi_rt_finish_payment
+        pass:
+          - criteria:
+              - "<1000000"
+              - "<=+10%"
+        warning:
+          - criteria:
+              - "<=500000"
+        key_sli: true
+    total_score:
+      pass: "85%"
+      warning: "75%"

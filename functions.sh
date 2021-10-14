@@ -6,7 +6,7 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.8.3"
+KIAB_RELEASE="release-0.9.2"
 
 #https://cert-manager.io/docs/release-notes/
 CERTMANAGER_VERSION=0.14.0
@@ -17,11 +17,10 @@ HELM_VERSION=3.5.0
 # https://github.com/keptn/keptn
 KEPTN_VERSION=0.9.2
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.17.0
-# https://github.com/keptn-contrib/dynatrace-sli-service
-KEPTN_DT_SLI_SERVICE_VERSION=0.12.1
+KEPTN_DT_SERVICE_VERSION=0.17.1
+
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="release-0.8.3"
+KEPTN_EXAMPLES_BRANCH="release-0.9.0"
 TEASER_IMAGE="shinojosa/kiab:0.8"
 # https://github.com/ubuntu/microk8s/releases
 # snap info microk8s
@@ -670,6 +669,7 @@ keptnInstall() {
     printInfoSection "Authenticate Keptn CLI"
     KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
     KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
+    KEPTN_BRIDGE_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath='{.spec.rules[0].host}')/bridge
     bashas "keptn auth --endpoint=$KEPTN_ENDPOINT --api-token=$KEPTN_API_TOKEN"
   fi
 }
@@ -720,11 +720,8 @@ dynatraceConfigureMonitoring() {
     printInfo "Deploying the OneAgent Operator and containerized AG monitoring all events and Cluster Health"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && echo 'y' | bash deploy_operator.sh"
 
-    printInfo "Deploying the Dynatrace Service in Keptn"
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/service.yaml -n keptn"
-
-    printInfo "Setting up Dynatrace SLI provider in Keptn"
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/$KEPTN_DT_SLI_SERVICE_VERSION/deploy/service.yaml -n keptn"
+    printInfo "Deploying the Dynatrace Service $KEPTN_DT_SERVICE_VERSION in Keptn via Helm"
+    bashas "helm upgrade --install dynatrace-service -n keptn https://github.com/keptn-contrib/dynatrace-service/releases/download/$KEPTN_DT_SERVICE_VERSION/dynatrace-service-$KEPTN_DT_SERVICE_VERSION.tgz --set dynatraceService.config.keptnApiUrl=$KEPTN_ENDPOINT --set dynatraceService.config.keptnBridgeUrl=$KEPTN_BRIDGE_URL --set dynatraceService.config.generateTaggingRules=true --set dynatraceService.config.generateProblemNotifications=true --set dynatraceService.config.generateManagementZones=true --set dynatraceService.config.generateDashboards=true --set dynatraceService.config.generateMetricEvents=true"
 
     waitForAllPods
     bashas "keptn configure monitoring dynatrace"
@@ -747,18 +744,21 @@ keptndemoUnleash() {
 
     printInfoSection "Expose Unleash-Server"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} unleash"
-
-    UNLEASH_SERVER="http://unleash.unleash-dev.$DOMAIN"
-    waitForServersAvailability ${UNLEASH_SERVER}
   fi
 }
 
 keptndemoUnleashConfigure() {
   if [ "$keptndemo_unleash_configure" = true ]; then
+
+    UNLEASH_TOKEN=$(echo -n keptn:keptn | base64)
+    UNLEASH_SERVER="http://unleash.unleash-dev.$DOMAIN"
+    
+    waitForServersAvailability ${UNLEASH_SERVER}
+
     printInfoSection "Enable Feature Flags for Unleash and Configure Keptn for it"
     bashas "cd $KEPTN_EXAMPLES_DIR/onboarding-carts/ &&  bash $KEPTN_IN_A_BOX_DIR/resources/demo/unleash_add_featureflags.sh ${UNLEASH_SERVER}"
     printInfoSection "No load generation will be created for running the experiment"
-    printInfoSection "You can trigger the experiment manually here: https://tutorials.keptn.sh/tutorials/keptn-full-tour-dynatrace-08/#25"
+    printInfoSection "You can trigger the experiment manually here: https://tutorials.keptn.sh/tutorials/keptn-full-tour-dynatrace-09/#27"
   fi
 }
 
@@ -801,15 +801,12 @@ keptndemoCartsonboard() {
 devloveEasytravel() {
   if [ "$devlove_easytravel" = true ]; then
     printInfoSection "Why Devs Love Dynatrace Resources & Jenkins Configuration"
-    # Clone Repo
-    bashas "git clone $DEVLOVE_ET_REPO $DEVLOVE_ET_DIR --single-branch"
-    # Deploy Jenkins
-    # TODO merge with Jenkins to have a single source.
-    bashas "cd $DEVLOVE_ET_DIR/pipelines/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
+
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/jenkins && bash deploy-jenkins.sh ${DOMAIN}"
     # Create Ingress
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} jenkins"
     # Create Easytravel Project
-    bashas "cd $DEVLOVE_ET_DIR/keptn && keptn create project easytravel --shipyard shipyard.yaml"
+    bashas "cd $KEPTN_IN_A_BOX_DIR/resources/jenkins/pipelines/keptn_devlove/ && keptn create project easytravel --shipyard shipyard.yaml"
   fi
 }
 

@@ -55,8 +55,8 @@ enablePromotion
 
 kubectl -n keptn create secret generic unleash --from-literal="UNLEASH_SERVER_URL=http://unleash.unleash-dev/api" --from-literal="UNLEASH_USER=keptn" --from-literal="UNLEASH_TOKEN=keptn"
 
-kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/unleash-service/release-0.3.0/deploy/service.yaml -n keptn
+kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/unleash-service/release-0.3.2/deploy/service.yaml -n keptn
 
 keptn add-resource --project=sockshop --service=carts --stage=production --resource=remediation_feature_toggle.yaml --resourceUri=remediation.yaml
 
-keptn add-resource --project=sockshop --stage=production --service=carts --resource=slo-self-healing.yaml --resourceUri=slo.yaml
+keptn add-resource --project=sockshop --stage=production --service=carts --resource=slo-self-healing-dynatrace.yaml --resourceUri=slo.yaml

@@ -1,0 +1,22 @@
+---
+spec_version: '1.0'
+indicators:
+  throughput_svc: "metricSelector=builtin:service.requestCount.total:merge(\"dt.entity.service\"):sum&entitySelector=tag($SERVICE),type(SERVICE)"
+  error_count: "metricSelector=builtin:service.errors.total.count:merge(\"dt.entity.service\"):sum&entitySelector=tag(EasyTravel),type(SERVICE)"
+  rt_svc_p90:     "metricSelector=builtin:service.response.time:merge(\"dt.entity.service\"):percentile(90)&entitySelector=tag($SERVICE),type(SERVICE)"
+  rt_svc_p95:     "metricSelector=builtin:service.response.time:merge(\"dt.entity.service\"):percentile(95)&entitySelector=tag($SERVICE),type(SERVICE)"
+  db_calls:       "metricSelector=builtin:service.dbChildCallCount:merge(\"dt.entity.service\"):sum&entitySelector=tag($SERVICE),type(SERVICE)"
+  non_db_calls:   "metricSelector=builtin:service.nonDbChildCallCount:merge(\"dt.entity.service\"):sum&entitySelector=tag($SERVICE),type(SERVICE)"
+  lock_time:    "metricSelector=builtin:service.lockTime:merge(\"dt.entity.service\"):sum&entitySelector=tag($SERVICE),type(SERVICE)"
+  io_time:      "metricSelector=builtin:service.ioTime:merge(\"dt.entity.service\"):sum&entitySelector=tag($SERVICE),type(SERVICE)"
+  cpu_time:     "metricSelector=builtin:service.cpu.time:merge(\"dt.entity.service\"):sum&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_et_ex:     "metricSelector=calc:service.exceptionsbystepeasytravel:sum:merge(0,1):sum&entitySelector=tag(EasyTravel),type(SERVICE)"
+  kpi_rt_home:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",1)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_recommendations:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",2)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_login:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",3)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_search:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",4)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_journey:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",5)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_select_payment:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",6)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_check_creditcard:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",7)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_submit_payment:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",8)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
+  kpi_rt_finish_payment:     "metricSelector=calc:service.teststepresponsetime:filter(prefix(\"Test Step\",9)):merge(\"dt.entity.service\"):avg&entitySelector=tag($SERVICE),type(SERVICE)"
