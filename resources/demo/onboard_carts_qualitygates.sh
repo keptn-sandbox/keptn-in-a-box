@@ -6,7 +6,6 @@ if [[ -d "carts" ]]; then
     # The context for this script needs to be in examples/onboarding-carts
     echo "Adding the SLI for the Project to all Stages"
     keptn add-resource --project=sockshop --resource=sli-config-dynatrace.yaml --resourceUri=dynatrace/sli.yaml
-
     keptn configure monitoring dynatrace --project=sockshop
 
     echo "Setting up QualityGate to Staging"

@@ -19,10 +19,6 @@ KEPTN_VERSION=0.9.2
 # https://github.com/keptn-contrib/dynatrace-service
 KEPTN_DT_SERVICE_VERSION=0.17.1
 
-# TODO SLI is not needed anymore?
-# https://github.com/keptn-contrib/dynatrace-sli-service
-KEPTN_DT_SLI_SERVICE_VERSION=0.12.1
-
 # https://github.com/keptn/examples
 KEPTN_EXAMPLES_BRANCH="release-0.9.0"
 TEASER_IMAGE="shinojosa/kiab:0.8"
@@ -673,6 +669,7 @@ keptnInstall() {
     printInfoSection "Authenticate Keptn CLI"
     KEPTN_ENDPOINT=https://$(kubectl get ing -n keptn api-keptn-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')/api
     KEPTN_API_TOKEN=$(kubectl get secret keptn-api-token -n keptn -ojsonpath={.data.keptn-api-token} | base64 --decode)
+    KEPTN_BRIDGE_URL=http://$(kubectl -n keptn get ingress api-keptn-ingress -ojsonpath='{.spec.rules[0].host}')/bridge
     bashas "keptn auth --endpoint=$KEPTN_ENDPOINT --api-token=$KEPTN_API_TOKEN"
   fi
 }
@@ -723,11 +720,8 @@ dynatraceConfigureMonitoring() {
     printInfo "Deploying the OneAgent Operator and containerized AG monitoring all events and Cluster Health"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/dynatrace && echo 'y' | bash deploy_operator.sh"
 
-    printInfo "Deploying the Dynatrace Service in Keptn"
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-service/$KEPTN_DT_SERVICE_VERSION/deploy/service.yaml -n keptn"
-
-    printInfo "Setting up Dynatrace SLI provider in Keptn"
-    bashas "kubectl apply -f https://raw.githubusercontent.com/keptn-contrib/dynatrace-sli-service/$KEPTN_DT_SLI_SERVICE_VERSION/deploy/service.yaml -n keptn"
+    printInfo "Deploying the Dynatrace Service $KEPTN_DT_SERVICE_VERSION in Keptn via Helm"
+    bashas "helm upgrade --install dynatrace-service -n keptn https://github.com/keptn-contrib/dynatrace-service/releases/download/$KEPTN_DT_SERVICE_VERSION/dynatrace-service-$KEPTN_DT_SERVICE_VERSION.tgz --set dynatraceService.config.keptnApiUrl=$KEPTN_ENDPOINT --set dynatraceService.config.keptnBridgeUrl=$KEPTN_BRIDGE_URL --set dynatraceService.config.generateTaggingRules=true --set dynatraceService.config.generateProblemNotifications=true --set dynatraceService.config.generateManagementZones=true --set dynatraceService.config.generateDashboards=true --set dynatraceService.config.generateMetricEvents=true"
 
     waitForAllPods
     bashas "keptn configure monitoring dynatrace"
