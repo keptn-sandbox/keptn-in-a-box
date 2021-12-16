@@ -6,7 +6,7 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.9.2"
+KIAB_RELEASE="release-0.10.0"
 
 #https://cert-manager.io/docs/release-notes/
 CERTMANAGER_VERSION=0.14.0
@@ -15,12 +15,12 @@ ISTIO_VERSION=1.9.1
 # https://github.com/helm/helm/releases
 HELM_VERSION=3.5.0
 # https://github.com/keptn/keptn
-KEPTN_VERSION=0.9.2
+KEPTN_VERSION=0.10.0
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.17.1
+KEPTN_DT_SERVICE_VERSION=0.18.1
 
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="release-0.9.0"
+KEPTN_EXAMPLES_BRANCH="release-0.10.0"
 TEASER_IMAGE="shinojosa/kiab:0.8"
 # https://github.com/ubuntu/microk8s/releases
 # snap info microk8s
