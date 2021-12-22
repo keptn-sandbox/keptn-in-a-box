@@ -3,13 +3,15 @@
 set -e
 
 CLI="kubectl"
-ENABLE_K8S_MONITORING="false"
-SET_APP_LOG_CONTENT_ACCESS="false"
 SKIP_CERT_CHECK="false"
 ENABLE_VOLUME_STORAGE="false"
+CONNECTION_NAME=""
+CLUSTER_NAME=""
+CLUSTER_NAME_REGEX="^[-_a-zA-Z0-9][-_\.a-zA-Z0-9]*$"
+CLUSTER_NAME_LENGTH=256
 
-for arg in "$@"; do
-  case $arg in
+while [ $# -gt 0 ]; do
+  case "$1" in
   --api-url)
     API_URL="$2"
     shift 2
@@ -22,15 +24,7 @@ for arg in "$@"; do
     PAAS_TOKEN="$2"
     shift 2
     ;;
-  --enable-k8s-monitoring)
-    ENABLE_K8S_MONITORING="true"
-    shift
-    ;;
-  --set-app-log-content-access)
-    SET_APP_LOG_CONTENT_ACCESS="true"
-    shift
-    ;;
-  --skip-cert-check)
+  --skip-ssl-verification)
     SKIP_CERT_CHECK="true"
     shift
     ;;
@@ -38,8 +32,16 @@ for arg in "$@"; do
     ENABLE_VOLUME_STORAGE="true"
     shift
     ;;
+  --cluster-name)
+    CLUSTER_NAME="$2"
+    shift 2
+    ;;
   --openshift)
     CLI="oc"
+    shift
+    ;;
+  *)
+    echo "Warning: skipping unsupported option: $1"
     shift
     ;;
   esac
@@ -60,6 +62,27 @@ if [ -z "$PAAS_TOKEN" ]; then
   exit 1
 fi
 
+K8S_ENDPOINT="$("${CLI}" get ing -n default k8-api-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')"
+if [ -z "$K8S_ENDPOINT" ]; then
+  echo "Error: failed to get kubernetes endpoint!"
+  exit 1
+fi
+
+if [ -n "$CLUSTER_NAME" ]; then
+  if ! echo "$CLUSTER_NAME" | grep -Eq "$CLUSTER_NAME_REGEX"; then
+    echo "Error: cluster name \"$CLUSTER_NAME\" does not match regex: \"$CLUSTER_NAME_REGEX\""
+    exit 1
+  fi
+
+  if [ "${#CLUSTER_NAME}" -ge $CLUSTER_NAME_LENGTH ]; then
+    echo "Error: cluster name too long: ${#CLUSTER_NAME} >= $CLUSTER_NAME_LENGTH"
+    exit 1
+  fi
+  CONNECTION_NAME="$CLUSTER_NAME"
+else
+  CONNECTION_NAME="$(echo "${K8S_ENDPOINT}" | awk -F[/:] '{print $4}')"
+fi
+
 set -u
 
 checkIfNSExists() {
@@ -69,77 +92,116 @@ checkIfNSExists() {
     else
       "${CLI}" adm new-project --node-selector="" dynatrace
     fi
-  else
-    echo "Namespace already exists"
   fi
 }
 
-applyOneAgentOperator() {
-  if [ "${CLI}" = "kubectl" ]; then
-    "${CLI}" apply -f https://github.com/Dynatrace/dynatrace-oneagent-operator/releases/latest/download/kubernetes.yaml
-  else
-    "${CLI}" apply -f https://github.com/Dynatrace/dynatrace-oneagent-operator/releases/latest/download/openshift.yaml
-  fi
-
-  "${CLI}" -n dynatrace create secret generic oneagent --from-literal="apiToken=${API_TOKEN}" --from-literal="paasToken=${PAAS_TOKEN}" --dry-run -o yaml | "${CLI}" apply -f -
-}
-
-applyOneAgentCR() {
-  cat <<EOF | "${CLI}" apply -f -
-apiVersion: dynatrace.com/v1alpha1
-kind: OneAgent
-metadata:
-  name: oneagent
-  namespace: dynatrace
-spec:
-  apiUrl: ${API_URL}
-  tolerations:
-  - effect: NoSchedule
-    key: node-role.kubernetes.io/master
-    operator: Exists
-  skipCertCheck: ${SKIP_CERT_CHECK}
-  args:
-  - --set-app-log-content-access=${SET_APP_LOG_CONTENT_ACCESS}
-  env:
-  - name: ONEAGENT_ENABLE_VOLUME_STORAGE
-    value: "${ENABLE_VOLUME_STORAGE}"
-EOF
+isOCP311() {
+  # Openshift 3.11 uses Kubernetes 1.11, and `oc version` returns the Kubernetes version and NOT the Openshift version
+  "${CLI}" version -o json | tr -d '[[:space:]]'| grep '"serverVersion.*"' | grep -q '"major":"1","minor":"11.*"'
 }
 
 applyDynatraceOperator() {
-    if [ "${CLI}" = "kubectl" ]; then
-      "${CLI}" apply -f https://github.com/Dynatrace/dynatrace-operator/releases/latest/download/kubernetes.yaml
+  if [ "${CLI}" = "kubectl" ]; then
+    "${CLI}" apply -f https://github.com/Dynatrace/dynatrace-operator/releases/latest/download/kubernetes.yaml
+  else
+    if isOCP311; then
+      "${CLI}" apply -f https://github.com/Dynatrace/dynatrace-operator/releases/latest/download/openshift3.11.yaml
     else
       "${CLI}" apply -f https://github.com/Dynatrace/dynatrace-operator/releases/latest/download/openshift.yaml
     fi
+  fi
+
+  "${CLI}" -n dynatrace create secret generic dynakube --from-literal="apiToken=${API_TOKEN}" --from-literal="paasToken=${PAAS_TOKEN}" --dry-run=client -o yaml | "${CLI}" apply -f -
+}
+
+buildGlobalSection() {
+  cat <<EOF
+  apiUrl: ${API_URL}
+  skipCertCheck: ${SKIP_CERT_CHECK}
+EOF
+  if [ -n "$CLUSTER_NAME" ]; then
+    cat <<EOF
+  networkZone: ${CLUSTER_NAME}
+EOF
+  fi
+}
+
+buildClassicFullStackSection() {
+  cat <<EOF
+  oneAgent:
+    classicFullStack:
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+
+$(buildHostMonitoringArgsField)
+$(buildHostMonitoringEnvField)
+EOF
+}
+
+buildHostMonitoringArgsField() {
+  if [ -n "$CLUSTER_NAME" ]; then
+    cat <<EOF
+      args:
+      - --set-host-group=${CLUSTER_NAME}
+EOF
+  fi
+}
+
+buildHostMonitoringEnvField() {
+  if "$ENABLE_VOLUME_STORAGE" = "true"; then
+    cat <<EOF
+      env:
+      - name: ONEAGENT_ENABLE_VOLUME_STORAGE
+        value: "${ENABLE_VOLUME_STORAGE}"
+EOF
+  fi
+}
+
+buildActiveGateSection() {
+  cat <<EOF
+  activeGate:
+    capabilities:
+      - routing
+      - kubernetes-monitoring
+EOF
+  if [ -n "$CLUSTER_NAME" ]; then
+    cat <<EOF
+    group: ${CLUSTER_NAME}
+EOF
+  fi
+}
+
+waitForWebhook() {
+  "${CLI}" -n dynatrace wait pod --for=condition=ready -l internal.dynatrace.com/app=webhook --timeout=300s
 }
 
 applyDynaKubeCR() {
-  cat <<EOF | "${CLI}" apply -f -
-apiVersion: dynatrace.com/v1alpha1
+  dynakube="$(
+    cat <<EOF
+apiVersion: dynatrace.com/v1beta1
 kind: DynaKube
 metadata:
   name: dynakube
   namespace: dynatrace
 spec:
-  apiUrl: ${API_URL}
-  tokens: oneagent
-  kubernetesMonitoring:
-    enabled: true
-    replicas: 1
+$(buildGlobalSection)
+$(buildClassicFullStackSection)
+$(buildActiveGateSection)
 EOF
+  )"
+
+  echo "CR.yaml:"
+  echo "----------"
+  echo "$dynakube"
+  echo "----------"
+  echo "$dynakube" | "${CLI}" apply -f -
 }
 
 addK8sConfiguration() {
-  api_endpoint=$(kubectl get ing k8-api-ingress -o=jsonpath='{.spec.tls[0].hosts[0]}')
-  K8S_ENDPOINT="https://${api_endpoint}"
-  if [ -z "$K8S_ENDPOINT" ]; then
-    echo "Error: failed to get kubernetes endpoint!"
-    exit 1
-  fi
 
-  CONNECTION_NAME="$(echo "${K8S_ENDPOINT}" | awk -F[/:] '{print $4}')"
-  K8S_SECRET_NAME="$(for token in $("${CLI}" get sa dynatrace-kubernetes-monitoring -o jsonpath='{.secrets[*].name}' -n dynatrace); do echo "$token"; done | grep token)"
+  K8S_SECRET_NAME="$(for token in $("${CLI}" get sa dynatrace-kubernetes-monitoring -o jsonpath='{.secrets[*].name}' -n dynatrace); do echo "$token"; done | grep -F token)"
   if [ -z "$K8S_SECRET_NAME" ]; then
     echo "Error: failed to get kubernetes-monitoring secret!"
     exit 1
@@ -151,8 +213,15 @@ addK8sConfiguration() {
     exit 1
   fi
 
-  json="$(
-    cat <<EOF
+  if "$SKIP_CERT_CHECK" = "true"; then
+    CERT_CHECK_API="false"
+  else
+    CERT_CHECK_API="true"
+  fi
+
+  if [ -z "$CLUSTER_NAME" ]; then
+    json="$(
+      cat <<EOF
 {
   "label": "${CONNECTION_NAME}",
   "endpointUrl": "${K8S_ENDPOINT}",
@@ -163,47 +232,143 @@ addK8sConfiguration() {
       "active": true
     },
     {
-      "label": "All Namespaces",
-      "fieldSelector": "involvedObject.kind!=Node",
+      "label": "Namespace events",
+      "fieldSelector": "involvedObject.kind=!Node",
+      "active": true
+    }
+  ],
+  "workloadIntegrationEnabled": true,
+  "eventsIntegrationEnabled": false,
+  "authToken": "${K8S_BEARER}",
+  "active": true,
+  "certificateCheckEnabled": "${CERT_CHECK_API}"
+}
+EOF
+    )"
+  else
+    json="$(
+      cat <<EOF
+{
+  "label": "${CLUSTER_NAME}",
+  "endpointUrl": "${K8S_ENDPOINT}",
+  "eventsFieldSelectors": [
+    {
+      "label": "Node events",
+      "fieldSelector": "involvedObject.kind=Node",
+      "active": true
+    },
+    {
+      "label": "Namespace events",
+      "fieldSelector": "involvedObject.kind=!Node",
       "active": true
     }
   ],
   "workloadIntegrationEnabled": true,
   "eventsIntegrationEnabled": true,
+  "activeGateGroup": "${CLUSTER_NAME}",
   "authToken": "${K8S_BEARER}",
   "active": true,
-  "certificateCheckEnabled": "${SKIP_CERT_CHECK}"
+  "certificateCheckEnabled": "${CERT_CHECK_API}"
 }
 EOF
-  )"
+    )"
+  fi
 
-  response="$(curl -sS -X POST "${API_URL}/config/v1/kubernetes/credentials" \
-    -H "accept: application/json; charset=utf-8" \
-    -H "Authorization: Api-Token ${API_TOKEN}" \
-    -H "Content-Type: application/json; charset=utf-8" \
-    -d "${json}")"
+  response=$(apiRequest "POST" "/config/v1/kubernetes/credentials" "${json}")
 
-  if echo "$response" | grep "${CONNECTION_NAME}" >/dev/null 2>&1; then
+  if echo "$response" | grep -Fq "${CONNECTION_NAME}"; then
     echo "Kubernetes monitoring successfully setup."
   else
     echo "Error adding Kubernetes cluster to Dynatrace: $response"
   fi
 }
 
+checkForExistingCluster() {
+  response=$(apiRequest "GET" "/config/v1/kubernetes/credentials" "")
+
+  # To check the exact name we need to include the `\` at the end
+  if echo "$response" | grep -Fq "\"name\":\"${CONNECTION_NAME}\""; then
+    echo "Error: Cluster already exists: ${CONNECTION_NAME}"
+    exit 1
+  fi
+  # To check the endpoint URL we must not include the `\` at the end
+  if echo "$response" | grep -Fq "\"endpointUrl\":\"${K8S_ENDPOINT}"; then
+    echo "Error: Cluster endpoint already exists: ${K8S_ENDPOINT}"
+    exit 1
+  fi
+}
+
+checkTokenScopes() {
+  jsonAPI="{\"token\": \"${API_TOKEN}\"}"
+  jsonPaaS="{\"token\": \"${PAAS_TOKEN}\"}"
+
+  responseAPI=$(apiRequest "POST" "/v1/tokens/lookup" "${jsonAPI}")
+
+  if echo "$responseAPI" | grep -Fq "Authentication failed"; then
+    echo "Error: API token authentication failed!"
+    exit 1
+  fi
+
+  if ! echo "$responseAPI" | grep -Fq "WriteConfig"; then
+    echo "Error: API token does not have config write permission!"
+    exit 1
+  fi
+
+  if ! echo "$responseAPI" | grep -Fq "ReadConfig"; then
+    echo "Error: API token does not have config read permission!"
+    exit 1
+  fi
+
+  if echo "$responseAPI" | grep -Fq '"revoked": true'; then
+    echo "Error: API token has been revoked!"
+    exit 1
+  fi
+
+  responsePaaS=$(apiRequest "POST" "/v1/tokens/lookup" "${jsonPaaS}")
+
+  if echo "$responsePaaS" | grep -Fq "Token does not exist"; then
+    echo "Error: PaaS token does not exist!"
+    exit 1
+  fi
+
+  if echo "$responsePaaS" | grep -Fq '"revoked": true'; then
+    echo "Error: PaaS token has been revoked!"
+    exit 1
+  fi
+}
+
+apiRequest() {
+  method=$1
+  url=$2
+  json=$3
+
+  if "$SKIP_CERT_CHECK" = "true"; then
+    curl_command="curl -k"
+  else
+    curl_command="curl"
+  fi
+
+  response="$(${curl_command} -sS -X ${method} "${API_URL}${url}" \
+    -H "accept: application/json; charset=utf-8" \
+    -H "Authorization: Api-Token ${API_TOKEN}" \
+    -H "Content-Type: application/json; charset=utf-8" \
+    -d "${json}")"
+
+  echo "$response"
+}
+
 ####### MAIN #######
+printf "\nCheck for token scopes...\n"
+checkTokenScopes
+printf "\nCheck if cluster already exists...\n"
+checkForExistingCluster
 printf "\nCreating Dynatrace namespace...\n"
 checkIfNSExists
-printf "\nApplying Dynatrace OneAgent Operator...\n"
-applyOneAgentOperator
-printf "\nApplying OneAgent CustomResource...\n"
-applyOneAgentCR
-
-if [ "${ENABLE_K8S_MONITORING}" = "true" ]; then
-  printf "\nApplying Dynatrace Operator...\n"
-  applyDynatraceOperator
-  printf "\nApplying DynaKube CustomResource...\n"
-  applyDynaKubeCR
-  
-  printf "\nAdding cluster to Dynatrace...\n"
-  addK8sConfiguration
-fi
+printf "\nApplying Dynatrace Operator...\n"
+applyDynatraceOperator
+printf "\nWait for webhook to become available\n"
+waitForWebhook
+printf "\nApplying DynaKube CustomResource...\n"
+applyDynaKubeCR
+printf "\nAdding cluster to Dynatrace...\n"
+addK8sConfiguration

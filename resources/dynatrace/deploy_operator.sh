@@ -8,7 +8,7 @@ deploy_operator() {
 
     # Install the operator
     echo "Installing the Operator and connecting the K8s API"
-    sh ./install.sh --api-url "$DT_API_URL" --api-token "$DT_API_TOKEN" --paas-token "$DT_PAAS_TOKEN" --enable-app-log-access --enable-k8s-monitoring --skip-cert-check
+    sh ./install.sh  --api-url "$DT_API_URL" --api-token "$DT_API_TOKEN" --paas-token "$DT_PAAS_TOKEN" --skip-ssl-verification --cluster-name "keptn-in-a-box"
 }
 
 echo "Deploying the oneagent via operator..."
