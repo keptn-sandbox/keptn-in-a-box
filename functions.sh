@@ -512,6 +512,8 @@ microk8sEnableBasic() {
   bashas 'microk8s.enable storage'
   waitForAllPods
   bashas 'microk8s.enable ingress'
+  #TODO remove workaround. status.quay.io is not working. Downloading from mirror. 
+  bashas 'kubectl -n ingress set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=gcr.io/k8s-staging-ingress-nginx/nginx-ingress-controller:0.33.0'
   waitForAllPods
 }
 
