@@ -233,7 +233,7 @@ addK8sConfiguration() {
     },
     {
       "label": "Namespace events",
-      "fieldSelector": "involvedObject.kind=!Node",
+      "fieldSelector": "involvedObject.kind!=Node",
       "active": true
     }
   ],
@@ -259,7 +259,7 @@ EOF
     },
     {
       "label": "Namespace events",
-      "fieldSelector": "involvedObject.kind=!Node",
+      "fieldSelector": "involvedObject.kind!=Node",
       "active": true
     }
   ],
