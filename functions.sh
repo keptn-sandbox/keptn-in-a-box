@@ -20,7 +20,7 @@ KEPTN_VERSION=0.10.0
 KEPTN_DT_SERVICE_VERSION=0.18.1
 
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="release-0.10.0"
+KEPTN_EXAMPLES_BRANCH="0.10.0"
 TEASER_IMAGE="shinojosa/kiab:0.8"
 # https://github.com/ubuntu/microk8s/releases
 # snap info microk8s
