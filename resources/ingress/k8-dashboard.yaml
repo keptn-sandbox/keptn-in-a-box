@@ -1,10 +1,10 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: k8-dashboard-ingress
   namespace: kube-system
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: public
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS" 
@@ -14,10 +14,12 @@ spec:
   - host: kubernetes.domain.placeholder
     http:
       paths:
-      - backend:
-          serviceName: kubernetes-dashboard
-          servicePort: 443
+      - pathType: Prefix
         path: /
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port: 443
   tls:
   - hosts:
     - kubernetes.domain.placeholder

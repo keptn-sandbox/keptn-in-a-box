@@ -1,8 +1,8 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: public
     # We allow HTTP and HTTPS
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     # Instructs the controller to send TLS connections directly 
@@ -20,24 +20,30 @@ spec:
   - host: carts.sockshop-dev.domain.placeholder
     http:
       paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
+      - pathType: Prefix
         path: /
+        backend:
+          service:
+            name: istio-ingressgateway
+            port: 80
   - host: carts.sockshop-staging.domain.placeholder
     http:
       paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
+      - pathType: Prefix
         path: /
+        backend:
+          service:
+            name: istio-ingressgateway
+            port: 80
   - host: carts.sockshop-production.domain.placeholder
     http:
       paths:
-      - backend:
-          serviceName: istio-ingressgateway
-          servicePort: 80
+      - pathType: Prefix
         path: /
+        backend:
+          service:
+            name: istio-ingressgateway
+            port: 80
   tls:
   - hosts:
     - carts.sockshop-dev.domain.placeholder

@@ -1,10 +1,13 @@
-@Library('keptn-library')_
-def keptn = new sh.keptn.Keptn()
+//@Library('keptn-library@6.0.0-next.0')_
+@Library('keptn-library@5.1')_
+import sh.keptn.Keptn
+def cloudautomation = new sh.keptn.Keptn()
 
 node {
     properties([
         parameters([
          string(defaultValue: 'qualitygate', description: 'Name of your Project for Quality Gate Feedback ', name: 'Project', trim: false), 
+         //TODO replace the stage in the Shipyard?
          string(defaultValue: 'qualitystage', description: 'Stage used for for Quality Gate Feedback', name: 'Stage', trim: false), 
          string(defaultValue: 'evalservice', description: 'Name of the Tag for identifyting the service to validate the SLIs and SLOs', name: 'Service', trim: false),
          choice(choices: ['dynatrace', 'prometheus',''], description: 'Select which monitoring tool should be configured as SLI provider', name: 'Monitoring', trim: false),
@@ -16,24 +19,41 @@ node {
     ])
 
     stage('Initialize Keptn') {
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.9.2/resources/jenkins/pipelines/keptn/dynatrace/dynatrace.conf.yaml", 'keptn/dynatrace/dynatrace.conf.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.9.2/resources/jenkins/pipelines/keptn/slo_${params.SLI}.yaml", 'keptn/slo.yaml')
-        keptn.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.9.2/resources/jenkins/pipelines/keptn/dynatrace/sli_${params.SLI}.yaml", 'keptn/sli.yaml')
-        archiveArtifacts artifacts:'keptn/**/*.*'
+
+        // TODO Optimize with if Project exists download otherwise not.
+        cloudautomation.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.10.0/resources/jenkins/pipelines/keptn/shipyard-performance.yaml", 'shipyard.yaml')
+        cloudautomation.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.10.0/resources/jenkins/pipelines/keptn/dynatrace/dynatrace.conf.yaml", 'dynatrace/dynatrace.conf.yaml')
+        cloudautomation.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.10.0/resources/jenkins/pipelines/keptn/slo_${params.SLI}.yaml", 'slo.yaml')
+        cloudautomation.downloadFile("https://raw.githubusercontent.com/keptn-sandbox/keptn-in-a-box/release-0.10.0/resources/jenkins/pipelines/keptn/dynatrace/sli_${params.SLI}.yaml", 'sli.yaml')
+        
+        //The stages are defined in the shipyard file
+        sh """#!/bin/bash
+        echo 'Replacing stage in shipyard file'
+        sed -i 's~staging~${params.Stage}~g' shipyard.yaml
+        cat shipyard.yaml
+        """
 
         // Initialize the Keptn Project - ensures the Keptn Project is created with the passed shipyard
-        keptn.keptnInit project:"${params.Project}", service:"${params.Service}", stage:"${params.Stage}", monitoring:"${monitoring}" // , shipyard:'shipyard.yaml'
+        cloudautomation.keptnInit project:"${params.Project}", service:"${params.Service}", stage:"${params.Stage}", monitoring:'dynatrace', shipyard:'shipyard.yaml'
 
         // Upload all the files
-        keptn.keptnAddResources('keptn/dynatrace/dynatrace.conf.yaml','dynatrace/dynatrace.conf.yaml')
-        keptn.keptnAddResources('keptn/sli.yaml','dynatrace/sli.yaml')
-        keptn.keptnAddResources('keptn/slo.yaml','slo.yaml')
+        cloudautomation.keptnAddResources('slo.yaml','slo.yaml')
+        cloudautomation.keptnAddResources('dynatrace/dynatrace.conf.yaml','dynatrace/dynatrace.conf.yaml')
+        cloudautomation.keptnAddResources('sli.yaml','dynatrace/sli.yaml')
+
+        // Configure monitoring for your keptn project (using dynatrace or prometheus)
+        // NOT Necesarry for CloudAutomation 
+        //cloudautomation.keptnConfigureMonitoring monitoring:"dynatrace"
     }
     stage('Trigger Quality Gate') {
         echo "Quality Gates ONLY: Just triggering an SLI/SLO-based evaluation for the passed timeframe"
+        // Custom Labels
+        // all cloudautomation.send** functions have an optional parameter called labels. It is a way to pass custom labels to the sent event
+        def labels=[:]
+        labels.put('TriggeredBy', 'Jenkins')
 
         // Trigger an evaluation
-        def keptnContext = keptn.sendStartEvaluationEvent starttime:"${params.StartTime}", endtime:"${params.EndTime}" 
+        def keptnContext = cloudautomation.sendStartEvaluationEvent starttime:"${params.StartTime}", endtime:"${params.EndTime}", labels: labels
         String keptn_bridge = env.KEPTN_BRIDGE
         echo "Open Keptns Bridge: ${keptn_bridge}/trace/${keptnContext}"
     }
@@ -45,7 +65,7 @@ node {
 
         if(waitTime > 0) {
             echo "Waiting until Keptn is done and returns the results"
-            def result = keptn.waitForEvaluationDoneEvent setBuildResult:true, waitTime:waitTime
+            def result = cloudautomation.waitForEvaluationDoneEvent setBuildResult:true, waitTime:waitTime
             echo "${result}"
         } else {
             echo "Not waiting for results. Please check the Keptns bridge for the details!"
@@ -57,7 +77,7 @@ node {
                 alwaysLinkToLastBuild: false,
                 keepAll              : true,
                 reportDir            : ".",
-                reportFiles          : 'keptn.html',
+                reportFiles          : 'cloudautomation.html',
                 reportName           : "Keptn Result in Bridge"
             ]
         )

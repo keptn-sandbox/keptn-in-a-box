@@ -6,7 +6,7 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.10.0"
+KIAB_RELEASE="release-0.16.0"
 
 #https://cert-manager.io/docs/release-notes/
 CERTMANAGER_VERSION=0.14.0
@@ -20,11 +20,11 @@ KEPTN_VERSION=0.10.0
 KEPTN_DT_SERVICE_VERSION=0.18.1
 
 # https://github.com/keptn/examples
-KEPTN_EXAMPLES_BRANCH="0.10.0"
+KEPTN_EXAMPLES_BRANCH="0.14.0"
 TEASER_IMAGE="shinojosa/kiab:0.8"
 # https://github.com/ubuntu/microk8s/releases
 # snap info microk8s
-MICROK8S_CHANNEL="1.19/stable"
+MICROK8S_CHANNEL="1.24/stable"
 KEPTN_IN_A_BOX_DIR="~/keptn-in-a-box"
 KEPTN_EXAMPLES_DIR="~/examples"
 KEPTN_IN_A_BOX_REPO="https://github.com/keptn-sandbox/keptn-in-a-box.git"
@@ -512,8 +512,6 @@ microk8sEnableBasic() {
   bashas 'microk8s.enable storage'
   waitForAllPods
   bashas 'microk8s.enable ingress'
-  #TODO remove workaround. status.quay.io is not working. Downloading from mirror. 
-  bashas 'kubectl -n ingress set image daemonset.apps/nginx-ingress-microk8s-controller nginx-ingress-microk8s=gcr.io/k8s-staging-ingress-nginx/nginx-ingress-controller:0.33.0'
   waitForAllPods
 }
 
