@@ -19,7 +19,8 @@ spec:
         backend:
           service:
             name: kubernetes-dashboard
-            port: 443
+            port: 
+              number: 443
   tls:
   - hosts:
     - kubernetes.domain.placeholder

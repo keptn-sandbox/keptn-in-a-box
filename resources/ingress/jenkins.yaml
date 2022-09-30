@@ -18,7 +18,8 @@ spec:
         backend:
           service:
             name: jenkins
-            port: 8080
+            port: 
+              number: 8080
   tls:
   - hosts:
     - jenkins.domain.placeholder

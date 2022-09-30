@@ -509,7 +509,7 @@ microk8sEnableBasic() {
   printInfoSection "Enable DNS, Storage, NGINX Ingress"
   bashas 'microk8s.enable dns'
   waitForAllPods
-  bashas 'microk8s.enable storage'
+  bashas 'microk8s.enable hostpath-storage'
   waitForAllPods
   bashas 'microk8s.enable ingress'
   waitForAllPods

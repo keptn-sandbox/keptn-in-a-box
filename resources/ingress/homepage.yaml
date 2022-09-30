@@ -27,7 +27,8 @@ spec:
         backend:
           service:
             name: homepage
-            port: 80
+            port:
+              number: 80
   tls:
   - hosts:
     - domain.placeholder

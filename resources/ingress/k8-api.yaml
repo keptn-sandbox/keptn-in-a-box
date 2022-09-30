@@ -20,7 +20,8 @@ spec:
         backend:
           service:
             name: kubernetes
-            port: 443
+            port: 
+              number: 443
   tls:
   - hosts:
     - api.kubernetes.domain.placeholder

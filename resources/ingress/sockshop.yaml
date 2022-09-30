@@ -25,7 +25,8 @@ spec:
         backend:
           service:
             name: istio-ingressgateway
-            port: 80
+            port: 
+              number: 80
   - host: carts.sockshop-staging.domain.placeholder
     http:
       paths:
@@ -34,7 +35,8 @@ spec:
         backend:
           service:
             name: istio-ingressgateway
-            port: 80
+            port: 
+              number: 80
   - host: carts.sockshop-production.domain.placeholder
     http:
       paths:
@@ -43,7 +45,8 @@ spec:
         backend:
           service:
             name: istio-ingressgateway
-            port: 80
+            port: 
+              number: 80
   tls:
   - hosts:
     - carts.sockshop-dev.domain.placeholder
