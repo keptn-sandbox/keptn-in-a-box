@@ -9,11 +9,11 @@
 KIAB_RELEASE="release-0.19.0"
 
 #https://cert-manager.io/docs/release-notes/
-CERTMANAGER_VERSION=0.14.0
+CERTMANAGER_VERSION=1.10.0
 #https://istio.io/latest/news/releases/
-ISTIO_VERSION=1.9.1
+ISTIO_VERSION=1.14.5
 # https://github.com/helm/helm/releases
-HELM_VERSION=3.5.0
+HELM_VERSION=3.10.2
 # https://github.com/keptn/keptn
 KEPTN_VERSION=0.10.0
 # https://github.com/keptn-contrib/dynatrace-service
