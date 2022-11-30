@@ -6,7 +6,7 @@
 # ==================================================
 #      ----- Components Versions -----             #
 # ==================================================
-KIAB_RELEASE="release-0.16.0"
+KIAB_RELEASE="release-0.19.0"
 
 #https://cert-manager.io/docs/release-notes/
 CERTMANAGER_VERSION=0.14.0
@@ -17,7 +17,7 @@ HELM_VERSION=3.5.0
 # https://github.com/keptn/keptn
 KEPTN_VERSION=0.10.0
 # https://github.com/keptn-contrib/dynatrace-service
-KEPTN_DT_SERVICE_VERSION=0.18.1
+KEPTN_DT_SERVICE_VERSION=0.25.0
 
 # https://github.com/keptn/examples
 KEPTN_EXAMPLES_BRANCH="0.14.0"
