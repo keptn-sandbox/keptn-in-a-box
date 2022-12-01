@@ -444,6 +444,7 @@ setupProAliases() {
     echo "
       # Alias for ease of use of the CLI
       alias las='ls -las' 
+      alias c='clear' 
       alias hg='history | grep' 
       alias h='history' 
       alias vaml='vi -c \"set syntax:yaml\" -' 
