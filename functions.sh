@@ -15,7 +15,7 @@ ISTIO_VERSION=1.14.5
 # https://github.com/helm/helm/releases
 HELM_VERSION=3.10.2
 # https://github.com/keptn/keptn
-KEPTN_VERSION=0.10.0
+KEPTN_VERSION=0.19.3
 # https://github.com/keptn-contrib/dynatrace-service
 KEPTN_DT_SERVICE_VERSION=0.25.0
 
