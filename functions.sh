@@ -54,6 +54,7 @@ shopt -s expand_aliases
 verbose_mode=false
 update_ubuntu=false
 docker_install=false
+k9s_install=false
 microk8s_install=false
 setup_proaliases=false
 enable_k8dashboard=false
@@ -99,6 +100,7 @@ installationBundleDemo() {
   docker_install=true
   microk8s_install=true
   setup_proaliases=true
+  k9s_install=true
 
   enable_k8dashboard=false
   istio_install=true
@@ -435,6 +437,13 @@ dockerInstall() {
     apt install docker.io -y
     service docker start
     usermod -a -G docker $USER
+  fi
+}
+
+k9sInstall() {
+  if [ "$k9s_install" = true ]; then
+    printInfoSection "Installing K9s"
+    bashas "curl -sS https://webi.sh/k9s | sh"
   fi
 }
 
@@ -889,7 +898,7 @@ printInstalltime() {
 
 printFlags() {
   printInfoSection "Function Flags values"
-  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_unleash_configure,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user,devlove_easytravel}; do
+  for i in {selected_bundle,verbose_mode,update_ubuntu,docker_install,k9s_install,microk8s_install,setup_proaliases,enable_k8dashboard,enable_registry,istio_install,helm_install,git_deploy,git_migrate,certmanager_install,certmanager_enable,keptn_install,keptn_install_qualitygates,keptn_examples_clone,resources_clone,dynatrace_savecredentials,dynatrace_configure_monitoring,jenkins_deploy,keptn_bridge_disable_login,keptndeploy_homepage,keptndemo_cartsload,keptndemo_unleash,keptndemo_unleash_configure,keptndemo_cartsonboard,expose_kubernetes_api,expose_kubernetes_dashboard,patch_kubernetes_dashboard,create_workshop_user,devlove_easytravel}; do
     echo "$i = ${!i}"
   done
 }
