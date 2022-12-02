@@ -563,6 +563,8 @@ helmInstall() {
     mv linux-amd64/helm /usr/local/bin/helm    
     printInfo "Adding Default repo for Helm"
     bashas "helm repo add stable https://charts.helm.sh/stable"
+    printInfo "Adding Keptn repo for Helm"
+    bashas "helm repo add keptn https://charts.keptn.sh"
     printInfo "Adding Jenkins repo for Helm"
     bashas "helm repo add jenkins https://charts.jenkins.io"
     printInfo "Adding GiteaCharts for Helm"
@@ -651,26 +653,33 @@ keptnInstall() {
     if [ "$keptn_install_qualitygates" = true ]; then
       printInfoSection "Install Keptn with Continuous Delivery UseCase (no Istio configuration)"
 
-      bashas "echo 'y' | keptn install"
-      waitForAllPods
+     #bashas "echo 'y' | keptn install"
+      bashas "helm install keptn keptn/keptn -n keptn --version=${KEPTN_VERSION} --create-namespace"
+      
+      waitForAllPods 
     else
       ## -- Keptn Installation --
       printInfoSection "Install Keptn with Continuous Delivery UseCase"
-      bashas "echo 'y' | keptn install --use-case=continuous-delivery"
+      bashas "helm install keptn keptn/keptn -n keptn --version=${KEPTN_VERSION} --create-namespace --set=continuousDelivery.enabled=true"
+      
+      # helm uninstall keptn -n 
       waitForAllPods
 
       # Adding configuration for the IngressGW
-      printInfoSection "Creating Public Gateway for Istio"
-      bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && kubectl apply -f public-gateway.yaml"
+      # TODO Unchanged
+      #printInfoSection "Creating Public Gateway for Istio"
+      #bashas "cd $KEPTN_IN_A_BOX_DIR/resources/istio && kubectl apply -f public-gateway.yaml"
 
-      printInfoSection "Configuring Istio for Keptn"
-      bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=public-gateway.istio-system -oyaml --dry-run | kubectl replace -f -"
+      # TODO Skipping configmap
+      #printInfoSection "Configuring Istio for Keptn"
+      #bashas "kubectl create configmap -n keptn ingress-config --from-literal=ingress_hostname_suffix=${DOMAIN} --from-literal=ingress_port=80 --from-literal=ingress_protocol=http --from-literal=istio_gateway=public-gateway.istio-system -oyaml --dry-run | kubectl replace -f -"
 
-      printInfo "Restart Keptn Helm Service for the istio service mesh"
-      bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
+      # TODO Skipping restart
+      #printInfo "Restart Keptn Helm Service for the istio service mesh"
+      #bashas "kubectl delete pod -n keptn -lapp.kubernetes.io/name=helm-service"
     fi
 
-    printInfoSection "Routing for the Keptn Services via NGINX Ingress"
+    printInfoSection "Routing for the Keptn Services via Istio Ingress"
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/ingress && bash create-ingress.sh ${DOMAIN} api-keptn-ingress"
     waitForAllPods
 
@@ -720,6 +729,7 @@ gitMigrate() {
 }
 
 dynatraceConfigureMonitoring() {
+  #TODO Change monitoring with latest Operator
   if [ "$dynatrace_configure_monitoring" = true ]; then
     printInfoSection "Installing and configuring Dynatrace OneAgent on the Cluster for $DT_TENANT"
 
@@ -794,7 +804,6 @@ patchKubernetesDashboard() {
     bashas "cd $KEPTN_IN_A_BOX_DIR/resources/misc && bash patch-kubernetes-dashboard.sh"
   fi
 }
-
 keptndemoCartsonboard() {
   if [ "$keptndemo_cartsonboard" = true ]; then
     printInfoSection "Keptn onboarding Carts"
